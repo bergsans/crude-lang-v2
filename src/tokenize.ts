@@ -7,12 +7,14 @@ interface Token {
   literal: Literal;
 }
 
-type Tokens = Token[];
+export type Tokens = Token[];
 
 const NUL = '\0';
 
 const EOF = 'EOF';
 const LET = 'LET';
+const L_PAREN = '(';
+const R_PAREN = ')';
 const IDENTIFIER = 'IDENTIFIER';
 const INTEGER = 'INTEGER';
 const ASSIGN = '=';
@@ -26,20 +28,15 @@ class UnallowedCharacter extends Error {
   }
 }
 
-function readCharacter(
-  input: string,
-  _currentPosition: number,
-  nextPosition: number,
-  character: string
-) {
-  if (nextPosition >= input.length) {
-    character = NUL;
-  }
+function peekCharacter(input: string, nextPosition: number) {
+  return nextPosition >= input.length ? NUL : input[nextPosition];
+}
+
+function readCharacter(input: string, nextPosition: number) {
   return {
-    character: character === NUL ? NUL : input[nextPosition],
+    character: nextPosition >= input.length ? NUL : input[nextPosition],
     currentPosition: nextPosition,
     nextPosition: nextPosition + 1,
-    input,
   };
 }
 
@@ -57,18 +54,14 @@ function readNumber(
 ) {
   let number = '';
   while (isDigit(character)) {
-    number += character;
-    const nextCharacter = readCharacter(
-      input,
-      currentPosition,
-      nextPosition,
-      character
-    );
+    number = ''.concat(number, character);
+    const nextCharacter = readCharacter(input, nextPosition);
+    if (!isDigit(peekCharacter(input, nextPosition))) break;
     currentPosition = nextCharacter.currentPosition;
     nextPosition = nextCharacter.nextPosition;
     character = nextCharacter.character;
   }
-  return { input, currentPosition, nextPosition, character, number };
+  return { currentPosition, nextPosition, character, number };
 }
 
 function readIdentifier(
@@ -80,17 +73,13 @@ function readIdentifier(
   let name = '';
   while (isASCIIAlphabetic(character)) {
     name = ''.concat(name, character);
-    const nextCharacter = readCharacter(
-      input,
-      currentPosition,
-      nextPosition,
-      character
-    );
-    currentPosition = nextCharacter.currentPosition;
+    const nextCharacter = readCharacter(input, nextPosition);
+    if (!isASCIIAlphabetic(peekCharacter(input, nextPosition))) break;
+    // currentPosition = nextCharacter.currentPosition;
     nextPosition = nextCharacter.nextPosition;
     character = nextCharacter.character;
   }
-  return { input, currentPosition, nextPosition, character, name };
+  return { nextPosition, character, name };
 }
 
 function consumeWhitespace(
@@ -99,39 +88,29 @@ function consumeWhitespace(
   nextPosition: number,
   character: string
 ) {
-  let nextCharacter;
   while (
     character === ' ' ||
     character === '\r' ||
     character === '\n' ||
     character === '\t'
   ) {
-    nextCharacter = readCharacter(
-      input,
-      currentPosition,
-      nextPosition,
-      character[currentPosition]
-    );
+    const nextCharacter = readCharacter(input, nextPosition);
     character = nextCharacter.character;
+    currentPosition = nextCharacter.currentPosition;
+    nextPosition = nextCharacter.nextPosition;
   }
-  if (!nextCharacter) {
-    return { input, currentPosition, nextPosition, character };
-  }
-  currentPosition = nextCharacter.currentPosition;
-  nextPosition = nextCharacter.nextPosition;
-  character = nextCharacter.character;
-  return { input, currentPosition, nextPosition, character };
+  return { currentPosition, nextPosition, character };
 }
 
 function nextToken(
-  _input: string,
+  input: string,
   _currentPosition: number,
   _nextPosition: number,
   _character: string
 ) {
   let currentToken: Token | undefined;
-  let { input, currentPosition, nextPosition, character } = consumeWhitespace(
-    _input,
+  let { currentPosition, nextPosition, character } = consumeWhitespace(
+    input,
     _currentPosition,
     _nextPosition,
     _character
@@ -139,16 +118,19 @@ function nextToken(
   if (character === NUL) currentToken = newToken(EOF, NUL);
   else if (character === ASSIGN) {
     currentToken = newToken(ASSIGN, character);
-  } else if (character === SEMICOLON)
+  } else if (character === SEMICOLON) {
     currentToken = newToken(SEMICOLON, character);
-  else if (isASCIIAlphabetic(character)) {
+  } else if (character === L_PAREN) {
+    currentToken = newToken(L_PAREN, character);
+  } else if (character === R_PAREN) {
+    currentToken = newToken(R_PAREN, character);
+  } else if (isASCIIAlphabetic(character)) {
     const nextToken = readIdentifier(
       input,
       currentPosition,
       nextPosition,
       character
     );
-    currentPosition = nextToken.currentPosition;
     nextPosition = nextToken.nextPosition;
     character = nextToken.character;
     if (nextToken.name === 'let') {
@@ -163,18 +145,19 @@ function nextToken(
       nextPosition,
       character
     );
-    currentPosition = nextToken.currentPosition;
     nextPosition = nextToken.nextPosition;
     character = nextToken.character;
     currentToken = newToken(INTEGER, nextToken.number);
   } else {
     currentToken = newToken(UNALLOWED_CHARACTER, character);
   }
+  let nextCharacter = readCharacter(input, nextPosition);
+  character = nextCharacter.character;
+  currentPosition = nextCharacter.currentPosition;
+  nextPosition = nextCharacter.nextPosition;
   return {
     currentToken,
-    currentPosition,
     nextPosition,
-    input,
     character,
   };
 }
@@ -182,34 +165,21 @@ function nextToken(
 const isUnallowedCharacter = (token: Token) =>
   token.type === UNALLOWED_CHARACTER;
 
-export function tokenize(inp: string): Tokens {
-  if (!inp.length) {
+export function tokenize(input: string): Tokens {
+  if (!input.length) {
     throw new Error('No input.');
   }
   let tokens = [];
-  let currentPosition = 0;
-  let nextPosition = 0;
-  let input = inp;
-  let character = input[0];
+  let { character, currentPosition, nextPosition } = readCharacter(input, 0);
   while (character !== NUL) {
-    let nextCharacter = readCharacter(
-      input,
-      currentPosition,
-      nextPosition,
-      character
-    );
-    character = nextCharacter.character;
-    input = nextCharacter.input;
-    currentPosition = nextCharacter.currentPosition;
-    nextPosition = nextCharacter.nextPosition;
     let next = nextToken(input, currentPosition, nextPosition, character);
-    //if ([IDENTIFIER, INTEGER, LET].includes(next.currentToken.type)) {
-    character = next.character;
-    input = next.input;
-    currentPosition = next.currentPosition;
-    nextPosition = next.nextPosition;
-    //}
     tokens.push(next.currentToken);
+    if ([IDENTIFIER, INTEGER, LET].includes(next.currentToken.type)) {
+      character = next.character;
+      nextPosition = next.nextPosition;
+    }
+    character = next.character;
+    nextPosition = next.nextPosition;
   }
   if (tokens.some(isUnallowedCharacter)) {
     const unallowedCharacters = tokens.filter(isUnallowedCharacter);
