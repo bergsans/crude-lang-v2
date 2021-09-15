@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Tokens, tokenize } from '../src/tokenize';
+import { Tokens, tokenize } from '../src/tokenize/tokenize';
 
 describe('Tokenizer', () => {
   it('#tokenize', () => {

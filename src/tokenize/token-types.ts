@@ -1,0 +1,10 @@
+export const NUL = '\0';
+export const EOF = 'EOF';
+export const LET = 'LET';
+export const L_PAREN = '(';
+export const R_PAREN = ')';
+export const IDENTIFIER = 'IDENTIFIER';
+export const INTEGER = 'INTEGER';
+export const ASSIGN = '=';
+export const SEMICOLON = ';';
+export const UNALLOWED_CHARACTER = 'UNALLOWED_CHARACTER';

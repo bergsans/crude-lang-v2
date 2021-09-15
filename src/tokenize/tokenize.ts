@@ -1,32 +1,25 @@
-type TokenType = string;
+import {
+  NUL,
+  EOF,
+  IDENTIFIER,
+  LET,
+  INTEGER,
+  L_PAREN,
+  R_PAREN,
+  ASSIGN,
+  SEMICOLON,
+  UNALLOWED_CHARACTER,
+} from './token-types';
+import { throwNoInput, throwUnallowedCharacter } from './token-errors';
+import { isDigit, isASCIIAlphabetic, isUnallowedCharacter } from './helpers';
 
-type Literal = string;
-
-interface Token {
+export type TokenType = string;
+export type Literal = string;
+export interface Token {
   type: TokenType;
   literal: Literal;
 }
-
 export type Tokens = Token[];
-
-const NUL = '\0';
-
-const EOF = 'EOF';
-const LET = 'LET';
-const L_PAREN = '(';
-const R_PAREN = ')';
-const IDENTIFIER = 'IDENTIFIER';
-const INTEGER = 'INTEGER';
-const ASSIGN = '=';
-const SEMICOLON = ';';
-const UNALLOWED_CHARACTER = 'UNALLOWED_CHARACTER';
-
-class UnallowedCharacter extends Error {
-  constructor(invalidToken: Token) {
-    super(`${invalidToken.literal} is an unvalid character.`);
-    this.name = 'UnallowedCharacter';
-  }
-}
 
 function peekCharacter(input: string, nextPosition: number) {
   return nextPosition >= input.length ? NUL : input[nextPosition];
@@ -40,13 +33,11 @@ function readCharacter(input: string, nextPosition: number) {
   };
 }
 
-const newToken = (type: string, literal: string) => ({ type, literal });
+function newToken(type: string, literal: string) {
+  return { type, literal };
+}
 
-const isASCIIAlphabetic = (character: string) => character.match(/[a-z]/i);
-
-const isDigit = (character: string) => character.match(/[0-9]/);
-
-function readNumber(
+export function readNumber(
   input: string,
   currentPosition: number,
   nextPosition: number,
@@ -66,7 +57,6 @@ function readNumber(
 
 function readIdentifier(
   input: string,
-  currentPosition: number,
   nextPosition: number,
   character: string
 ) {
@@ -75,7 +65,6 @@ function readIdentifier(
     name = ''.concat(name, character);
     const nextCharacter = readCharacter(input, nextPosition);
     if (!isASCIIAlphabetic(peekCharacter(input, nextPosition))) break;
-    // currentPosition = nextCharacter.currentPosition;
     nextPosition = nextCharacter.nextPosition;
     character = nextCharacter.character;
   }
@@ -125,12 +114,7 @@ function nextToken(
   } else if (character === R_PAREN) {
     currentToken = newToken(R_PAREN, character);
   } else if (isASCIIAlphabetic(character)) {
-    const nextToken = readIdentifier(
-      input,
-      currentPosition,
-      nextPosition,
-      character
-    );
+    const nextToken = readIdentifier(input, nextPosition, character);
     nextPosition = nextToken.nextPosition;
     character = nextToken.character;
     if (nextToken.name === 'let') {
@@ -162,12 +146,9 @@ function nextToken(
   };
 }
 
-const isUnallowedCharacter = (token: Token) =>
-  token.type === UNALLOWED_CHARACTER;
-
 export function tokenize(input: string): Tokens {
   if (!input.length) {
-    throw new Error('No input.');
+    throwNoInput();
   }
   let tokens = [];
   let { character, currentPosition, nextPosition } = readCharacter(input, 0);
@@ -182,10 +163,7 @@ export function tokenize(input: string): Tokens {
     nextPosition = next.nextPosition;
   }
   if (tokens.some(isUnallowedCharacter)) {
-    const unallowedCharacters = tokens.filter(isUnallowedCharacter);
-    unallowedCharacters.forEach((unallowedCharacter) => {
-      throw new UnallowedCharacter(unallowedCharacter);
-    });
+    tokens.filter(isUnallowedCharacter).forEach(throwUnallowedCharacter);
   }
   return tokens;
 }
