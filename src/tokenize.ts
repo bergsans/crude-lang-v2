@@ -219,4 +219,3 @@ export function tokenize(inp: string): Tokens {
   }
   return tokens;
 }
-console.log(tokenize('let a = 34;  '));
