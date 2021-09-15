@@ -12,5 +12,6 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   rules: {
     quotes: [2, 'single', { avoidEscape: true }],
+    'no-param-reassign': false,
   },
 };
