@@ -7,11 +7,15 @@
     "build": "npm run build:js",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir .build --extensions \".ts,.tsx\"",
-    "test": "jest"
+    "test": "jest",
+    "watch": "npm test -- --watch"
   },
   "keywords": [],
   "author": "Claes-Magnus Berg <bergclaesmagnus@gmail.com>",
   "license": "ISC",
+  "dependencies": {
+    "core-js": "^3.17.3"
+  },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
     "@babel/core": "^7.15.5",
