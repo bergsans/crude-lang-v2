@@ -9,6 +9,6 @@ export function isDigit(character: string) {
   return character.match(/[0-9]/);
 }
 
-export function isUnallowedCharacter(token: Token) {
+export function isUnallowedToken(token: Token) {
   return token.type === UNALLOWED_CHARACTER;
 }

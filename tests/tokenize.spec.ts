@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { Tokens, tokenize } from '../src/tokenize/tokenize';
+import { Token, Tokens, tokenize } from '../src/tokenize/tokenize';
 
 describe('Tokenizer', () => {
-  it('#tokenize', () => {
+  it('#tokenize (without metadata)', () => {
     const codeSnippet1 = `
 let num = 444;
 `;
@@ -41,9 +41,42 @@ let numTwo =333;
       [codeSnippet2, expectedRes2],
       [codeSnippet3, expectedRes3],
     ].forEach(([code, res]: [string, Tokens]) => {
-      const tokens = tokenize(code);
-      console.log(tokens);
-      expect(tokens).to.deep.equal(res);
+      const tokensWithoutMetadata = tokenize(code).map(
+        ({ type, literal }: Partial<Token>) => ({
+          type,
+          literal,
+        })
+      );
+      expect(tokensWithoutMetadata).to.deep.equal(res);
     });
+  });
+
+  it('#tokenize (with metadata)', () => {
+    const codeSnippet1 = 'let num = 444;';
+    const tokens = tokenize(codeSnippet1);
+    const res = [
+      {
+        type: 'LET',
+        literal: 'let',
+        meta: { ln: 1, col: 1, realPosition: 0 },
+      },
+      {
+        type: 'IDENTIFIER',
+        literal: 'num',
+        meta: { ln: 1, col: 5, realPosition: 4 },
+      },
+      { type: '=', literal: '=', meta: { ln: 1, col: 9, realPosition: 8 } },
+      {
+        type: 'INTEGER',
+        literal: '444',
+        meta: { ln: 1, col: 11, realPosition: 10 },
+      },
+      {
+        type: ';',
+        literal: ';',
+        meta: { ln: 1, col: 14, realPosition: 13 },
+      },
+    ];
+    expect(tokens).to.deep.equal(res);
   });
 });
