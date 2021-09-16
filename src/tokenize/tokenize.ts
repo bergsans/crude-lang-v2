@@ -10,7 +10,7 @@ import {
   SEMICOLON,
   UNALLOWED_CHARACTER,
 } from './token-types';
-import { throwNoInput, throwUnallowedCharacter } from './token-errors';
+import { throwNoInput, throwCollectedErrors } from './token-errors';
 import { isDigit, isASCIIAlphabetic, isUnallowedToken } from './helpers';
 
 export type TokenType = string;
@@ -223,7 +223,7 @@ export function tokenize(input: string): Tokens {
   );
   if (tokens.some(isUnallowedToken)) {
     const unallowedTokens = tokens.filter(isUnallowedToken);
-    unallowedTokens.forEach(throwUnallowedCharacter);
+    throwCollectedErrors(unallowedTokens);
   }
   return tokens;
 }

@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { Token, Tokens, tokenize } from '../src/tokenize/tokenize';
+import { TokenizeError } from '../src/tokenize/token-errors';
 
 describe('Tokenizer', () => {
   it('#tokenize (without metadata)', () => {
@@ -78,5 +79,20 @@ let numTwo =333;
       },
     ];
     expect(tokens).to.deep.equal(res);
+  });
+
+  it('Should throw on unallowed token', () => {
+    const code = `
+let num_1 = 333;
+let ?? = 2;
+`;
+    const expectedErrorMessage = `_ - at line 2, column 8 - is an unvalid character.
+
+? - at line 3, column 5 - is an unvalid character.
+
+? - at line 3, column 6 - is an unvalid character.
+
+`;
+    expect(() => tokenize(code)).to.throw(expectedErrorMessage);
   });
 });
