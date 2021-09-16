@@ -9,6 +9,11 @@ import {
   ASSIGN,
   SEMICOLON,
   UNALLOWED_CHARACTER,
+  MINUS,
+  PLUS,
+  characterNames,
+  EQUAL,
+  NOT_EQUAL,
 } from './token-types';
 import { throwNoInput, throwCollectedErrors } from './token-errors';
 import { isDigit, isASCIIAlphabetic, isUnallowedToken } from './helpers';
@@ -29,14 +34,21 @@ export interface Token {
 
 export type Tokens = Token[];
 
+interface Data {
+  input: string;
+  currentPosition?: number;
+  nextPosition: number;
+  character: string;
+  meta: Metadata;
+  currentToken?: Token;
+}
+
 function peekCharacter(input: string, nextPosition: number) {
   return nextPosition >= input.length ? NUL : input[nextPosition];
 }
 
 function getMetadata(input: string, meta: Metadata, nextPosition: number) {
   let { col, ln, realPosition } = meta;
-
-  // input.split('').forEach((ch, i) => console.log(`${ch} - ${i}`));
   while (realPosition < nextPosition) {
     if (input[realPosition] === '\n') {
       ln++;
@@ -71,40 +83,30 @@ function newToken(type: string, literal: string, meta: Metadata): Token {
   return { type, literal, meta };
 }
 
-export function readNumber(
-  input: string,
-  nextPosition: number,
-  character: string,
-  meta: Metadata
-) {
-  let number = '';
-  while (isDigit(character)) {
-    number = ''.concat(number, character);
-    const nextCharacter = readCharacter(input, nextPosition, meta);
-    if (!isDigit(peekCharacter(input, nextPosition))) break;
-    nextPosition = nextCharacter.nextPosition;
-    character = nextCharacter.character;
-    meta = nextCharacter.meta;
-  }
-  return { nextPosition, character, number, meta };
+interface Output extends Partial<Data> {
+  name?: string;
+  number?: string;
 }
-
-function readIdentifier(
-  input: string,
-  nextPosition: number,
-  character: string,
-  meta: Metadata
-) {
-  let name = '';
-  while (isASCIIAlphabetic(character)) {
-    name = ''.concat(name, character);
-    const nextCharacter = readCharacter(input, nextPosition, meta);
-    if (!isASCIIAlphabetic(peekCharacter(input, nextPosition))) break;
-    nextPosition = nextCharacter.nextPosition;
-    character = nextCharacter.character;
-    meta = nextCharacter.meta;
+function read(
+  data: Data,
+  readType: string,
+  pred: (v: string) => boolean
+): Output {
+  let key: string = '';
+  while (pred(data.character)) {
+    key = ''.concat(key, data.character);
+    const nextCharacter = readCharacter(
+      data.input,
+      data.nextPosition,
+      data.meta
+    );
+    if (!pred(peekCharacter(data.input, data.nextPosition))) break;
+    data.nextPosition = nextCharacter.nextPosition;
+    data.character = nextCharacter.character;
+    data.meta = nextCharacter.meta;
   }
-  return { nextPosition, character, name, meta };
+  const { nextPosition, character, meta } = data;
+  return { nextPosition, character, meta, [readType]: key };
 }
 
 function consumeWhitespace(
@@ -145,25 +147,33 @@ function nextToken(
     _meta
   );
   if (character === NUL) currentToken = newToken(EOF, NUL, meta);
-  else if (character === ASSIGN) {
-    currentToken = newToken(ASSIGN, character, meta);
-  } else if (character === SEMICOLON) {
-    currentToken = newToken(SEMICOLON, character, meta);
-  } else if (character === L_PAREN) {
-    currentToken = newToken(L_PAREN, character, meta);
-  } else if (character === R_PAREN) {
-    currentToken = newToken(R_PAREN, character, meta);
+  else if (
+    [ASSIGN, SEMICOLON, L_PAREN, R_PAREN, MINUS, PLUS].includes(character)
+  ) {
+    currentToken = newToken(
+      character in characterNames ? characterNames[character] : character,
+      character,
+      meta
+    );
   } else if (isASCIIAlphabetic(character)) {
-    const nextToken = readIdentifier(input, nextPosition, character, meta);
+    const nextToken = read(
+      { input, nextPosition, character, meta },
+      'name',
+      isASCIIAlphabetic
+    );
     nextPosition = nextToken.nextPosition;
     character = nextToken.character;
     if (nextToken.name === 'let') {
       currentToken = newToken(LET, nextToken.name, meta);
-    } else {
+    } else if (typeof nextToken.name === 'string') {
       currentToken = newToken(IDENTIFIER, nextToken.name, meta);
     }
   } else if (isDigit(character)) {
-    const nextToken = readNumber(input, nextPosition, character, meta);
+    const nextToken = read(
+      { input, nextPosition, character, meta },
+      'number',
+      isDigit
+    );
     nextPosition = nextToken.nextPosition;
     character = nextToken.character;
     currentToken = newToken(INTEGER, nextToken.number, meta);
@@ -182,20 +192,20 @@ function nextToken(
   };
 }
 
-function getTokens(
-  input: string,
-  currentPosition: number,
-  nextPosition: number,
-  character: string,
-  meta: Metadata
-) {
+function getTokens(data: Data) {
   const tokens = [];
-  while (character !== NUL) {
-    let next = nextToken(input, currentPosition, nextPosition, character, meta);
-    character = next.character;
-    nextPosition = next.nextPosition;
-    meta = next.meta;
-    tokens.push(next.currentToken);
+  while (data.character !== NUL) {
+    data = {
+      ...data,
+      ...nextToken(
+        data.input,
+        data.currentPosition,
+        data.nextPosition,
+        data.character,
+        data.meta
+      ),
+    };
+    tokens.push(data.currentToken);
   }
   return tokens;
 }
@@ -214,13 +224,13 @@ export function tokenize(input: string): Tokens {
     0,
     initialMeta
   );
-  const tokens = getTokens(
+  const tokens = getTokens({
     input,
     currentPosition,
     nextPosition,
     character,
-    meta
-  );
+    meta,
+  });
   if (tokens.some(isUnallowedToken)) {
     const unallowedTokens = tokens.filter(isUnallowedToken);
     throwCollectedErrors(unallowedTokens);

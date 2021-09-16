@@ -2,11 +2,11 @@ import { UNALLOWED_CHARACTER } from './token-types';
 import { Token } from './tokenize';
 
 export function isASCIIAlphabetic(character: string) {
-  return character.match(/[a-z]/i);
+  return /[a-z]/i.test(character);
 }
 
 export function isDigit(character: string) {
-  return character.match(/[0-9]/);
+  return /[0-9]/.test(character);
 }
 
 export function isUnallowedToken(token: Token) {

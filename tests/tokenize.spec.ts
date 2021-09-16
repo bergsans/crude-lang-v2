@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { Token, Tokens, tokenize } from '../src/tokenize/tokenize';
-import { TokenizeError } from '../src/tokenize/token-errors';
 
 describe('Tokenizer', () => {
   it('#tokenize (without metadata)', () => {
@@ -8,32 +7,40 @@ describe('Tokenizer', () => {
 let num = 444;
 `;
     const codeSnippet2 = `
-let numOne = 2;
+let numOne = 2 + 2 + (3 - 3);
 let numTwo = 333;
 `;
     const codeSnippet3 = `
-let numOne= 2;
+let numOne =2 + 2 + (3 - 3);
 let numTwo =333;
 `;
     const expectedRes1 = [
       { type: 'LET', literal: 'let' },
       { type: 'IDENTIFIER', literal: 'num' },
-      { type: '=', literal: '=' },
+      { type: 'ASSIGN', literal: '=' },
       { type: 'INTEGER', literal: '444' },
-      { type: ';', literal: ';' },
+      { type: 'SEMICOLON', literal: ';' },
       { type: 'EOF', literal: '\u0000' },
     ];
     const expectedRes2 = [
       { type: 'LET', literal: 'let' },
       { type: 'IDENTIFIER', literal: 'numOne' },
-      { type: '=', literal: '=' },
+      { type: 'ASSIGN', literal: '=' },
       { type: 'INTEGER', literal: '2' },
-      { type: ';', literal: ';' },
+      { type: 'PLUS', literal: '+' },
+      { type: 'INTEGER', literal: '2' },
+      { type: 'PLUS', literal: '+' },
+      { type: 'L_PAREN', literal: '(' },
+      { type: 'INTEGER', literal: '3' },
+      { type: 'MINUS', literal: '-' },
+      { type: 'INTEGER', literal: '3' },
+      { type: 'R_PAREN', literal: ')' },
+      { type: 'SEMICOLON', literal: ';' },
       { type: 'LET', literal: 'let' },
       { type: 'IDENTIFIER', literal: 'numTwo' },
-      { type: '=', literal: '=' },
+      { type: 'ASSIGN', literal: '=' },
       { type: 'INTEGER', literal: '333' },
-      { type: ';', literal: ';' },
+      { type: 'SEMICOLON', literal: ';' },
       { type: 'EOF', literal: '\u0000' },
     ];
     const expectedRes3 = expectedRes2;
@@ -66,14 +73,18 @@ let numTwo =333;
         literal: 'num',
         meta: { ln: 1, col: 5, realPosition: 4 },
       },
-      { type: '=', literal: '=', meta: { ln: 1, col: 9, realPosition: 8 } },
+      {
+        type: 'ASSIGN',
+        literal: '=',
+        meta: { ln: 1, col: 9, realPosition: 8 },
+      },
       {
         type: 'INTEGER',
         literal: '444',
         meta: { ln: 1, col: 11, realPosition: 10 },
       },
       {
-        type: ';',
+        type: 'SEMICOLON',
         literal: ';',
         meta: { ln: 1, col: 14, realPosition: 13 },
       },
