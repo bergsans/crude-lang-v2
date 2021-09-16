@@ -1,5 +1,6 @@
 import {
   NUL,
+  BANG,
   EOF,
   IDENTIFIER,
   LET,
@@ -146,8 +147,21 @@ function nextToken(
     _character,
     _meta
   );
-  if (character === NUL) currentToken = newToken(EOF, NUL, meta);
-  else if (
+  if (character === NUL) {
+    currentToken = newToken(EOF, NUL, meta);
+  } else if (
+    character === BANG &&
+    peekCharacter(input, nextPosition) === ASSIGN
+  ) {
+    currentToken = newToken(characterNames[NOT_EQUAL], NOT_EQUAL, meta);
+    nextPosition++;
+  } else if (
+    character === ASSIGN &&
+    peekCharacter(input, nextPosition) === ASSIGN
+  ) {
+    currentToken = newToken(characterNames[EQUAL], EQUAL, meta);
+    nextPosition++;
+  } else if (
     [ASSIGN, SEMICOLON, L_PAREN, R_PAREN, MINUS, PLUS].includes(character)
   ) {
     currentToken = newToken(

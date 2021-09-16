@@ -106,4 +106,57 @@ let ?? = 2;
 `;
     expect(() => tokenize(code)).to.throw(expectedErrorMessage);
   });
+
+  it('Should toknize EQUAL and NOT_EQUAL', () => {
+    const code1 = '4 == 4;';
+    const code2 = '4 != 4;';
+    const tokens1 = tokenize(code1);
+    const tokens2 = tokenize(code2);
+    const expectedResult1 = [
+      {
+        type: 'INTEGER',
+        literal: '4',
+        meta: { ln: 1, col: 1, realPosition: 0 },
+      },
+      {
+        type: 'EQUAL',
+        literal: '==',
+        meta: { ln: 1, col: 3, realPosition: 2 },
+      },
+      {
+        type: 'INTEGER',
+        literal: '4',
+        meta: { ln: 1, col: 6, realPosition: 5 },
+      },
+      {
+        type: 'SEMICOLON',
+        literal: ';',
+        meta: { ln: 1, col: 7, realPosition: 6 },
+      },
+    ];
+    const expectedResult2 = [
+      {
+        type: 'INTEGER',
+        literal: '4',
+        meta: { ln: 1, col: 1, realPosition: 0 },
+      },
+      {
+        type: 'NOT_EQUAL',
+        literal: '!=',
+        meta: { ln: 1, col: 3, realPosition: 2 },
+      },
+      {
+        type: 'INTEGER',
+        literal: '4',
+        meta: { ln: 1, col: 6, realPosition: 5 },
+      },
+      {
+        type: 'SEMICOLON',
+        literal: ';',
+        meta: { ln: 1, col: 7, realPosition: 6 },
+      },
+    ];
+    expect(tokens1).to.deep.equal(expectedResult1);
+    expect(tokens2).to.deep.equal(expectedResult2);
+  });
 });
