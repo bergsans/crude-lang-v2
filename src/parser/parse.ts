@@ -115,10 +115,7 @@ export function parseLiteralExpression(token: Token) {
 }
 
 export function parseExpressionStatement(tokens: Tokens) {
-  if (
-    tokens[0].type === characterNames[INTEGER] &&
-    isPeekToken(tokens[0], characterNames[SEMICOLON])
-  ) {
+  if (tokens[0].type === INTEGER && tokens[1].type === 'SEMICOLON') {
     return parseLiteralExpression(tokens[0]);
   }
   if (
@@ -151,23 +148,21 @@ export function parse(_tokens: Tokens): AST {
   };
 }
 
-function parseLetStatement(tokens: Tokens) {
-  if (!isPeekToken(tokens[0], IDENTIFIER)) {
+export function parseLetStatement(tokens: Tokens) {
+  let currentToken = tokens.shift();
+  if (currentToken.type !== IDENTIFIER) {
     return NIL;
   }
-  let currentToken = tokens.shift();
-  const name = {
-    token: currentToken,
-    value: currentToken.literal,
+  const id = {
+    type: IDENTIFIER,
+    name: currentToken.literal,
   };
   currentToken = tokens.shift();
-  if (!isPeekToken(tokens[0], ASSIGN)) {
+  if (currentToken.type !== characterNames[ASSIGN]) {
     return NIL;
   }
-  tokens.shift();
   const expression = parseExpressionStatement(tokens);
-  const statement = { name, expression };
-  return { statement };
+  return { type: LetDeclaration, id, expression };
 }
 
 function parseStatement(token: Token, tokens: Tokens) {

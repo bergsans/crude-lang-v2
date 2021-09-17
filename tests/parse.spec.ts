@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { Tokens, Token, tokenize } from '../src/lexer/tokenize';
 import {
+  parseLetStatement,
   parseLiteralExpression,
   _parseBinaryExpression,
 } from '../src/parser/parse';
@@ -24,6 +25,34 @@ describe('ExpressionStatement', () => {
     });
   });
 
+  describe('LetDeclaration', () => {
+    it('let x = 4;', () => {
+      const code = 'let x = 4;';
+      const tokens = tokenize(code).slice(1); // remove 'let'
+      const result = parseLetStatement(tokens);
+      const expectedResult = {
+        type: 'LetDeclaration',
+        id: {
+          type: 'IDENTIFIER',
+          name: 'x',
+        },
+        expression: {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LiteralExpression',
+            literal: '4',
+            meta: {
+              ln: 1,
+              col: 9,
+              realPosition: 8,
+            },
+            value: 4,
+          },
+        },
+      };
+      expect(result).to.deep.equal(expectedResult);
+    });
+  });
   describe('BinaryExpression', () => {
     it('4 + 4;', () => {
       const code = '4 + 4;';

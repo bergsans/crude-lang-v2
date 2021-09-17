@@ -2,6 +2,7 @@ import { UNALLOWED_CHARACTER } from '../lexer/token-types';
 import { Token } from '../lexer/tokenize';
 
 export function isPeekToken(token: Token, tokenType: string) {
+  console.log(token, tokenType);
   return token.type === tokenType;
 }
 
