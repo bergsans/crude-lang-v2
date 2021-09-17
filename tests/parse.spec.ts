@@ -8,8 +8,6 @@ import {
 describe('ExpressionStatement', () => {
   describe('Integer', () => {
     it('4;', () => {
-      // const code = '4;';
-      // const tokens = tokenize(code);
       const result = parseLiteralExpression({
         type: 'Integer',
         literal: '4',

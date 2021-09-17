@@ -13,7 +13,9 @@ import {
 import {
   BinaryExpression,
   LiteralExpression,
+  LetDeclaration,
   ExpressionStatement,
+  Program,
   precedence,
 } from './parse-types';
 import { isPeekToken } from '../utils/predicates';
@@ -32,12 +34,13 @@ interface NodeTree {
 interface Expression extends Value {}
 
 interface Statement {
-  tokens: Token[];
-  value: Expression;
+  type: typeof LetDeclaration | typeof ExpressionStatement;
+  expression?: Expression;
 }
 
 interface AST {
-  program: Statement[];
+  type: 'Program';
+  body: Statement[];
 }
 
 type TokenList = List<Token>;
@@ -143,7 +146,8 @@ export function parse(_tokens: Tokens): AST {
     currentToken = tokens.shift();
   }
   return {
-    program: statements,
+    type: Program,
+    body: statements,
   };
 }
 
@@ -163,7 +167,7 @@ function parseLetStatement(tokens: Tokens) {
   tokens.shift();
   const expression = parseExpressionStatement(tokens);
   const statement = { name, expression };
-  return { statement, tokens };
+  return { statement };
 }
 
 function parseStatement(token: Token, tokens: Tokens) {
