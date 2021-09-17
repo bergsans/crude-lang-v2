@@ -17,7 +17,11 @@ import {
   NOT_EQUAL,
 } from './token-types';
 import { throwNoInput, throwCollectedErrors } from './token-errors';
-import { isDigit, isASCIIAlphabetic, isUnallowedToken } from '../helpers';
+import {
+  isDigit,
+  isASCIIAlphabetic,
+  isUnallowedToken,
+} from '../utils/predicates';
 
 export type TokenType = string;
 export type Literal = string;

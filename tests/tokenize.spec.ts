@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Token, Tokens, tokenize } from '../src/tokenize/tokenize';
+import { Token, Tokens, tokenize } from '../src/lexer/tokenize';
 
 describe('Tokenizer', () => {
   it('#tokenize (without metadata)', () => {

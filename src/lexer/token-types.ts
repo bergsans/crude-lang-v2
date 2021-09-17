@@ -1,4 +1,5 @@
 export const NUL = '\0';
+export const NIL = undefined;
 export const EOF = 'EOF';
 export const LET = 'LET';
 export const L_PAREN = '(';
