@@ -28,7 +28,7 @@ type Value = Token;
 type Left = NodeTree;
 type Right = Left;
 
-interface NodeTree {
+export interface NodeTree {
   left: Left;
   value: Value;
   right: Right;
@@ -74,7 +74,7 @@ function led(bt: TokenList, left: Left, operator: Token) {
 
 function parseBinaryExpression(bt: TokenList, currentPrecedence = 0) {
   let left = nud(bt, bt.rm());
-  if (bt.head().type === characterNames[SEMICOLON]) {
+  if (bt.head().type === 'SEMICOLON') {
     return left;
   }
   while (precedence[bt.head().type] > currentPrecedence) {
@@ -99,10 +99,11 @@ function removeDeadNodes(node: NodeTree) {
 
 export function _parseBinaryExpression(ts: Token[]) {
   const bt = list(ts);
-  const binaryExpressionAST = parseBinaryExpression(bt);
+  const result = parseBinaryExpression(bt, 0);
+  const purifiedNode = removeDeadNodes(result);
   return {
     type: BinaryExpression,
-    ...removeDeadNodes(binaryExpressionAST),
+    ...purifiedNode,
   };
 }
 

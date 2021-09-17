@@ -9,5 +9,5 @@ export const precedence = {
   PLUS: 1,
   MINUS: 1,
   DIV: 2,
-  MULT: 2,
+  MULTIPLICATION: 2,
 };
