@@ -11,6 +11,7 @@ import {
   SEMICOLON,
   UNALLOWED_CHARACTER,
   MINUS,
+  MULTIPLICATION,
   PLUS,
   characterNames,
   EQUAL,
@@ -166,7 +167,9 @@ function nextToken(
     currentToken = newToken(characterNames[EQUAL], EQUAL, meta);
     nextPosition++;
   } else if (
-    [ASSIGN, SEMICOLON, L_PAREN, R_PAREN, MINUS, PLUS].includes(character)
+    [ASSIGN, SEMICOLON, L_PAREN, R_PAREN, MINUS, PLUS, MULTIPLICATION].includes(
+      character
+    )
   ) {
     currentToken = newToken(
       character in characterNames ? characterNames[character] : character,

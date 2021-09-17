@@ -1,5 +1,9 @@
-import { UNALLOWED_CHARACTER } from './lexer/token-types';
-import { Token } from './lexer/tokenize';
+import { UNALLOWED_CHARACTER } from '../lexer/token-types';
+import { Token } from '../lexer/tokenize';
+
+export function isPeekToken(token: Token, tokenType: string) {
+  return token.type === tokenType;
+}
 
 export function isASCIIAlphabetic(character: string) {
   return /[a-z]/i.test(character);

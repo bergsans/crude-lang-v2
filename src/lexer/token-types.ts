@@ -5,6 +5,7 @@ export const LET = 'LET';
 export const L_PAREN = '(';
 export const R_PAREN = ')';
 export const PLUS = '+';
+export const MULTIPLICATION = '*';
 export const MINUS = '-';
 export const EQUAL = '==';
 export const BANG = '!';
@@ -16,6 +17,7 @@ export const SEMICOLON = ';';
 export const UNALLOWED_CHARACTER = 'UNALLOWED_CHARACTER';
 
 export const characterNames = {
+  [MULTIPLICATION]: 'MULTIPLICATION',
   [PLUS]: 'PLUS',
   [MINUS]: 'MINUS',
   [EQUAL]: 'EQUAL',
