@@ -1,5 +1,5 @@
-import { UNALLOWED_CHARACTER } from './token-types';
-import { Token } from './tokenize';
+import { UNALLOWED_CHARACTER } from './lexer/token-types';
+import { Token } from './lexer/tokenize';
 
 export function isASCIIAlphabetic(character: string) {
   return /[a-z]/i.test(character);
