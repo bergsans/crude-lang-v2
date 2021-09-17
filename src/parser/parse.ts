@@ -2,6 +2,7 @@ import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
   LET,
+  L_PAREN,
   SEMICOLON,
   ASSIGN,
   EOF,
@@ -9,6 +10,11 @@ import {
   NIL,
   IDENTIFIER,
 } from '../lexer/token-types';
+import {
+  BinaryExpression,
+  ExpressionStatement,
+  precedence,
+} from './parse-types';
 import { isPeekToken } from '../utils/predicates';
 import { list, List } from '../utils/list';
 
@@ -33,14 +39,6 @@ interface AST {
   program: Statement[];
 }
 
-const precedence = {
-  R_PAREN: 0,
-  PLUS: 1,
-  MINUS: 1,
-  DIV: 2,
-  MULT: 2,
-};
-
 type TokenList = List<Token>;
 
 function Tree(left: Left, node: Token, right: Right) {
@@ -52,7 +50,7 @@ function Tree(left: Left, node: Token, right: Right) {
 }
 
 function nud(bt: TokenList, node: Token) {
-  if (node.type === 'L_PAREN') {
+  if (node.type === characterNames[L_PAREN]) {
     bt.rm();
     return parseBinaryExpression(bt);
   }
@@ -96,7 +94,7 @@ export function _parseBinaryExpression(ts: Token[]) {
   const bt = list(ts);
   const binaryExpressionAST = parseBinaryExpression(bt);
   return {
-    type: 'BinaryExpression',
+    type: BinaryExpression,
     ...removeDeadNodes(binaryExpressionAST),
   };
 }
@@ -104,7 +102,7 @@ export function _parseBinaryExpression(ts: Token[]) {
 export function parseExpressionStatement(tokens: Tokens) {
   if (
     tokens[0].type === characterNames[INTEGER] &&
-    isPeekToken(tokens[0], 'SEMICOLON')
+    isPeekToken(tokens[0], characterNames[SEMICOLON])
   ) {
     return {
       tokens,
@@ -116,7 +114,7 @@ export function parseExpressionStatement(tokens: Tokens) {
     isPeekToken(tokens[0], 'PLUS')
   ) {
     return {
-      type: 'ExpressionStatement',
+      type: ExpressionStatement,
       expression: _parseBinaryExpression(tokens),
     };
   }
