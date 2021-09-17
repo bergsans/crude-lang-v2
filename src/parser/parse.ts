@@ -12,6 +12,7 @@ import {
 } from '../lexer/token-types';
 import {
   BinaryExpression,
+  LiteralExpression,
   ExpressionStatement,
   precedence,
 } from './parse-types';
@@ -99,15 +100,23 @@ export function _parseBinaryExpression(ts: Token[]) {
   };
 }
 
+export function parseLiteralExpression(token: Token) {
+  return {
+    type: ExpressionStatement,
+    expression: {
+      ...token,
+      type: LiteralExpression,
+      value: parseInt(token.literal, 10),
+    },
+  };
+}
+
 export function parseExpressionStatement(tokens: Tokens) {
   if (
     tokens[0].type === characterNames[INTEGER] &&
     isPeekToken(tokens[0], characterNames[SEMICOLON])
   ) {
-    return {
-      tokens,
-      statement: parseInt(tokens[0].literal, 10),
-    };
+    return parseLiteralExpression(tokens[0]);
   }
   if (
     tokens[0].type === characterNames[INTEGER] &&

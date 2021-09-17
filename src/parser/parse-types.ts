@@ -1,5 +1,6 @@
 export const ExpressionStatement = 'ExpressionStatement';
 export const BinaryExpression = 'BinaryExpression';
+export const LiteralExpression = 'LiteralExpression';
 
 export const precedence = {
   R_PAREN: 0,

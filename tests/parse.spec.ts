@@ -1,8 +1,31 @@
 import { expect } from 'chai';
 import { Tokens, Token, tokenize } from '../src/lexer/tokenize';
-import { _parseBinaryExpression } from '../src/parser/parse';
+import {
+  parseLiteralExpression,
+  _parseBinaryExpression,
+} from '../src/parser/parse';
 
 describe('ExpressionStatement', () => {
+  describe('Integer', () => {
+    it('4;', () => {
+      // const code = '4;';
+      // const tokens = tokenize(code);
+      const result = parseLiteralExpression({
+        type: 'Integer',
+        literal: '4',
+      } as Token);
+      const expectedResult = {
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'LiteralExpression',
+          literal: '4',
+          value: 4,
+        },
+      };
+      expect(result).to.deep.equal(expectedResult);
+    });
+  });
+
   describe('BinaryExpression', () => {
     it('4 + 4;', () => {
       const code = '4 + 4;';
