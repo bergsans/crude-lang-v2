@@ -3,6 +3,9 @@ import {
   characterNames,
   LET,
   L_PAREN,
+  PLUS,
+  MINUS,
+  MULTIPLICATION,
   SEMICOLON,
   ASSIGN,
   EOF,
@@ -115,21 +118,23 @@ export function parseLiteralExpression(token: Token) {
 }
 
 export function parseExpressionStatement(tokens: Tokens) {
-  if (tokens[0].type === INTEGER && tokens[1].type === 'SEMICOLON') {
+  if (
+    isPeekToken(tokens[0], INTEGER) &&
+    isPeekToken(tokens[1], characterNames[SEMICOLON])
+  ) {
     return parseLiteralExpression(tokens[0]);
   }
   if (
-    tokens[0].type === characterNames[INTEGER] &&
-    isPeekToken(tokens[0], 'PLUS')
+    isPeekToken(tokens[0], INTEGER) &&
+    [
+      characterNames[PLUS],
+      characterNames[MINUS],
+      characterNames[MULTIPLICATION],
+    ].includes(tokens[1].type)
   ) {
-    return {
-      type: ExpressionStatement,
-      expression: _parseBinaryExpression(tokens),
-    };
+    return _parseBinaryExpression(tokens);
   }
-  return {
-    value: NIL,
-  };
+  return NIL;
 }
 
 export function parse(_tokens: Tokens): AST {
