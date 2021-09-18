@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { tokenize } from '../src/lexer/tokenize';
 import { _parseBinaryExpression } from '../src/parser/parse';
-import { evaluateBinaryExpression } from '../src/evaluate/evaluate';
+import { evaluateBinaryExpression } from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
 
 describe('Evaluate', () => {
