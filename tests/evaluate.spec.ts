@@ -24,6 +24,15 @@ describe('Evaluate', () => {
       expect(result).to.eq(2);
     });
 
+    it('(4 - 1) * 3  is 9', () => {
+      const code = '(4 - 1) * 3;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(9);
+    });
+
     it('4 == 4 is true', () => {
       const code = '4 == 4;';
       const tokens = tokenize(code);

@@ -1,7 +1,6 @@
 import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
-  L_PAREN,
   SEMICOLON,
   ASSIGN,
   EOF,
@@ -60,9 +59,10 @@ function Tree(left: Left, node: Token, right: Right) {
 }
 
 function nud(li: TokenList, node: Token) {
-  if (node.type === characterNames[L_PAREN]) {
+  if (node.type === 'L_PAREN') {
+    const expression = parseBinaryExpression(li, 0);
     li.rm();
-    return parseBinaryExpression(li);
+    return expression;
   }
   return Tree(null, node, null);
 }

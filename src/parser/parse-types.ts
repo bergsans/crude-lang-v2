@@ -15,5 +15,5 @@ export const precedence = {
   DIV: 2,
   MULTIPLICATION: 2,
   // BANG: 3,
-  L_PAREN: 4,
+  // L_PAREN: 4,
 };

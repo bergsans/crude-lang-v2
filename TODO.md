@@ -2,7 +2,7 @@
 
 ## Lexer
 - add division and power of and modulo
-- add prefix operators: - 3 -> -3
+- add prefix operators: - 3 -> -3 / unary
 
 ## Errors
 - throw errors in evaluator and parser
@@ -14,10 +14,6 @@ General: write more tests!
 ----------------------------
 
 # Goal 2
-- Add boolean properties and characters
-
-# Goal 3
+- Add strings and list
 - Add if while function return for
 
-# Goal 4
-...
