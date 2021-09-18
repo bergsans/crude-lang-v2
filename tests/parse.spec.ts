@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { Token, tokenize } from '../src/lexer/tokenize';
 import {
+  parse,
   parseLetStatement,
   parseLiteralExpression,
   _parseBinaryExpression,
@@ -39,7 +40,7 @@ describe('Parser', () => {
             type: 'IDENTIFIER',
             name: 'x',
           },
-          expression: {
+          statement: {
             type: 'ExpressionStatement',
             expression: {
               type: 'LiteralExpression',
@@ -67,7 +68,7 @@ describe('Parser', () => {
             type: 'IDENTIFIER',
             name: 'x',
           },
-          expression: {
+          statement: {
             type: 'BinaryExpression',
             left: {
               value: {
@@ -103,6 +104,52 @@ describe('Parser', () => {
           },
         };
         expect(result).to.deep.equal(expectedResult);
+      });
+
+      it('Full LetDeclaration single line', () => {
+        const code = 'let x = 9;';
+        const tokens = tokenize(code);
+        const result = parse(tokens);
+        const expectedResult = {
+          type: 'Program',
+          body: [
+            {
+              type: 'LetDeclaration',
+              id: {
+                type: 'IDENTIFIER',
+                name: 'x',
+              },
+              statement: {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'LiteralExpression',
+                  literal: '9',
+                  meta: {
+                    ln: 1,
+                    col: 9,
+                    realPosition: 8,
+                  },
+                  value: 9,
+                },
+              },
+            },
+          ],
+        };
+        expect(result).to.deep.equal(expectedResult);
+      });
+
+      it('Full LetDeclaration multi line', () => {
+        const code = `
+let numOne = 100;
+let numTwo = 200;
+`;
+        const tokens = tokenize(code);
+        const ast = parse(tokens);
+        expect(ast.body.length).to.eql(2);
+        expect(ast.body[0].id.name).to.equal('numOne');
+        expect(ast.body[0].statement.expression.value).to.equal(100);
+        expect(ast.body[1].id.name).to.equal('numTwo');
+        expect(ast.body[1].statement.expression.value).to.equal(200);
       });
     });
 

@@ -34,10 +34,17 @@ export interface NodeTree {
   right: Right;
 }
 
-interface Expression extends Value {}
+interface Expression extends NodeTree {}
+
+interface Identifier {
+  type: string;
+  name: string;
+}
 
 interface Statement {
   type: typeof LetDeclaration | typeof ExpressionStatement;
+  statement: Statement;
+  id?: Identifier;
   expression?: Expression;
 }
 
@@ -140,11 +147,12 @@ export function parse(tokens: Tokens): AST {
   const li = list(tokens);
   let currentToken = li.rm();
   while (currentToken.type !== EOF) {
-    const { statement } = parseStatement(currentToken, li);
+    const statement = parseStatement(currentToken, li);
     if (statement !== NIL) {
       statements.push(statement);
     }
-    currentToken = li.rm();
+    // remove: todo! fix EOF bug
+    currentToken = li.rm() ?? ({ type: EOF } as Token);
   }
   return {
     type: Program,
@@ -165,13 +173,14 @@ export function parseLetStatement(li: List<Token>) {
   if (currentToken.type !== characterNames[ASSIGN]) {
     return NIL;
   }
-  const expression = parseExpressionStatement(li);
-  return { type: LetDeclaration, id, expression };
+  const statement = parseExpressionStatement(li);
+  li.rm();
+  li.rm();
+  return { type: LetDeclaration, id, statement };
 }
 
 function parseStatement(token: Token, li: List<Token>) {
-  if (token.type === characterNames[LET]) {
-    li.rm();
+  if (token.type === 'LET') {
     return parseLetStatement(li);
   }
   li.rm();
