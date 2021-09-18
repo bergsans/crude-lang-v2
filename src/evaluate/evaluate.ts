@@ -7,6 +7,8 @@ const arithmetics = {
   MULTIPLICATION: (a: number, b: number) => a * b,
   EQUAL: (a: number, b: number) => a === b,
   NOT_EQUAL: (a: number, b: number) => a !== b,
+  GT: (a: number, b: number) => a > b,
+  LT: (a: number, b: number) => a < b,
 };
 
 export function evaluateBinaryExpression(node: NodeTree) {

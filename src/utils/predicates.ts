@@ -43,6 +43,14 @@ export function isNotEqual(currentCharacter: string, nextCharacter: string) {
   return currentCharacter === BANG && nextCharacter === ASSIGN;
 }
 
+export function isGT(currentCharacter: string) {
+  return currentCharacter === '>';
+}
+
+export function isLT(currentCharacter: string) {
+  return currentCharacter === '<';
+}
+
 export function isAssign(currentCharacter: string) {
   return currentCharacter === ASSIGN;
 }
@@ -74,5 +82,7 @@ export const isOperatorType = isOfType(
   'NOT_EQUAL',
   'PLUS',
   'MINUS',
-  'MULTIPLICATION'
+  'MULTIPLICATION',
+  'GT',
+  'LT'
 );

@@ -16,11 +16,15 @@ export const INTEGER = 'INTEGER';
 export const ASSIGN = '=';
 export const SEMICOLON = ';';
 export const UNALLOWED_CHARACTER = 'UNALLOWED_CHARACTER';
+export const GT = '>';
+export const LT = '<';
 
 export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',
   [PLUS]: 'PLUS',
   [MINUS]: 'MINUS',
+  [GT]: 'GT',
+  [LT]: 'LT',
   [EQUAL]: 'EQUAL',
   [NOT_EQUAL]: 'NOT_EQUAL',
   [ASSIGN]: 'ASSIGN',

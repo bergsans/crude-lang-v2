@@ -18,6 +18,8 @@ import {
   isNotEqual,
   isParens,
   isOr,
+  isGT,
+  isLT,
   isOperator,
   isSemicolon,
   isAssign,
@@ -160,7 +162,9 @@ function nextToken(
   } else if (isEqual(character, peekCharacter(input, nextPosition))) {
     currentToken = newToken(characterNames[EQUAL], EQUAL, meta);
     nextPosition++;
-  } else if (isOr([isAssign, isParens, isOperator, isSemicolon], character)) {
+  } else if (
+    isOr([isGT, isLT, isAssign, isParens, isOperator, isSemicolon], character)
+  ) {
     currentToken = newToken(characterNames[character], character, meta);
   } else if (isASCIIAlphabetic(character)) {
     const nextToken = read(

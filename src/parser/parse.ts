@@ -2,7 +2,6 @@ import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
   L_PAREN,
-  //  BOOLEAN,
   SEMICOLON,
   ASSIGN,
   EOF,

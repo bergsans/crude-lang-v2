@@ -59,5 +59,23 @@ describe('Evaluate', () => {
       const result = evaluateBinaryExpression(parsed);
       expect(result).to.eq(false);
     });
+
+    it('3 < 2 is false', () => {
+      const code = '3 < 2;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(false);
+    });
+
+    it('3 > 2 is true', () => {
+      const code = '3 > 2;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(true);
+    });
   });
 });
