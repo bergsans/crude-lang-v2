@@ -56,29 +56,29 @@ function Tree(left: Left, node: Token, right: Right) {
   };
 }
 
-function nud(bt: TokenList, node: Token) {
+function nud(li: TokenList, node: Token) {
   if (node.type === characterNames[L_PAREN]) {
-    bt.rm();
-    return parseBinaryExpression(bt);
+    li.rm();
+    return parseBinaryExpression(li);
   }
   return Tree(null, node, null);
 }
 
-function led(bt: TokenList, left: Left, operator: Token) {
+function led(li: TokenList, left: Left, operator: Token) {
   return Tree(
     left,
     operator,
-    parseBinaryExpression(bt, precedence[operator.type])
+    parseBinaryExpression(li, precedence[operator.type])
   );
 }
 
-function parseBinaryExpression(bt: TokenList, currentPrecedence = 0) {
-  let left = nud(bt, bt.rm());
-  if (bt.head().type === 'SEMICOLON') {
+function parseBinaryExpression(li: TokenList, currentPrecedence = 0) {
+  let left = nud(li, li.rm());
+  if (li.head().type === 'SEMICOLON') {
     return left;
   }
-  while (precedence[bt.head().type] > currentPrecedence) {
-    left = led(bt, left, bt.rm());
+  while (precedence[li.head().type] > currentPrecedence) {
+    left = led(li, left, li.rm());
   }
   return left;
 }
@@ -97,9 +97,8 @@ function removeDeadNodes(node: NodeTree) {
   return node;
 }
 
-export function _parseBinaryExpression(ts: Token[]) {
-  const bt = list(ts);
-  const result = parseBinaryExpression(bt, 0);
+export function _parseBinaryExpression(li: List<Token>) {
+  const result = parseBinaryExpression(li, 0);
   const purifiedNode = removeDeadNodes(result);
   return {
     type: BinaryExpression,
@@ -118,35 +117,34 @@ export function parseLiteralExpression(token: Token) {
   };
 }
 
-export function parseExpressionStatement(tokens: Tokens) {
+export function parseExpressionStatement(li: List<Token>) {
   if (
-    isPeekToken(tokens[0], INTEGER) &&
-    isPeekToken(tokens[1], characterNames[SEMICOLON])
+    isPeekToken(li.head(), INTEGER) &&
+    isPeekToken(li.get()[1], characterNames[SEMICOLON])
   ) {
-    return parseLiteralExpression(tokens[0]);
+    return parseLiteralExpression(li.head());
   }
   if (
-    isPeekToken(tokens[0], INTEGER) &&
-    [
-      characterNames[PLUS],
-      characterNames[MINUS],
-      characterNames[MULTIPLICATION],
-    ].includes(tokens[1].type)
+    isPeekToken(li.head(), INTEGER) &&
+    ['PLUS', characterNames[MINUS], characterNames[MULTIPLICATION]].includes(
+      li.get()[1].type
+    )
   ) {
-    return _parseBinaryExpression(tokens);
+    return _parseBinaryExpression(li);
   }
   return NIL;
 }
 
-export function parse(_tokens: Tokens): AST {
+export function parse(tokens: Tokens): AST {
   const statements = [];
-  let currentToken = _tokens.shift();
+  const li = list(tokens);
+  let currentToken = li.rm();
   while (currentToken.type !== EOF) {
-    const { statement, tokens } = parseStatement(currentToken, _tokens);
+    const { statement } = parseStatement(currentToken, li);
     if (statement !== NIL) {
       statements.push(statement);
     }
-    currentToken = tokens.shift();
+    currentToken = li.rm();
   }
   return {
     type: Program,
@@ -154,8 +152,8 @@ export function parse(_tokens: Tokens): AST {
   };
 }
 
-export function parseLetStatement(tokens: Tokens) {
-  let currentToken = tokens.shift();
+export function parseLetStatement(li: List<Token>) {
+  let currentToken = li.rm();
   if (currentToken.type !== IDENTIFIER) {
     return NIL;
   }
@@ -163,17 +161,19 @@ export function parseLetStatement(tokens: Tokens) {
     type: IDENTIFIER,
     name: currentToken.literal,
   };
-  currentToken = tokens.shift();
+  currentToken = li.rm();
   if (currentToken.type !== characterNames[ASSIGN]) {
     return NIL;
   }
-  const expression = parseExpressionStatement(tokens);
+  const expression = parseExpressionStatement(li);
   return { type: LetDeclaration, id, expression };
 }
 
-function parseStatement(token: Token, tokens: Tokens) {
+function parseStatement(token: Token, li: List<Token>) {
   if (token.type === characterNames[LET]) {
-    return parseLetStatement(tokens);
+    li.rm();
+    return parseLetStatement(li);
   }
-  return parseExpressionStatement(tokens);
+  li.rm();
+  return parseExpressionStatement(li);
 }

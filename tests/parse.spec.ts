@@ -1,10 +1,11 @@
 import { expect } from 'chai';
-import { Tokens, Token, tokenize } from '../src/lexer/tokenize';
+import { Token, tokenize } from '../src/lexer/tokenize';
 import {
   parseLetStatement,
   parseLiteralExpression,
   _parseBinaryExpression,
 } from '../src/parser/parse';
+import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
   describe('ExpressionStatement', () => {
@@ -30,7 +31,8 @@ describe('Parser', () => {
       it('let x = 4;', () => {
         const code = 'let x = 4;';
         const tokens = tokenize(code).slice(1); // remove 'let'
-        const result = parseLetStatement(tokens);
+        const li = list(tokens);
+        const result = parseLetStatement(li);
         const expectedResult = {
           type: 'LetDeclaration',
           id: {
@@ -57,7 +59,8 @@ describe('Parser', () => {
       it('let x = 4 + 4;', () => {
         const code = 'let x = 4 + 4;';
         const tokens = tokenize(code).slice(1); // remove 'let'
-        const result = parseLetStatement(tokens);
+        const li = list(tokens);
+        const result = parseLetStatement(li);
         const expectedResult = {
           type: 'LetDeclaration',
           id: {
@@ -131,7 +134,8 @@ describe('Parser', () => {
             literal,
           })
         );
-        const result = _parseBinaryExpression(tokens as Tokens);
+        const li = list(tokens);
+        const result = _parseBinaryExpression(li as List<Token>);
         expect(result).to.deep.equal(expectedResult);
       });
 
@@ -194,7 +198,8 @@ describe('Parser', () => {
           },
         };
         const tokens = tokenize(code);
-        const result = _parseBinaryExpression(tokens);
+        const li = list(tokens);
+        const result = _parseBinaryExpression(li as List<Token>);
         expect(result).to.deep.equal(expectedResult);
       });
     });
