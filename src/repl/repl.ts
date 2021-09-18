@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { createInterface } from 'readline';
 
 import { evaluateBinaryExpression } from '../evaluate/evaluate';
@@ -50,8 +52,9 @@ console.log(msg);
   });
 })();
 
-function handleUserInput(input: string) {
+function handleUserInput(inp: string) {
   try {
+    const input = inp.endsWith(';') ? inp : inp + ';';
     console.log(interpret(input));
   } catch (e) {
     console.log(e);
