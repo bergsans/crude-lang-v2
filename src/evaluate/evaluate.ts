@@ -1,19 +1,21 @@
 import { NodeTree } from '../parser/parse';
-import { characterNames, PLUS, MULTIPLICATION } from '../lexer/token-types';
+import { isOperatorType } from '../utils/predicates';
+
+const arithmetics = {
+  PLUS: (a: number, b: number) => a + b,
+  MINUS: (a: number, b: number) => a - b,
+  MULTIPLICATION: (a: number, b: number) => a * b,
+  EQUAL: (a: number, b: number) => a === b,
+  NOT_EQUAL: (a: number, b: number) => a !== b,
+};
 
 export function evaluateBinaryExpression(node: NodeTree) {
   if (!node.left) {
     return parseInt(node.value.literal, 10);
   }
-  if (node.value.type === characterNames[PLUS]) {
-    return (
-      evaluateBinaryExpression(node.left as NodeTree) +
-      evaluateBinaryExpression(node.right as NodeTree)
-    );
-  }
-  if (node.value.type === characterNames[MULTIPLICATION]) {
-    return (
-      evaluateBinaryExpression(node.left as NodeTree) *
+  if (isOperatorType(node.value.type)) {
+    return arithmetics[node.value.type](
+      evaluateBinaryExpression(node.left as NodeTree),
       evaluateBinaryExpression(node.right as NodeTree)
     );
   }

@@ -1,11 +1,8 @@
 import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
-  LET,
   L_PAREN,
-  PLUS,
-  MINUS,
-  MULTIPLICATION,
+  //  BOOLEAN,
   SEMICOLON,
   ASSIGN,
   EOF,
@@ -21,7 +18,7 @@ import {
   Program,
   precedence,
 } from './parse-types';
-import { isPeekToken } from '../utils/predicates';
+import { isOperatorType, isPeekToken } from '../utils/predicates';
 import { list, List } from '../utils/list';
 
 type Value = Token;
@@ -113,30 +110,30 @@ export function _parseBinaryExpression(li: List<Token>) {
   };
 }
 
+const getTruthiness = (value: string) => (value === 'true' ? true : false);
+
 export function parseLiteralExpression(token: Token) {
   return {
     type: ExpressionStatement,
     expression: {
       ...token,
       type: LiteralExpression,
-      value: parseInt(token.literal, 10),
+      value:
+        token.type === 'INTEGER'
+          ? parseInt(token.literal, 10)
+          : getTruthiness(token.literal),
     },
   };
 }
 
 export function parseExpressionStatement(li: List<Token>) {
   if (
-    isPeekToken(li.head(), INTEGER) &&
-    isPeekToken(li.get()[1], characterNames[SEMICOLON])
+    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), 'Boolean')) &&
+    isPeekToken(li.lookAt(1), characterNames[SEMICOLON])
   ) {
     return parseLiteralExpression(li.head());
   }
-  if (
-    isPeekToken(li.head(), INTEGER) &&
-    ['PLUS', characterNames[MINUS], characterNames[MULTIPLICATION]].includes(
-      li.get()[1].type
-    )
-  ) {
+  if (isPeekToken(li.head(), INTEGER) && isOperatorType(li.lookAt(1).type)) {
     return _parseBinaryExpression(li);
   }
   return NIL;

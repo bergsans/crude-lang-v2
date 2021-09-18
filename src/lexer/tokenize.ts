@@ -1,18 +1,10 @@
 import {
   NUL,
-  BANG,
   EOF,
   IDENTIFIER,
   LET,
   INTEGER,
-  L_PAREN,
-  R_PAREN,
-  ASSIGN,
-  SEMICOLON,
   UNALLOWED_CHARACTER,
-  MINUS,
-  MULTIPLICATION,
-  PLUS,
   characterNames,
   EQUAL,
   NOT_EQUAL,
@@ -22,7 +14,15 @@ import {
   isDigit,
   isASCIIAlphabetic,
   isUnallowedToken,
+  isEqual,
+  isNotEqual,
+  isParens,
+  isOr,
+  isOperator,
+  isSemicolon,
+  isAssign,
 } from '../utils/predicates';
+import RESERVED_KEYWORD from './reserved-keywords';
 
 export type TokenType = string;
 export type Literal = string;
@@ -154,28 +154,14 @@ function nextToken(
   );
   if (character === NUL) {
     currentToken = newToken(EOF, NUL, meta);
-  } else if (
-    character === BANG &&
-    peekCharacter(input, nextPosition) === ASSIGN
-  ) {
+  } else if (isNotEqual(character, peekCharacter(input, nextPosition))) {
     currentToken = newToken(characterNames[NOT_EQUAL], NOT_EQUAL, meta);
     nextPosition++;
-  } else if (
-    character === ASSIGN &&
-    peekCharacter(input, nextPosition) === ASSIGN
-  ) {
+  } else if (isEqual(character, peekCharacter(input, nextPosition))) {
     currentToken = newToken(characterNames[EQUAL], EQUAL, meta);
     nextPosition++;
-  } else if (
-    [ASSIGN, SEMICOLON, L_PAREN, R_PAREN, MINUS, PLUS, MULTIPLICATION].includes(
-      character
-    )
-  ) {
-    currentToken = newToken(
-      character in characterNames ? characterNames[character] : character,
-      character,
-      meta
-    );
+  } else if (isOr([isAssign, isParens, isOperator, isSemicolon], character)) {
+    currentToken = newToken(characterNames[character], character, meta);
   } else if (isASCIIAlphabetic(character)) {
     const nextToken = read(
       { input, nextPosition, character, meta },
@@ -184,8 +170,12 @@ function nextToken(
     );
     nextPosition = nextToken.nextPosition;
     character = nextToken.character;
-    if (nextToken.name === 'let') {
+    if (nextToken.name === RESERVED_KEYWORD.LET) {
       currentToken = newToken(LET, nextToken.name, meta);
+    } else if (nextToken.name === RESERVED_KEYWORD.TRUE) {
+      currentToken = newToken('Boolean', RESERVED_KEYWORD.TRUE, meta);
+    } else if (nextToken.name === RESERVED_KEYWORD.FALSE) {
+      currentToken = newToken('Boolean', RESERVED_KEYWORD.FALSE, meta);
     } else if (typeof nextToken.name === 'string') {
       currentToken = newToken(IDENTIFIER, nextToken.name, meta);
     }

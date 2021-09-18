@@ -13,7 +13,7 @@ describe('Parser', () => {
     describe('Integer', () => {
       it('4;', () => {
         const result = parseLiteralExpression({
-          type: 'Integer',
+          type: 'INTEGER',
           literal: '4',
         } as Token);
         const expectedResult = {
@@ -22,6 +22,74 @@ describe('Parser', () => {
             type: 'LiteralExpression',
             literal: '4',
             value: 4,
+          },
+        };
+        expect(result).to.deep.equal(expectedResult);
+      });
+    });
+
+    describe('Boolean', () => {
+      it('true;', () => {
+        const code = 'true';
+        const tokens = tokenize(code);
+        const li = list(tokens);
+        const result = parseLiteralExpression(li.head());
+        const expectedResult = {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LiteralExpression',
+            literal: 'true',
+            meta: { ln: 1, col: 1, realPosition: 0 },
+            value: true,
+          },
+        };
+        expect(result).to.deep.equal(expectedResult);
+      });
+
+      it('4 == 4;', () => {
+        const code = 'let x = 4 == 4;';
+        const tokens = tokenize(code).slice(1); // remove 'let'
+        const li = list(tokens);
+        const result = parseLetStatement(li);
+        const expectedResult = {
+          type: 'LetDeclaration',
+          id: {
+            type: 'IDENTIFIER',
+            name: 'x',
+          },
+          statement: {
+            type: 'BinaryExpression',
+            left: {
+              value: {
+                type: 'INTEGER',
+                literal: '4',
+                meta: {
+                  ln: 1,
+                  col: 9,
+                  realPosition: 8,
+                },
+              },
+            },
+            value: {
+              type: 'EQUAL',
+              literal: '==',
+              meta: {
+                ln: 1,
+                col: 11,
+                realPosition: 10,
+              },
+            },
+            right: {
+              value: {
+                type: 'INTEGER',
+                literal: '4',
+                meta: {
+                  ln: 1,
+                  col: 14,
+                  realPosition: 13,
+                },
+              },
+            },
           },
         };
         expect(result).to.deep.equal(expectedResult);

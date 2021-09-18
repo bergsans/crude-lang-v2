@@ -11,6 +11,7 @@ export const EQUAL = '==';
 export const BANG = '!';
 export const NOT_EQUAL = '!=';
 export const IDENTIFIER = 'IDENTIFIER';
+export const BOOLEAN = 'BOOLEAN';
 export const INTEGER = 'INTEGER';
 export const ASSIGN = '=';
 export const SEMICOLON = ';';

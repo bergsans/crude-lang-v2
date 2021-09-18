@@ -1,8 +1,6 @@
 # Goal 1
 
 ## Lexer
-- char codes instead of regexp
-- add operator and isOperator in predicates
 - add division and power of and modulo
 - add prefix operators: - 3 -> -3
 
