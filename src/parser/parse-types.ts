@@ -18,5 +18,5 @@ export const precedence = {
   LOWER_THAN_OR_EQUAL: 2,
   DIV: 2,
   MULTIPLICATION: 2,
-  // BANG: 3,
+  NOT: 3,
 };

@@ -100,7 +100,7 @@ export function isSemicolon(currentCharacter: string) {
   return currentCharacter === SEMICOLON;
 }
 
-export function isBang(currentCharacter: string) {
+export function isNot(currentCharacter: string) {
   return currentCharacter === BANG;
 }
 

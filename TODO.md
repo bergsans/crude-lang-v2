@@ -2,7 +2,6 @@
 
 - refactor tokenize to use List
 - BANG!
-- AND OR
 - add division and power of and modulo
 - add prefix operators: - 3 -> -3 / unary
 

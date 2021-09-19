@@ -16,6 +16,7 @@ import {
   isEqual,
   isNotEqual,
   isParens,
+  isNot,
   isOr,
   isGreaterThan,
   isLowerThan,
@@ -179,7 +180,15 @@ function nextToken(
     nextPosition++;
   } else if (
     isOr(
-      [isGreaterThan, isLowerThan, isAssign, isParens, isOperator, isSemicolon],
+      [
+        isNot,
+        isGreaterThan,
+        isLowerThan,
+        isAssign,
+        isParens,
+        isOperator,
+        isSemicolon,
+      ],
       character
     )
   ) {

@@ -30,7 +30,12 @@ export interface NodeTree {
   right: Right;
 }
 
-interface Expression extends NodeTree {}
+export interface Expression extends NodeTree {
+  type: string;
+  literal: string;
+  expression: Expression;
+  argument?: Expression;
+}
 
 interface Identifier {
   type: string;
@@ -110,7 +115,13 @@ export function _parseBinaryExpression(li: List<Token>) {
   };
 }
 
-const getTruthiness = (value: string) => (value === 'true' ? true : false);
+export const getValueFromLiteral = {
+  BOOLEAN: (literal: string) => {
+    return literal === 'true' ? true : false;
+  },
+  INTEGER: (literal: string) => parseInt(literal, 10),
+  NOT: (literal: string) => !getValueFromLiteral.BOOLEAN(literal),
+};
 
 export function parseLiteralExpression(token: Token) {
   return {
@@ -118,23 +129,34 @@ export function parseLiteralExpression(token: Token) {
     expression: {
       ...token,
       type: LiteralExpression,
-      value:
-        token.type === 'INTEGER'
-          ? parseInt(token.literal, 10)
-          : getTruthiness(token.literal),
+      value: getValueFromLiteral[token.type](token.literal),
     },
   };
 }
 
 export function parseExpressionStatement(li: List<Token>) {
+  if (isPeekToken(li.head(), 'NOT')) {
+    li.rm();
+    return {
+      type: 'UnaryExpression',
+      literal: 'NOT',
+      argument: parseLiteralExpression(li.rm()),
+    };
+  }
+  if (
+    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
+    isOperatorType(li.lookAt(1).type)
+  ) {
+    return _parseBinaryExpression(li);
+  }
+  if (isPeekToken(li.head(), BOOLEAN)) {
+    return parseLiteralExpression(li.head());
+  }
   if (
     (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
     isPeekToken(li.lookAt(1), characterNames[SEMICOLON])
   ) {
     return parseLiteralExpression(li.head());
-  }
-  if (isPeekToken(li.head(), INTEGER) && isOperatorType(li.lookAt(1).type)) {
-    return _parseBinaryExpression(li);
   }
   return NIL;
 }
