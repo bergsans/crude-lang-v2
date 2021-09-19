@@ -1,5 +1,7 @@
 import {
   BANG,
+  AND_SIGN,
+  OR_SIGN,
   UNALLOWED_CHARACTER,
   ASSIGN,
   L_PAREN,
@@ -50,6 +52,14 @@ export function isEqual(currentCharacter: string, nextCharacter: string) {
 
 export function isNotEqual(currentCharacter: string, nextCharacter: string) {
   return currentCharacter === BANG && nextCharacter === ASSIGN;
+}
+
+export function isAndSign(currentCharacter: string, nextCharacter: string) {
+  return currentCharacter === nextCharacter && currentCharacter === AND_SIGN;
+}
+
+export function isOrSign(currentCharacter: string, nextCharacter: string) {
+  return currentCharacter === nextCharacter && currentCharacter === OR_SIGN;
 }
 
 export function isGreaterThan(currentCharacter: string) {
@@ -109,5 +119,7 @@ export const isOperatorType = isOfType(
   'GREATER_THAN_OR_EQUAL',
   'PLUS',
   'MINUS',
-  'MULTIPLICATION'
+  'MULTIPLICATION',
+  'AND',
+  'OR'
 );

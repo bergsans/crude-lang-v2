@@ -11,14 +11,14 @@ const arithmetics = {
   LOWER_THAN_OR_EQUAL: (a: number, b: number) => a <= b,
 };
 
-const booleans = {
+const logic = {
   EQUAL: <T>(a: T, b: T) => a === b,
   NOT_EQUAL: <T>(a: T, b: T) => a !== b,
-  AND: <T, V>(a: T, b: V) => a && b,
-  OR: <T, V>(a: T, b: V) => a || b,
+  AND: (a: boolean, b: boolean) => a && b,
+  OR: (a: boolean, b: boolean) => a || b,
 };
 
-const operations = { ...arithmetics, ...booleans };
+const operations = { ...arithmetics, ...logic };
 
 const getValueFromLiteral = {
   BOOLEAN: (literal: string) => (literal === 'true' ? true : false),

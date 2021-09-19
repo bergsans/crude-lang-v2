@@ -5,6 +5,25 @@ import { evaluateBinaryExpression } from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
 
 describe('Evaluate', () => {
+  describe('Boolean Operations', () => {
+    const truthTable = [
+      ['true && true;', true],
+      ['true && false;', false],
+      ['true || false;', true],
+      ['false || false;', false],
+    ];
+    for (const [code, expectedResult] of truthTable) {
+      it(`${code} is ${expectedResult}` as string, () => {
+        const tokens = tokenize(code as string);
+        const li = list(tokens);
+        const parsed = _parseBinaryExpression(li);
+        const result = evaluateBinaryExpression(parsed);
+        expect(result).to.eq(expectedResult);
+      });
+    }
+  });
+
+  // Todo: Remove boolean examples
   describe('Arithmetic Operations', () => {
     it('4 + 4 * 4 is 20', () => {
       const code = '4 + 4 * 4;';
@@ -31,6 +50,42 @@ describe('Evaluate', () => {
       const parsed = _parseBinaryExpression(li);
       const result = evaluateBinaryExpression(parsed);
       expect(result).to.eq(9);
+    });
+
+    it('4 < 5 && 5 > 4 is true', () => {
+      const code = '4 < 5 && 5 > 4;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(true);
+    });
+
+    it('4 < 5 && 5 > 6 is true', () => {
+      const code = '4 < 5 && 5 > 6;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(false);
+    });
+
+    it('4 < 5 || 5 > 6 is true', () => {
+      const code = '4 < 5 || 5 > 6;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(true);
+    });
+
+    it('6 < 5 || 5 > 6 is true', () => {
+      const code = '6 < 5 || 5 > 6;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(false);
     });
 
     it('4 == 4 is true', () => {

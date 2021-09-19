@@ -20,6 +20,10 @@ export const GREATER_THAN = '>';
 export const LOWER_THAN = '<';
 export const GREATER_THAN_OR_EQUAL = '>=';
 export const LOWER_THAN_OR_EQUAL = '<=';
+export const AND_SIGN = '&';
+export const OR_SIGN = '|';
+export const AND = '&&';
+export const OR = '||';
 
 export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',
@@ -35,4 +39,6 @@ export const characterNames = {
   [L_PAREN]: 'L_PAREN',
   [R_PAREN]: 'R_PAREN',
   [SEMICOLON]: 'SEMICOLON',
+  [AND]: 'AND',
+  [OR]: 'OR',
 };

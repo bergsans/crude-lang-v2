@@ -24,6 +24,8 @@ import {
   isOperator,
   isSemicolon,
   isAssign,
+  isAndSign,
+  isOrSign,
 } from '../utils/predicates';
 import RESERVED_KEYWORD from './reserved-keywords';
 
@@ -160,7 +162,14 @@ function nextToken(
     currentToken = newToken(EOF, NUL, meta);
   } else if (
     isOr(
-      [isNotEqual, isEqual, isGreaterThanOrEqual, isLowerThanOrEqual],
+      [
+        isNotEqual,
+        isEqual,
+        isAndSign,
+        isOrSign,
+        isGreaterThanOrEqual,
+        isLowerThanOrEqual,
+      ],
       character,
       peekCharacter(input, nextPosition)
     )
