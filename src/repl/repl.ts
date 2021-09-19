@@ -2,7 +2,7 @@
 
 import { createInterface } from 'readline';
 
-import { evaluateBinaryExpression } from '../evaluate/evaluate';
+import { evaluateBinaryExpression } from '../evaluator/evaluate';
 import { _parseBinaryExpression } from '../parser/parse';
 import { tokenize } from '../lexer/tokenize';
 import { list } from '../utils/list';

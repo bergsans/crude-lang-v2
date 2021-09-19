@@ -6,8 +6,7 @@ import {
   INTEGER,
   UNALLOWED_CHARACTER,
   characterNames,
-  EQUAL,
-  NOT_EQUAL,
+  BOOLEAN,
 } from './token-types';
 import { throwNoInput, throwCollectedErrors } from './token-errors';
 import {
@@ -18,8 +17,10 @@ import {
   isNotEqual,
   isParens,
   isOr,
-  isGT,
-  isLT,
+  isGreaterThan,
+  isLowerThan,
+  isGreaterThanOrEqual,
+  isLowerThanOrEqual,
   isOperator,
   isSemicolon,
   isAssign,
@@ -95,6 +96,7 @@ interface Output extends Partial<Data> {
   name?: string;
   number?: string;
 }
+
 function read(
   data: Data,
   readType: string,
@@ -156,14 +158,21 @@ function nextToken(
   );
   if (character === NUL) {
     currentToken = newToken(EOF, NUL, meta);
-  } else if (isNotEqual(character, peekCharacter(input, nextPosition))) {
-    currentToken = newToken(characterNames[NOT_EQUAL], NOT_EQUAL, meta);
-    nextPosition++;
-  } else if (isEqual(character, peekCharacter(input, nextPosition))) {
-    currentToken = newToken(characterNames[EQUAL], EQUAL, meta);
+  } else if (
+    isOr(
+      [isNotEqual, isEqual, isGreaterThanOrEqual, isLowerThanOrEqual],
+      character,
+      peekCharacter(input, nextPosition)
+    )
+  ) {
+    const sign = character + peekCharacter(input, nextPosition);
+    currentToken = newToken(characterNames[sign], sign, meta);
     nextPosition++;
   } else if (
-    isOr([isGT, isLT, isAssign, isParens, isOperator, isSemicolon], character)
+    isOr(
+      [isGreaterThan, isLowerThan, isAssign, isParens, isOperator, isSemicolon],
+      character
+    )
   ) {
     currentToken = newToken(characterNames[character], character, meta);
   } else if (isASCIIAlphabetic(character)) {
@@ -177,9 +186,9 @@ function nextToken(
     if (nextToken.name === RESERVED_KEYWORD.LET) {
       currentToken = newToken(LET, nextToken.name, meta);
     } else if (nextToken.name === RESERVED_KEYWORD.TRUE) {
-      currentToken = newToken('Boolean', RESERVED_KEYWORD.TRUE, meta);
+      currentToken = newToken(BOOLEAN, RESERVED_KEYWORD.TRUE, meta);
     } else if (nextToken.name === RESERVED_KEYWORD.FALSE) {
-      currentToken = newToken('Boolean', RESERVED_KEYWORD.FALSE, meta);
+      currentToken = newToken(BOOLEAN, RESERVED_KEYWORD.FALSE, meta);
     } else if (typeof nextToken.name === 'string') {
       currentToken = newToken(IDENTIFIER, nextToken.name, meta);
     }

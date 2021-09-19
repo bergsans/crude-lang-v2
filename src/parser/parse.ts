@@ -3,6 +3,7 @@ import {
   characterNames,
   SEMICOLON,
   ASSIGN,
+  BOOLEAN,
   EOF,
   INTEGER,
   NIL,
@@ -127,7 +128,7 @@ export function parseLiteralExpression(token: Token) {
 
 export function parseExpressionStatement(li: List<Token>) {
   if (
-    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), 'Boolean')) &&
+    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
     isPeekToken(li.lookAt(1), characterNames[SEMICOLON])
   ) {
     return parseLiteralExpression(li.head());

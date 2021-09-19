@@ -1,6 +1,8 @@
 # Goal 1
 
-## Lexer
+- refactor tokenize to use List
+
+- AND OR
 - add division and power of and modulo
 - add prefix operators: - 3 -> -3 / unary
 
@@ -11,6 +13,8 @@
 ## Tests
 General: write more tests!
 
+----------------------------
+--------------------REFACTOR
 ----------------------------
 
 # Goal 2

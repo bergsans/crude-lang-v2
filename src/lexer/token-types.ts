@@ -16,15 +16,19 @@ export const INTEGER = 'INTEGER';
 export const ASSIGN = '=';
 export const SEMICOLON = ';';
 export const UNALLOWED_CHARACTER = 'UNALLOWED_CHARACTER';
-export const GT = '>';
-export const LT = '<';
+export const GREATER_THAN = '>';
+export const LOWER_THAN = '<';
+export const GREATER_THAN_OR_EQUAL = '>=';
+export const LOWER_THAN_OR_EQUAL = '<=';
 
 export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',
   [PLUS]: 'PLUS',
   [MINUS]: 'MINUS',
-  [GT]: 'GT',
-  [LT]: 'LT',
+  [GREATER_THAN]: 'GREATER_THAN',
+  [LOWER_THAN]: 'LOWER_THAN',
+  [LOWER_THAN_OR_EQUAL]: 'LOWER_THAN_OR_EQUAL',
+  [GREATER_THAN_OR_EQUAL]: 'GREATER_THAN_OR_EQUAL',
   [EQUAL]: 'EQUAL',
   [NOT_EQUAL]: 'NOT_EQUAL',
   [ASSIGN]: 'ASSIGN',

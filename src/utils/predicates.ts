@@ -8,15 +8,24 @@ import {
   PLUS,
   MULTIPLICATION,
   SEMICOLON,
+  GREATER_THAN,
+  LOWER_THAN,
 } from '../lexer/token-types';
 import { Token } from '../lexer/tokenize';
 
-type Predicate<T> = (v: T) => boolean;
-export function isOr<T>(predicates: Predicate<T>[], v: T) {
-  return predicates.reduce(
-    (isTrue: boolean, pred: Predicate<T>) => (!isTrue ? pred(v as T) : true),
-    false
-  );
+type Predicate<T> = (x: T, y?: T) => boolean;
+export function isOr<T>(predicates: Predicate<T>[], x: T, y?: T) {
+  return y
+    ? predicates.reduce(
+        (isTrue: boolean, pred: Predicate<T>) =>
+          !isTrue ? pred(x as T, y as T) : true,
+        false
+      )
+    : predicates.reduce(
+        (isTrue: boolean, pred: Predicate<T>) =>
+          !isTrue ? pred(x as T) : true,
+        false
+      );
 }
 
 export function isPeekToken(token: Token, tokenType: string) {
@@ -43,12 +52,26 @@ export function isNotEqual(currentCharacter: string, nextCharacter: string) {
   return currentCharacter === BANG && nextCharacter === ASSIGN;
 }
 
-export function isGT(currentCharacter: string) {
-  return currentCharacter === '>';
+export function isGreaterThan(currentCharacter: string) {
+  return currentCharacter === GREATER_THAN;
 }
 
-export function isLT(currentCharacter: string) {
-  return currentCharacter === '<';
+export function isLowerThan(currentCharacter: string) {
+  return currentCharacter === LOWER_THAN;
+}
+
+export function isGreaterThanOrEqual(
+  currentCharacter: string,
+  nextCharacter: string
+) {
+  return currentCharacter === GREATER_THAN && nextCharacter === ASSIGN;
+}
+
+export function isLowerThanOrEqual(
+  currentCharacter: string,
+  nextCharacter: string
+) {
+  return currentCharacter === LOWER_THAN && nextCharacter === ASSIGN;
 }
 
 export function isAssign(currentCharacter: string) {
@@ -80,9 +103,11 @@ export function isOfType(...types: string[]) {
 export const isOperatorType = isOfType(
   'EQUAL',
   'NOT_EQUAL',
+  'GREATER_THAN',
+  'LOWER_THAN',
+  'LOWER_THAN_OR_EQUAL',
+  'GREATER_THAN_OR_EQUAL',
   'PLUS',
   'MINUS',
-  'MULTIPLICATION',
-  'GT',
-  'LT'
+  'MULTIPLICATION'
 );

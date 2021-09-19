@@ -69,6 +69,24 @@ describe('Evaluate', () => {
       expect(result).to.eq(false);
     });
 
+    it('true == true', () => {
+      const code = 'true == true;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(true);
+    });
+
+    it('true == false', () => {
+      const code = 'true == false;';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = _parseBinaryExpression(li);
+      const result = evaluateBinaryExpression(parsed);
+      expect(result).to.eq(false);
+    });
+
     it('3 < 2 is false', () => {
       const code = '3 < 2;';
       const tokens = tokenize(code);
@@ -85,6 +103,34 @@ describe('Evaluate', () => {
       const parsed = _parseBinaryExpression(li);
       const result = evaluateBinaryExpression(parsed);
       expect(result).to.eq(true);
+    });
+
+    it('3 <= 3 is true and 2 <= 3', () => {
+      for (const [code, expectedResult] of [
+        ['3 <= 3;', true],
+        ['2 <= 3;', true],
+        ['3 <= 2;', false],
+      ]) {
+        const tokens = tokenize(code as string);
+        const li = list(tokens);
+        const parsed = _parseBinaryExpression(li);
+        const result = evaluateBinaryExpression(parsed);
+        expect(result).to.eq(expectedResult);
+      }
+    });
+
+    it('3 >= 3 is true and 3 >= 2', () => {
+      for (const [code, expectedResult] of [
+        ['3 >= 3;', true],
+        ['3 >= 2;', true],
+        ['3 <= 2;', false],
+      ]) {
+        const tokens = tokenize(code as string);
+        const li = list(tokens);
+        const parsed = _parseBinaryExpression(li);
+        const result = evaluateBinaryExpression(parsed);
+        expect(result).to.eq(expectedResult);
+      }
     });
   });
 });
