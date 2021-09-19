@@ -75,6 +75,9 @@ describe('Evaluate', () => {
   describe('Arithmetic Operations', () => {
     const examples = [
       ['4 + 4 * 4;', 20],
+      ['-3 + 3;', 0],
+      ['2 * -2;', -4],
+      ['4 - -2;', 6],
       ['4 - 2;', 2],
       ['(4 - 1) * 3;', 9],
     ];
@@ -82,8 +85,8 @@ describe('Evaluate', () => {
       it(`${code} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
-        const parsed = _parseBinaryExpression(li);
-        const result = evaluateBinaryExpression(parsed);
+        const parsed = parseExpressionStatement(li);
+        const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });
     }

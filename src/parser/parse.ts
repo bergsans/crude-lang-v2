@@ -70,6 +70,10 @@ function nud(li: TokenList, node: Token) {
     li.rm();
     return expression;
   }
+  if (node.type === 'MINUS') {
+    node = li.rm();
+    node.literal = '-' + node.literal;
+  }
   return Tree(null, node, null);
 }
 
@@ -143,19 +147,29 @@ export function parseExpressionStatement(li: List<Token>) {
       argument: parseLiteralExpression(li.rm()),
     };
   }
-  if (
-    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
-    isOperatorType(li.lookAt(1).type)
-  ) {
-    return _parseBinaryExpression(li);
-  }
-  if (isPeekToken(li.head(), BOOLEAN)) {
-    return parseLiteralExpression(li.head());
-  }
+  //if (isPeekToken(li.head(), 'MINUS') && li.lookAt(1).type === 'INTEGER') {
+  //li.rm();
+  //return {
+  //type: 'UnaryExpression',
+  //literal: 'NEGATIVE',
+  //argument: -parseLiteralExpression(li.rm()),
+  //};
+  //}
   if (
     (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
     isPeekToken(li.lookAt(1), characterNames[SEMICOLON])
   ) {
+    return parseLiteralExpression(li.head());
+  }
+  if (
+    isPeekToken(li.head(), INTEGER) ||
+    (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
+    isPeekToken(li.head(), 'L_PAREN') ||
+    isPeekToken(li.head(), 'MINUS')
+  ) {
+    return _parseBinaryExpression(li);
+  }
+  if (isPeekToken(li.head(), BOOLEAN)) {
     return parseLiteralExpression(li.head());
   }
   return NIL;

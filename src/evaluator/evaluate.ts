@@ -39,6 +39,9 @@ export function evaluate(node: Expression) {
     if (node.literal === 'NOT') {
       return !node.argument.expression.value;
     }
+    if (node.literal === 'MINUS') {
+      return -parseInt(node.argument.value.literal, 10);
+    }
   }
   if (node.type === 'BinaryExpression') {
     return evaluateBinaryExpression(node);
