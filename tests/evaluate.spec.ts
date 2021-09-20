@@ -75,7 +75,7 @@ describe('Evaluate', () => {
       });
     }
   });
-  // inside () +() +-1
+
   describe('Arithmetic Operations', () => {
     const examples = [
       ['4 + 4 * 4;', 20],
@@ -85,6 +85,9 @@ describe('Evaluate', () => {
       ['4 - -2;', 6],
       ['4 - 2;', 2],
       ['(4 - 1) * 3;', 9],
+      ['4 + +5;', 9],
+      ['+(4);', 4],
+      ['-(-4);', 4],
       ['-(4);', -4],
     ];
     for (const [code, expectedResult] of examples) {

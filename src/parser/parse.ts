@@ -11,7 +11,6 @@ import {
 } from '../lexer/token-types';
 import {
   BinaryExpression,
-  LiteralExpression,
   LetDeclaration,
   ExpressionStatement,
   Program,
@@ -70,9 +69,10 @@ function nud(li: TokenList, node: Token) {
     li.rm();
     return expression;
   }
-  if (node.type === 'MINUS') {
+  if (['MINUS', 'PLUS'].includes(node.type)) {
+    const sign = node.literal;
     node = li.rm();
-    node.literal = '-' + node.literal;
+    node.literal = sign + node.literal;
   }
   return Tree(null, node, null);
 }
@@ -146,11 +146,15 @@ export function parseExpressionStatement(li: List<Token>) {
       argument: parseExpressionStatement(li),
     };
   }
-  if (isPeekToken(li.head(), 'MINUS') && li.lookAt(1).type === 'L_PAREN') {
+  if (
+    ['MINUS', 'PLUS'].includes(li.head().type) &&
+    li.lookAt(1).type === 'L_PAREN'
+  ) {
+    const type = li.head().type;
     li.rm();
     return {
       type: 'UnaryExpression',
-      literal: 'MINUS',
+      literal: type,
       argument: parseExpressionStatement(li),
     };
   }
@@ -164,7 +168,7 @@ export function parseExpressionStatement(li: List<Token>) {
     isPeekToken(li.head(), INTEGER) ||
     (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
     isPeekToken(li.head(), 'L_PAREN') ||
-    isPeekToken(li.head(), 'MINUS')
+    ['MINUS', 'PLUS'].includes(li.head().type)
   ) {
     return _parseBinaryExpression(li);
   }

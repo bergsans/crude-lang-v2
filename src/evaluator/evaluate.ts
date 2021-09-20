@@ -6,21 +6,25 @@ const arithmetics = {
   PLUS: (a: number, b: number) => a + b,
   MINUS: (a: number, b: number) => a - b,
   MULTIPLICATION: (a: number, b: number) => a * b,
-  GREATER_THAN: (a: number, b: number) => a > b,
-  LOWER_THAN: (a: number, b: number) => a < b,
-  GREATER_THAN_OR_EQUAL: (a: number, b: number) => a >= b,
-  LOWER_THAN_OR_EQUAL: (a: number, b: number) => a <= b,
 };
 
 const logic = {
-  EQUAL: <T>(a: T, b: T) => a === b,
-  NOT_EQUAL: <T>(a: T, b: T) => a !== b,
   AND: (a: boolean, b: boolean) => a && b,
   OR: (a: boolean, b: boolean) => a || b,
   NOT: (a: boolean) => !a,
 };
 
-const operations = { ...arithmetics, ...logic };
+const comparators = {
+  GREATER_THAN: (a: number, b: number) => a > b,
+  LOWER_THAN: (a: number, b: number) => a < b,
+  GREATER_THAN_OR_EQUAL: (a: number, b: number) => a >= b,
+  LOWER_THAN_OR_EQUAL: (a: number, b: number) => a <= b,
+  EQUAL: <T>(a: T, b: T) => a === b,
+  NOT_EQUAL: <T>(a: T, b: T) => a !== b,
+};
+
+// own file
+const operations = { ...arithmetics, ...comparators, ...logic };
 
 export function evaluateBinaryExpression(node: NodeTree) {
   if (!node.left) {
@@ -35,15 +39,14 @@ export function evaluateBinaryExpression(node: NodeTree) {
 }
 
 const getValueFromUnaryExpression = {
-  NOT: (node: Expression) => !node.argument.expression.value,
-  MINUS: (node: Expression) => -parseInt(node.argument.value.literal, 10),
+  NOT: (node: Expression) => !evaluate(node.argument),
+  MINUS: (node: Expression) => -evaluate(node.argument),
+  PLUS: (node: Expression) => +evaluate(node.argument),
 };
 
 export function evaluate(node: Expression) {
   if (isNodeType(node, 'UnaryExpression')) {
-    return node.literal === 'NOT'
-      ? !evaluate(node.argument)
-      : -evaluate(node.argument);
+    return getValueFromUnaryExpression[node.literal](node);
   }
   if (isNodeType(node, 'BinaryExpression')) {
     return evaluateBinaryExpression(node);
