@@ -21,7 +21,6 @@ describe('Parser', () => {
           expression: {
             type: 'INTEGER',
             literal: '4',
-            value: 4,
           },
         };
         expect(result).to.deep.equal(expectedResult);
@@ -40,7 +39,6 @@ describe('Parser', () => {
             type: 'BOOLEAN',
             literal: 'true',
             meta: { ln: 1, col: 1, realPosition: 0 },
-            value: true,
           },
         };
         expect(result).to.deep.equal(expectedResult);
@@ -118,7 +116,6 @@ describe('Parser', () => {
                 col: 9,
                 realPosition: 8,
               },
-              value: 4,
             },
           },
         };
@@ -197,7 +194,6 @@ describe('Parser', () => {
                     col: 9,
                     realPosition: 8,
                   },
-                  value: 9,
                 },
               },
             },
@@ -215,9 +211,9 @@ let numTwo = 200;
         const ast = parse(tokens);
         expect(ast.body.length).to.eql(2);
         expect(ast.body[0].id.name).to.equal('numOne');
-        expect(ast.body[0].statement.expression.value).to.equal(100);
+        expect(ast.body[0].statement.expression.literal).to.equal('100');
         expect(ast.body[1].id.name).to.equal('numTwo');
-        expect(ast.body[1].statement.expression.value).to.equal(200);
+        expect(ast.body[1].statement.expression.literal).to.equal('200');
       });
     });
 

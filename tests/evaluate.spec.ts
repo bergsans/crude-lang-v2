@@ -24,6 +24,7 @@ describe('Evaluate', () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
+        console.log(code, parsed);
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });

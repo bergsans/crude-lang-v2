@@ -119,25 +119,25 @@ export function _parseBinaryExpression(li: List<Token>) {
   };
 }
 
-export const getValueFromLiteral = {
-  BOOLEAN: (literal: string) => {
-    return literal === 'true' ? true : false;
-  },
-  INTEGER: (literal: string) => parseInt(literal, 10),
-};
-
 export function parseLiteralExpression(token: Token) {
   return {
     type: ExpressionStatement,
     expression: {
       ...token,
       type: token.type,
-      value: getValueFromLiteral[token.type](token.literal),
     },
   };
 }
 
 export function parseExpressionStatement(li: List<Token>) {
+  if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'BOOLEAN') {
+    li.rm();
+    return {
+      type: 'UnaryExpression',
+      literal: 'NOT',
+      argument: parseExpressionStatement(li),
+    };
+  }
   if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'L_PAREN') {
     li.rm();
     return {
@@ -171,17 +171,6 @@ export function parseExpressionStatement(li: List<Token>) {
     ['MINUS', 'PLUS'].includes(li.head().type)
   ) {
     return _parseBinaryExpression(li);
-  }
-  if (isPeekToken(li.head(), 'NOT')) {
-    li.rm();
-    return {
-      type: 'UnaryExpression',
-      literal: 'NOT',
-      argument: parseExpressionStatement(li),
-    };
-  }
-  if (isPeekToken(li.head(), BOOLEAN)) {
-    return parseLiteralExpression(li.head());
   }
   return NIL;
 }
