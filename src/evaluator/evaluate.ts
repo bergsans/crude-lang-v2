@@ -1,6 +1,6 @@
 import { NIL } from '../lexer/token-types';
 import { Expression, getValueFromLiteral, NodeTree } from '../parser/parse';
-import { isOperatorType } from '../utils/predicates';
+import { isNodeType, isOperatorType } from '../utils/predicates';
 
 const arithmetics = {
   PLUS: (a: number, b: number) => a + b,
@@ -34,17 +34,22 @@ export function evaluateBinaryExpression(node: NodeTree) {
   }
 }
 
+const getValueFromUnaryExpression = {
+  NOT: (node: Expression) => !node.argument.expression.value,
+  MINUS: (node: Expression) => -parseInt(node.argument.value.literal, 10),
+};
+
 export function evaluate(node: Expression) {
-  if (node.type === 'UnaryExpression') {
-    if (node.literal === 'NOT') {
-      return !node.argument.expression.value;
-    }
-    if (node.literal === 'MINUS') {
-      return -parseInt(node.argument.value.literal, 10);
-    }
+  if (isNodeType(node, 'UnaryExpression')) {
+    return node.literal === 'NOT'
+      ? !evaluate(node.argument)
+      : -evaluate(node.argument);
   }
-  if (node.type === 'BinaryExpression') {
+  if (isNodeType(node, 'BinaryExpression')) {
     return evaluateBinaryExpression(node);
+  }
+  if (['BOOLEAN', 'INTEGER'].includes(node.expression.type)) {
+    return getValueFromLiteral[node.expression.type](node.expression.literal);
   }
   if (['BOOLEAN', 'INTEGER'].includes(node.value.type)) {
     return getValueFromLiteral[node.value.type](node.value.literal);

@@ -124,7 +124,6 @@ export const getValueFromLiteral = {
     return literal === 'true' ? true : false;
   },
   INTEGER: (literal: string) => parseInt(literal, 10),
-  NOT: (literal: string) => !getValueFromLiteral.BOOLEAN(literal),
 };
 
 export function parseLiteralExpression(token: Token) {
@@ -132,29 +131,29 @@ export function parseLiteralExpression(token: Token) {
     type: ExpressionStatement,
     expression: {
       ...token,
-      type: LiteralExpression,
+      type: token.type,
       value: getValueFromLiteral[token.type](token.literal),
     },
   };
 }
 
 export function parseExpressionStatement(li: List<Token>) {
-  if (isPeekToken(li.head(), 'NOT')) {
+  if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'L_PAREN') {
     li.rm();
     return {
       type: 'UnaryExpression',
       literal: 'NOT',
-      argument: parseLiteralExpression(li.rm()),
+      argument: parseExpressionStatement(li),
     };
   }
-  //if (isPeekToken(li.head(), 'MINUS') && li.lookAt(1).type === 'INTEGER') {
-  //li.rm();
-  //return {
-  //type: 'UnaryExpression',
-  //literal: 'NEGATIVE',
-  //argument: -parseLiteralExpression(li.rm()),
-  //};
-  //}
+  if (isPeekToken(li.head(), 'MINUS') && li.lookAt(1).type === 'L_PAREN') {
+    li.rm();
+    return {
+      type: 'UnaryExpression',
+      literal: 'MINUS',
+      argument: parseExpressionStatement(li),
+    };
+  }
   if (
     (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
     isPeekToken(li.lookAt(1), characterNames[SEMICOLON])
@@ -168,6 +167,14 @@ export function parseExpressionStatement(li: List<Token>) {
     isPeekToken(li.head(), 'MINUS')
   ) {
     return _parseBinaryExpression(li);
+  }
+  if (isPeekToken(li.head(), 'NOT')) {
+    li.rm();
+    return {
+      type: 'UnaryExpression',
+      literal: 'NOT',
+      argument: parseExpressionStatement(li),
+    };
   }
   if (isPeekToken(li.head(), BOOLEAN)) {
     return parseLiteralExpression(li.head());

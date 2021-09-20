@@ -14,6 +14,7 @@ import {
   LOWER_THAN,
 } from '../lexer/token-types';
 import { Token } from '../lexer/tokenize';
+import { Expression } from '../parser/parse';
 
 type Predicate<T> = (x: T, y?: T) => boolean;
 export function isOr<T>(predicates: Predicate<T>[], x: T, y?: T) {
@@ -108,6 +109,10 @@ export function isOfType(...types: string[]) {
   return function (type: string) {
     return types.includes(type);
   };
+}
+
+export function isNodeType(node: Expression, ofType: string) {
+  return node.type === ofType;
 }
 
 export const isOperatorType = isOfType(

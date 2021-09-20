@@ -16,6 +16,8 @@ describe('Evaluate', () => {
       ['false || false;', false],
       ['!true;', false],
       ['!false;', true],
+      ['!(true);', false],
+      ['!(false);', true],
     ];
     for (const [code, expectedResult] of truthTable) {
       it(`${code} is ${expectedResult}` as string, () => {
@@ -34,6 +36,8 @@ describe('Evaluate', () => {
       ['4 != 4;', false],
       ['4 == 2;', false],
       ['4 != 2;', true],
+      ['!(2 + 2 == 4);', false],
+      ['!(2 + 2 == 5);', true],
       ['2 + 2 == 4;', true],
       ['2 + 2 == 5;', false],
       ['2 + 2 != 5;', true],
@@ -42,8 +46,8 @@ describe('Evaluate', () => {
       it(`${code} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
-        const parsed = _parseBinaryExpression(li);
-        const result = evaluateBinaryExpression(parsed);
+        const parsed = parseExpressionStatement(li);
+        const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });
     }
@@ -71,15 +75,17 @@ describe('Evaluate', () => {
       });
     }
   });
-
+  // inside () +() +-1
   describe('Arithmetic Operations', () => {
     const examples = [
       ['4 + 4 * 4;', 20],
       ['-3 + 3;', 0],
       ['2 * -2;', -4],
+      ['4 + 4 + -2 + 2;', 8],
       ['4 - -2;', 6],
       ['4 - 2;', 2],
       ['(4 - 1) * 3;', 9],
+      ['-(4);', -4],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {

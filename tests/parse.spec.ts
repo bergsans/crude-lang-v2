@@ -19,7 +19,7 @@ describe('Parser', () => {
         const expectedResult = {
           type: 'ExpressionStatement',
           expression: {
-            type: 'LiteralExpression',
+            type: 'INTEGER',
             literal: '4',
             value: 4,
           },
@@ -37,7 +37,7 @@ describe('Parser', () => {
         const expectedResult = {
           type: 'ExpressionStatement',
           expression: {
-            type: 'LiteralExpression',
+            type: 'BOOLEAN',
             literal: 'true',
             meta: { ln: 1, col: 1, realPosition: 0 },
             value: true,
@@ -111,7 +111,7 @@ describe('Parser', () => {
           statement: {
             type: 'ExpressionStatement',
             expression: {
-              type: 'LiteralExpression',
+              type: 'INTEGER',
               literal: '4',
               meta: {
                 ln: 1,
@@ -190,7 +190,7 @@ describe('Parser', () => {
               statement: {
                 type: 'ExpressionStatement',
                 expression: {
-                  type: 'LiteralExpression',
+                  type: 'INTEGER',
                   literal: '9',
                   meta: {
                     ln: 1,
