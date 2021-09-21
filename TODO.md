@@ -1,16 +1,10 @@
 # Goal 1
 
-- refactor tokenize to use List
-- BANG!
-- add division and power of and modulo
-- add prefix operators: - 3 -> -3 / unary
+- add safe-division and power of and modulo
 
 ## Errors
 - throw errors in evaluator and parser
 - colors in error messages
-
-## Tests
-General: write more tests!
 
 ----------------------------
 --------------------REFACTOR

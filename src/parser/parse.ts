@@ -20,7 +20,9 @@ import { isOperatorType, isPeekToken } from '../utils/predicates';
 import { list, List } from '../utils/list';
 
 type Value = Token;
+
 type Left = NodeTree;
+
 type Right = Left;
 
 export interface NodeTree {
@@ -66,12 +68,12 @@ function Tree(left: Left, node: Token, right: Right) {
 function nud(li: TokenList, node: Token) {
   if (node.type === 'L_PAREN') {
     const expression = parseBinaryExpression(li, 0);
-    li.rm();
+    li.next();
     return expression;
   }
   if (['MINUS', 'PLUS'].includes(node.type)) {
     const sign = node.literal;
-    node = li.rm();
+    node = li.next();
     node.literal = sign + node.literal;
   }
   return Tree(null, node, null);
@@ -86,12 +88,12 @@ function led(li: TokenList, left: Left, operator: Token) {
 }
 
 function parseBinaryExpression(li: TokenList, currentPrecedence = 0) {
-  let left = nud(li, li.rm());
+  let left = nud(li, li.next());
   if (li.head().type === 'SEMICOLON') {
     return left;
   }
   while (precedence[li.head().type] > currentPrecedence) {
-    left = led(li, left, li.rm());
+    left = led(li, left, li.next());
   }
   return left;
 }
@@ -108,6 +110,23 @@ function removeDeadNodes(node: NodeTree) {
     delete node.right;
   }
   return node;
+}
+
+export function parse(tokens: Tokens): AST {
+  const statements = [];
+  const li = list(tokens);
+  let currentToken = li.next();
+  while (currentToken.type !== EOF) {
+    const statement = parseStatement(currentToken, li);
+    if (statement !== NIL) {
+      statements.push(statement);
+    }
+    currentToken = li.next() ?? ({ type: EOF } as Token);
+  }
+  return {
+    type: Program,
+    body: statements,
+  };
 }
 
 export function _parseBinaryExpression(li: List<Token>) {
@@ -131,7 +150,7 @@ export function parseLiteralExpression(token: Token) {
 
 export function parseExpressionStatement(li: List<Token>) {
   if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'BOOLEAN') {
-    li.rm();
+    li.next();
     return {
       type: 'UnaryExpression',
       literal: 'NOT',
@@ -139,7 +158,7 @@ export function parseExpressionStatement(li: List<Token>) {
     };
   }
   if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'L_PAREN') {
-    li.rm();
+    li.next();
     return {
       type: 'UnaryExpression',
       literal: 'NOT',
@@ -151,7 +170,7 @@ export function parseExpressionStatement(li: List<Token>) {
     li.lookAt(1).type === 'L_PAREN'
   ) {
     const type = li.head().type;
-    li.rm();
+    li.next();
     return {
       type: 'UnaryExpression',
       literal: type,
@@ -175,26 +194,8 @@ export function parseExpressionStatement(li: List<Token>) {
   return NIL;
 }
 
-export function parse(tokens: Tokens): AST {
-  const statements = [];
-  const li = list(tokens);
-  let currentToken = li.rm();
-  while (currentToken.type !== EOF) {
-    const statement = parseStatement(currentToken, li);
-    if (statement !== NIL) {
-      statements.push(statement);
-    }
-    // remove: todo! fix EOF bug
-    currentToken = li.rm() ?? ({ type: EOF } as Token);
-  }
-  return {
-    type: Program,
-    body: statements,
-  };
-}
-
 export function parseLetStatement(li: List<Token>) {
-  let currentToken = li.rm();
+  let currentToken = li.next();
   if (currentToken.type !== IDENTIFIER) {
     return NIL;
   }
@@ -202,13 +203,13 @@ export function parseLetStatement(li: List<Token>) {
     type: IDENTIFIER,
     name: currentToken.literal,
   };
-  currentToken = li.rm();
+  currentToken = li.next();
   if (currentToken.type !== characterNames[ASSIGN]) {
     return NIL;
   }
   const statement = parseExpressionStatement(li);
-  li.rm();
-  li.rm();
+  li.next();
+  li.next();
   return { type: LetDeclaration, id, statement };
 }
 
@@ -216,6 +217,6 @@ function parseStatement(token: Token, li: List<Token>) {
   if (token.type === 'LET') {
     return parseLetStatement(li);
   }
-  li.rm();
+  li.next();
   return parseExpressionStatement(li);
 }

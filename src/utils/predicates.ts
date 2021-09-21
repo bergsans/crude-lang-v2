@@ -1,4 +1,5 @@
 import {
+  NUL,
   BANG,
   AND_SIGN,
   OR_SIGN,
@@ -13,22 +14,26 @@ import {
   GREATER_THAN,
   LOWER_THAN,
 } from '../lexer/token-types';
-import { Token } from '../lexer/tokenize';
+import { peekCharacter, Token, NextToken } from '../lexer/tokenize';
 import { Expression } from '../parser/parse';
+import RESERVED_KEYWORD from '../lexer/reserved-keywords';
 
 type Predicate<T> = (x: T, y?: T) => boolean;
 export function isOr<T>(predicates: Predicate<T>[], x: T, y?: T) {
-  return y
-    ? predicates.reduce(
-        (isTrue: boolean, pred: Predicate<T>) =>
-          !isTrue ? pred(x as T, y as T) : true,
-        false
-      )
-    : predicates.reduce(
-        (isTrue: boolean, pred: Predicate<T>) =>
-          !isTrue ? pred(x as T) : true,
-        false
-      );
+  return predicates.reduce(
+    (isTrue: boolean, pred: Predicate<T>) =>
+      !isTrue ? (y ? pred(x as T, y as T) : pred(x as T)) : true,
+    false
+  );
+}
+
+export function isWhitespace(character: string) {
+  return (
+    character === ' ' ||
+    character === '\r' ||
+    character === '\n' ||
+    character === '\t'
+  );
 }
 
 export function isPeekToken(token: Token, tokenType: string) {
@@ -128,3 +133,44 @@ export const isOperatorType = isOfType(
   'AND',
   'OR'
 );
+
+export function isNUL(character: string) {
+  return character === NUL;
+}
+
+export function isReservedKeyword(nextToken: NextToken) {
+  return [
+    RESERVED_KEYWORD.LET,
+    RESERVED_KEYWORD.FALSE,
+    RESERVED_KEYWORD.TRUE,
+  ].includes(nextToken.name);
+}
+
+export function isIdentifier(nextToken: NextToken) {
+  return typeof nextToken.name === 'string';
+}
+
+export function isComparisonOperator(
+  character: string,
+  input: string,
+  nextPosition: number
+) {
+  return isOr(
+    [
+      isNotEqual,
+      isEqual,
+      isAndSign,
+      isOrSign,
+      isGreaterThanOrEqual,
+      isLowerThanOrEqual,
+      isGreaterThan,
+      isLowerThan,
+    ],
+    character,
+    peekCharacter(input, nextPosition)
+  );
+}
+
+export function isSingleSign(character: string) {
+  return isOr([isNot, isAssign, isParens, isOperator, isSemicolon], character);
+}
