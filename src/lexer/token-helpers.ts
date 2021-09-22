@@ -11,6 +11,7 @@ import {
   UNALLOWED_CHARACTER,
   characterNames,
   BOOLEAN,
+  NEW_LINE,
 } from './token-types';
 import {
   isDigit,
@@ -35,6 +36,10 @@ export function readCharacter(
   };
 }
 
+const IDENTIFIER_TYPE_NAME = 'name';
+
+const NUMBER_TYPE_NAME = 'number';
+
 function read(
   data: Data,
   readType: string,
@@ -58,7 +63,7 @@ function read(
 function produceMetadata(input: string, meta: Metadata, nextPosition: number) {
   let { col, ln, realPosition } = meta;
   while (realPosition < nextPosition) {
-    if (input[realPosition] === '\n') {
+    if (input[realPosition] === NEW_LINE) {
       ln++;
       col = 1;
     } else {
@@ -109,8 +114,6 @@ export function produceComparisionOperatorToken(
 export function newToken(type: string, literal: string, meta: Metadata): Token {
   return { type, literal, meta };
 }
-
-const IDENTIFIER_TYPE_NAME = 'name';
 
 export function produceIdentifier(
   input: string,
@@ -165,8 +168,6 @@ export function produceUnallowedCharacter(
     currentToken: newToken(UNALLOWED_CHARACTER, character, meta),
   };
 }
-
-const NUMBER_TYPE_NAME = 'number';
 
 export function produceNumber(
   input: string,

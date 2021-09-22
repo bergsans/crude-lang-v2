@@ -1,5 +1,4 @@
 export const NUL = '\0';
-export const NEW_LINE = '\n';
 export const NIL = undefined;
 export const EOF = 'EOF';
 export const LET = 'LET';
@@ -26,6 +25,10 @@ export const AND_SIGN = '&';
 export const OR_SIGN = '|';
 export const AND = '&&';
 export const OR = '||';
+export const NEW_LINE = '\n';
+export const RETURN = '\r';
+export const SPACE = ' ';
+export const TAB = '\t';
 
 export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',

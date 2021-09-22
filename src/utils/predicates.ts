@@ -14,6 +14,10 @@ import {
   SEMICOLON,
   GREATER_THAN,
   LOWER_THAN,
+  SPACE,
+  RETURN,
+  NEW_LINE,
+  TAB,
 } from '../lexer/token-types';
 import { peekCharacter, Token, NextToken } from '../lexer/tokenize';
 import { Expression } from '../parser/parse';
@@ -29,12 +33,7 @@ export function isOr<T>(predicates: Predicate<T>[], x: T, y?: T) {
 }
 
 export function isWhitespace(character: string) {
-  return (
-    character === ' ' ||
-    character === '\r' ||
-    character === '\n' ||
-    character === '\t'
-  );
+  return [SPACE, RETURN, NEW_LINE, TAB].includes(character);
 }
 
 export function isPeekToken(token: Token, tokenType: string) {
