@@ -7,9 +7,13 @@ import {
 import { evaluateBinaryExpression, evaluate } from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
 
+type Example = [string, any];
+
+const formatCodeString = (code: string) => code.slice(code.length - 2);
+
 describe('Evaluate', () => {
   describe('Logical operators - Truth Table', () => {
-    const truthTable = [
+    const truthTable: Example[] = [
       ['true && true;', true],
       ['true && false;', false],
       ['true || false;', true],
@@ -20,7 +24,7 @@ describe('Evaluate', () => {
       ['!(false);', true],
     ];
     for (const [code, expectedResult] of truthTable) {
-      it(`${code} is ${expectedResult}` as string, () => {
+      it(`${formatCodeString(code)} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
@@ -32,7 +36,7 @@ describe('Evaluate', () => {
   });
 
   describe('Equality Operators', () => {
-    const examples = [
+    const examples: Example[] = [
       ['4 == 4;', true],
       ['4 != 4;', false],
       ['4 == 2;', false],
@@ -44,7 +48,7 @@ describe('Evaluate', () => {
       ['2 + 2 != 5;', true],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code} is ${expectedResult}`, () => {
+      it(`${formatCodeString(code)} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
@@ -55,7 +59,7 @@ describe('Evaluate', () => {
   });
 
   describe('Comparison Operators', () => {
-    const examples = [
+    const examples: Example[] = [
       ['4 < 5 && 5 > 4;', true],
       ['4 < 5 && 5 > 6;', false],
       ['6 < 5 || 5 > 6;', false],
@@ -69,7 +73,7 @@ describe('Evaluate', () => {
       ['4 % 3 == 0;', false],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code} is ${expectedResult}`, () => {
+      it(`${formatCodeString(code)} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = _parseBinaryExpression(li);
@@ -80,7 +84,7 @@ describe('Evaluate', () => {
   });
 
   describe('Arithmetic Operations', () => {
-    const examples = [
+    const examples: Example[] = [
       ['4 + 4 * 4;', 20],
       ['-3 + 3;', 0],
       ['2 * -2;', -4],
@@ -96,9 +100,10 @@ describe('Evaluate', () => {
       ['4 / 3;', 1],
       ['4^2;', 16],
       ['2 * 4^2;', 32],
+      ['4 + (5 - 3 + (3 - 2));', 7],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code} is ${expectedResult}`, () => {
+      it(`${formatCodeString(code)} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);

@@ -1,7 +1,5 @@
 # Goal 1
 
-- add safe-division and power of and modulo
-
 ## Errors
 - throw errors in evaluator and parser
 - colors in error messages
