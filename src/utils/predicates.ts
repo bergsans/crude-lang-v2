@@ -1,5 +1,7 @@
 import {
   NUL,
+  L_BRACE,
+  R_BRACE,
   DIVISION,
   BANG,
   AND_SIGN,
@@ -96,6 +98,9 @@ export function isAssign(currentCharacter: string) {
   return currentCharacter === ASSIGN;
 }
 
+export function isBrace(currentCharacter: string) {
+  return [L_BRACE, R_BRACE].includes(currentCharacter);
+}
 export function isParens(currentCharacter: string) {
   return [L_PAREN, R_PAREN].includes(currentCharacter);
 }
@@ -150,6 +155,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.LET,
     RESERVED_KEYWORD.FALSE,
     RESERVED_KEYWORD.TRUE,
+    RESERVED_KEYWORD.IF,
   ].includes(nextToken.name);
 }
 
@@ -179,5 +185,8 @@ export function isComparisonOperator(
 }
 
 export function isSingleSign(character: string) {
-  return isOr([isNot, isAssign, isParens, isOperator, isSemicolon], character);
+  return isOr(
+    [isNot, isAssign, isBrace, isParens, isOperator, isSemicolon],
+    character
+  );
 }

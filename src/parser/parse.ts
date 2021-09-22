@@ -6,6 +6,7 @@ import {
   ASSIGN,
   BOOLEAN,
   EOF,
+  IF,
   INTEGER,
   NIL,
   IDENTIFIER,
@@ -49,7 +50,7 @@ interface Identifier {
   name: string;
 }
 
-interface Statement {
+export interface Statement {
   type: typeof LetDeclaration | typeof ExpressionStatement;
   statement: Statement;
   id?: Identifier;
@@ -222,10 +223,47 @@ export function parseLetStatement(li: List<Token>) {
   return { type: LetDeclaration, id, statement };
 }
 
+function parseBlockStatement(li: List<Token>) {
+  const statements = [];
+  li.next();
+  while (li.head().type !== 'R_BRACE') {
+    const currentToken = li.head();
+    const statement = parseStatement(currentToken, li);
+    li.next();
+    statements.push(statement);
+  }
+  return {
+    type: 'BlockStatement',
+    statements,
+  };
+}
+
+export function parseIfStatement(li: List<Token>) {
+  li.next();
+  if (li.head().type !== 'L_PAREN') {
+    throw new Error('Expected grouped expression.');
+  }
+  li.next();
+  const condition = parseExpressionStatement(li);
+  li.next();
+  if (li.head().type !== 'L_BRACE') {
+    throw new Error('Expected block statement.');
+  }
+  const consequence = parseBlockStatement(li);
+  return {
+    type: 'IfStatement',
+    condition,
+    consequence,
+  };
+}
+
 function parseStatement(token: Token, li: List<Token>) {
   if (token.type === LET) {
     return parseLetStatement(li);
   }
-  li.next();
+  if (token.type === IF) {
+    return parseIfStatement(li);
+  }
+  //  li.next();
   return parseExpressionStatement(li);
 }

@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { Token, tokenize } from '../src/lexer/tokenize';
 import {
   parse,
+  parseIfStatement,
   parseLetStatement,
   parseLiteralExpression,
   _parseBinaryExpression,
@@ -9,6 +10,92 @@ import {
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
+  describe('IfStatement', () => {
+    it('if(3 > 4) { 1; }', () => {
+      const code = 'if(3 > 4) { 3 + 3; }';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const result = parseIfStatement(li);
+      const expectedResult = {
+        type: 'IfStatement',
+        condition: {
+          type: 'BinaryExpression',
+          left: {
+            value: {
+              type: 'INTEGER',
+              literal: '3',
+              meta: {
+                ln: 1,
+                col: 4,
+                realPosition: 3,
+              },
+            },
+          },
+          value: {
+            type: 'GREATER_THAN',
+            literal: '>',
+            meta: {
+              ln: 1,
+              col: 6,
+              realPosition: 5,
+            },
+          },
+          right: {
+            value: {
+              type: 'INTEGER',
+              literal: '4',
+              meta: {
+                ln: 1,
+                col: 8,
+                realPosition: 7,
+              },
+            },
+          },
+        },
+        consequence: {
+          type: 'BlockStatement',
+          statements: [
+            {
+              type: 'BinaryExpression',
+              left: {
+                value: {
+                  type: 'INTEGER',
+                  literal: '3',
+                  meta: {
+                    ln: 1,
+                    col: 13,
+                    realPosition: 12,
+                  },
+                },
+              },
+              value: {
+                type: 'PLUS',
+                literal: '+',
+                meta: {
+                  ln: 1,
+                  col: 15,
+                  realPosition: 14,
+                },
+              },
+              right: {
+                value: {
+                  type: 'INTEGER',
+                  literal: '3',
+                  meta: {
+                    ln: 1,
+                    col: 17,
+                    realPosition: 16,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      };
+      expect(result).to.deep.equal(expectedResult);
+    });
+  });
+
   describe('ExpressionStatement', () => {
     describe('Integer', () => {
       it('4;', () => {

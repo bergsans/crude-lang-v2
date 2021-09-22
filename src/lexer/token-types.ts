@@ -1,6 +1,7 @@
 export const NUL = '\0';
 export const NIL = undefined;
 export const EOF = 'EOF';
+export const IF = 'IF';
 export const LET = 'LET';
 export const L_PAREN = '(';
 export const R_PAREN = ')';
@@ -31,6 +32,8 @@ export const NEW_LINE = '\n';
 export const RETURN = '\r';
 export const SPACE = ' ';
 export const TAB = '\t';
+export const L_BRACE = '{';
+export const R_BRACE = '}';
 
 export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',
@@ -52,4 +55,6 @@ export const characterNames = {
   [SEMICOLON]: 'SEMICOLON',
   [AND]: 'AND',
   [OR]: 'OR',
+  [L_BRACE]: 'L_BRACE',
+  [R_BRACE]: 'R_BRACE',
 };

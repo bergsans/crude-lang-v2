@@ -3,8 +3,13 @@ import { tokenize } from '../src/lexer/tokenize';
 import {
   _parseBinaryExpression,
   parseExpressionStatement,
+  parseIfStatement,
 } from '../src/parser/parse';
-import { evaluateBinaryExpression, evaluate } from '../src/evaluator/evaluate';
+import {
+  evaluateIfStatement,
+  evaluateBinaryExpression,
+  evaluate,
+} from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
 
 type Example = [string, any];
@@ -28,7 +33,6 @@ describe('Evaluate', () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
-        console.log(code, parsed);
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });
@@ -85,6 +89,7 @@ describe('Evaluate', () => {
 
   describe('Arithmetic Operations', () => {
     const examples: Example[] = [
+      ['4;', 4],
       ['4 + 4 * 4;', 20],
       ['-3 + 3;', 0],
       ['2 * -2;', -4],
@@ -111,5 +116,16 @@ describe('Evaluate', () => {
         expect(result).to.eq(expectedResult);
       });
     }
+  });
+
+  describe('If statement', () => {
+    it.only('...', () => {
+      const code = 'if(5 > 4) { 5; }';
+      const tokens = tokenize(code);
+      const li = list(tokens);
+      const parsed = parseIfStatement(li);
+      const result = evaluateIfStatement(parsed);
+      expect(result).to.eq(5);
+    });
   });
 });

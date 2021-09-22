@@ -1,6 +1,6 @@
 import { NIL } from '../lexer/token-types';
 import RESERVED_KEYWORDS from '../lexer/reserved-keywords';
-import { Expression, NodeTree } from '../parser/parse';
+import { Statement, Expression, NodeTree } from '../parser/parse';
 import {
   UnaryExpression,
   BinaryExpression,
@@ -34,8 +34,27 @@ export function evaluateBinaryExpression(node: NodeTree) {
     );
   }
 }
+interface BlockStatement {
+  type: string;
+  statements: Statement[];
+}
+export function evaluateIfStatement(node: {
+  type: string;
+  condition: Expression;
+  consequence: BlockStatement;
+}) {
+  const condition = evaluate(node.condition);
+  if (condition) {
+    // must implement return
+    return evaluate(node.consequence.statements[0]);
+  }
+  return NIL;
+}
 
-export function evaluate(node: Expression) {
+export function evaluate(node: any) {
+  if (isNodeType(node, 'IfStatement')) {
+    return evaluateIfStatement(node);
+  }
   if (isNodeType(node, UnaryExpression)) {
     return evaluateUnaryExpression[node.literal](node);
   }
