@@ -10,6 +10,8 @@ import {
   R_PAREN,
   MINUS,
   PLUS,
+  MODULO,
+  POWER,
   MULTIPLICATION,
   SEMICOLON,
   GREATER_THAN,
@@ -99,7 +101,9 @@ export function isParens(currentCharacter: string) {
 }
 
 export function isOperator(currentCharacter: string) {
-  return [MINUS, PLUS, MULTIPLICATION, DIVISION].includes(currentCharacter);
+  return [MINUS, PLUS, MULTIPLICATION, DIVISION, MODULO, POWER].includes(
+    currentCharacter
+  );
 }
 
 export function isSemicolon(currentCharacter: string) {
@@ -127,6 +131,8 @@ export const isOperatorType = isOfType(
   'LOWER_THAN',
   'LOWER_THAN_OR_EQUAL',
   'GREATER_THAN_OR_EQUAL',
+  'MODULO',
+  'POWER',
   'DIVISION',
   'PLUS',
   'MINUS',

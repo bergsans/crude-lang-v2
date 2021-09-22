@@ -7,6 +7,8 @@ export const R_PAREN = ')';
 export const PLUS = '+';
 export const MULTIPLICATION = '*';
 export const MINUS = '-';
+export const MODULO = '%';
+export const POWER = '^';
 export const DIVISION = '/';
 export const EQUAL = '==';
 export const BANG = '!';
@@ -34,6 +36,8 @@ export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',
   [DIVISION]: 'DIVISION',
   [PLUS]: 'PLUS',
+  [MODULO]: 'MODULO',
+  [POWER]: 'POWER',
   [MINUS]: 'MINUS',
   [BANG]: 'NOT',
   [GREATER_THAN]: 'GREATER_THAN',

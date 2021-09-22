@@ -2,6 +2,8 @@ const arithmetics = {
   PLUS: (a: number, b: number) => a + b,
   MINUS: (a: number, b: number) => a - b,
   MULTIPLICATION: (a: number, b: number) => a * b,
+  MODULO: (a: number, b: number) => a % b,
+  POWER: (a: number, b: number) => a ** b,
   DIVISION: (a: number, b: number) => {
     if (b === 0) {
       throw new Error('Division by zero is not allowed');

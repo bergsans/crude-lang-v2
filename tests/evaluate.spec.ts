@@ -65,6 +65,8 @@ describe('Evaluate', () => {
       ['3 >= 3;', true],
       ['3 >= 2;', true],
       ['3 <= 2;', false],
+      ['4 % 2 == 0;', true],
+      ['4 % 3 == 0;', false],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
@@ -92,6 +94,8 @@ describe('Evaluate', () => {
       ['-(4);', -4],
       ['4 / 2;', 2],
       ['4 / 3;', 1],
+      ['4^2;', 16],
+      ['2 * 4^2;', 32],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
