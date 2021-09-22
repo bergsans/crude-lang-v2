@@ -1,6 +1,10 @@
 import {
   NUL,
   EOF,
+  LOWER_THAN,
+  LOWER_THAN_OR_EQUAL,
+  GREATER_THAN,
+  GREATER_THAN_OR_EQUAL,
   IDENTIFIER,
   LET,
   INTEGER,
@@ -15,6 +19,7 @@ import {
   isReservedKeyword,
 } from '../utils/predicates';
 import { Data, NextToken, Metadata, Token, peekCharacter } from './tokenize';
+import RESERVED_KEYWORDS from './reserved-keywords';
 
 export function readCharacter(
   input: string,
@@ -86,12 +91,14 @@ export function produceComparisionOperatorToken(
   character: string,
   meta: Metadata
 ) {
-  const combinedCurrAndNextChar =
+  const combinedCurrentAndNextCharacter =
     character + peekCharacter(input, nextPosition);
   const sign =
-    !['<', '>'].includes(character) ||
-    ['<=', '>='].includes(combinedCurrAndNextChar)
-      ? combinedCurrAndNextChar
+    ![LOWER_THAN, GREATER_THAN].includes(character) ||
+    [GREATER_THAN_OR_EQUAL, LOWER_THAN_OR_EQUAL].includes(
+      combinedCurrentAndNextCharacter
+    )
+      ? combinedCurrentAndNextCharacter
       : character;
   return {
     currentToken: newToken(characterNames[sign], sign, meta),
@@ -103,6 +110,8 @@ export function newToken(type: string, literal: string, meta: Metadata): Token {
   return { type, literal, meta };
 }
 
+const IDENTIFIER_TYPE_NAME = 'name';
+
 export function produceIdentifier(
   input: string,
   nextPosition: number,
@@ -111,7 +120,7 @@ export function produceIdentifier(
 ) {
   const nextToken = read(
     { input, nextPosition, character, meta },
-    'name',
+    IDENTIFIER_TYPE_NAME,
     isASCIIAlphabetic
   );
   nextPosition = nextToken.nextPosition;
@@ -120,7 +129,7 @@ export function produceIdentifier(
     return {
       nextPosition,
       currentToken: newToken(
-        nextToken.name === 'let' ? LET : BOOLEAN,
+        nextToken.name === RESERVED_KEYWORDS.LET ? LET : BOOLEAN,
         nextToken.name,
         meta
       ),
@@ -157,6 +166,8 @@ export function produceUnallowedCharacter(
   };
 }
 
+const NUMBER_TYPE_NAME = 'number';
+
 export function produceNumber(
   input: string,
   nextPosition: number,
@@ -165,7 +176,7 @@ export function produceNumber(
 ) {
   const nextToken = read(
     { input, nextPosition, character, meta },
-    'number',
+    NUMBER_TYPE_NAME,
     isDigit
   );
   return {

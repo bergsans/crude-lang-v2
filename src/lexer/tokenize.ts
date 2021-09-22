@@ -64,13 +64,15 @@ type Producer = (
 
 type TokenHandler = [Predicate, Producer];
 
+const defaultAlwaysTrue = () => true;
+
 const tokenHandlers: TokenHandler[] = [
   [isNUL, produceNULToken],
   [isComparisonOperator, produceComparisionOperatorToken],
   [isSingleSign, produceSingleSign],
   [isASCIIAlphabetic, produceIdentifier],
   [isDigit, produceNumber],
-  [(_c: string) => true, produceUnallowedCharacter],
+  [defaultAlwaysTrue, produceUnallowedCharacter],
 ];
 
 export function peekCharacter(input: string, nextPosition: number) {

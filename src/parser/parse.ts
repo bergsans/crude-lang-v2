@@ -2,6 +2,7 @@ import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
   SEMICOLON,
+  LET,
   ASSIGN,
   BOOLEAN,
   EOF,
@@ -10,11 +11,16 @@ import {
   IDENTIFIER,
 } from '../lexer/token-types';
 import {
+  UnaryExpression,
   BinaryExpression,
   LetDeclaration,
   ExpressionStatement,
   Program,
   precedence,
+  INFIX_ARITHMETIC_TYPES,
+  INFIX_NOT,
+  END_OF_STATEMENT,
+  OPEN_GROUPED_EXPRESSION,
 } from './parse-types';
 import { isOperatorType, isPeekToken } from '../utils/predicates';
 import { list, List } from '../utils/list';
@@ -66,12 +72,12 @@ function Tree(left: Left, node: Token, right: Right) {
 }
 
 function nud(li: TokenList, node: Token) {
-  if (node.type === 'L_PAREN') {
+  if (node.type === OPEN_GROUPED_EXPRESSION) {
     const expression = parseBinaryExpression(li, 0);
     li.next();
     return expression;
   }
-  if (['MINUS', 'PLUS'].includes(node.type)) {
+  if (INFIX_ARITHMETIC_TYPES.includes(node.type)) {
     const sign = node.literal;
     node = li.next();
     node.literal = sign + node.literal;
@@ -89,7 +95,7 @@ function led(li: TokenList, left: Left, operator: Token) {
 
 function parseBinaryExpression(li: TokenList, currentPrecedence = 0) {
   let left = nud(li, li.next());
-  if (li.head().type === 'SEMICOLON') {
+  if (li.head().type === END_OF_STATEMENT) {
     return left;
   }
   while (precedence[li.head().type] > currentPrecedence) {
@@ -130,7 +136,7 @@ export function parse(tokens: Tokens): AST {
 }
 
 export function _parseBinaryExpression(li: List<Token>) {
-  const result = parseBinaryExpression(li, 0);
+  const result = parseBinaryExpression(li);
   const purifiedNode = removeDeadNodes(result);
   return {
     type: BinaryExpression,
@@ -149,30 +155,33 @@ export function parseLiteralExpression(token: Token) {
 }
 
 export function parseExpressionStatement(li: List<Token>) {
-  if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'BOOLEAN') {
+  if (isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN) {
     li.next();
     return {
-      type: 'UnaryExpression',
-      literal: 'NOT',
-      argument: parseExpressionStatement(li),
-    };
-  }
-  if (isPeekToken(li.head(), 'NOT') && li.lookAt(1).type === 'L_PAREN') {
-    li.next();
-    return {
-      type: 'UnaryExpression',
-      literal: 'NOT',
+      type: UnaryExpression,
+      literal: INFIX_NOT,
       argument: parseExpressionStatement(li),
     };
   }
   if (
-    ['MINUS', 'PLUS'].includes(li.head().type) &&
-    li.lookAt(1).type === 'L_PAREN'
+    isPeekToken(li.head(), INFIX_NOT) &&
+    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
+  ) {
+    li.next();
+    return {
+      type: UnaryExpression,
+      literal: INFIX_NOT,
+      argument: parseExpressionStatement(li),
+    };
+  }
+  if (
+    INFIX_ARITHMETIC_TYPES.includes(li.head().type) &&
+    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
   ) {
     const type = li.head().type;
     li.next();
     return {
-      type: 'UnaryExpression',
+      type: UnaryExpression,
       literal: type,
       argument: parseExpressionStatement(li),
     };
@@ -186,8 +195,8 @@ export function parseExpressionStatement(li: List<Token>) {
   if (
     isPeekToken(li.head(), INTEGER) ||
     (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
-    isPeekToken(li.head(), 'L_PAREN') ||
-    ['MINUS', 'PLUS'].includes(li.head().type)
+    isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
+    INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   ) {
     return _parseBinaryExpression(li);
   }
@@ -214,7 +223,7 @@ export function parseLetStatement(li: List<Token>) {
 }
 
 function parseStatement(token: Token, li: List<Token>) {
-  if (token.type === 'LET') {
+  if (token.type === LET) {
     return parseLetStatement(li);
   }
   li.next();

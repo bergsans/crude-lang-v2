@@ -1,4 +1,5 @@
 export const NUL = '\0';
+export const NEW_LINE = '\n';
 export const NIL = undefined;
 export const EOF = 'EOF';
 export const LET = 'LET';

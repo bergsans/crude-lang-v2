@@ -1,5 +1,12 @@
 import { NIL } from '../lexer/token-types';
+import RESERVED_KEYWORDS from '../lexer/reserved-keywords';
 import { Expression, NodeTree } from '../parser/parse';
+import {
+  UnaryExpression,
+  BinaryExpression,
+  ExpressionStatement,
+  LITERAL_PRIMITIVES,
+} from '../parser/parse-types';
 import { isNodeType, isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 
@@ -11,7 +18,7 @@ const evaluateUnaryExpression = {
 
 const evaluateLiteralExpression = {
   BOOLEAN: (literal: string) => {
-    return literal === 'true' ? true : false;
+    return literal === RESERVED_KEYWORDS.TRUE ? true : false;
   },
   INTEGER: (literal: string) => parseInt(literal, 10),
 };
@@ -29,18 +36,18 @@ export function evaluateBinaryExpression(node: NodeTree) {
 }
 
 export function evaluate(node: Expression) {
-  if (isNodeType(node, 'UnaryExpression')) {
+  if (isNodeType(node, UnaryExpression)) {
     return evaluateUnaryExpression[node.literal](node);
   }
-  if (isNodeType(node, 'BinaryExpression')) {
+  if (isNodeType(node, BinaryExpression)) {
     return evaluateBinaryExpression(node);
   }
-  if (isNodeType(node, 'ExpressionStatement')) {
+  if (isNodeType(node, ExpressionStatement)) {
     return evaluateLiteralExpression[node.expression.type](
       node.expression.literal
     );
   }
-  if (['BOOLEAN', 'INTEGER'].includes(node.value.type)) {
+  if (LITERAL_PRIMITIVES.includes(node.value.type)) {
     return evaluateLiteralExpression[node.value.type](node.value.literal);
   }
   if (node.expression) return NIL;
