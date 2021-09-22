@@ -23,7 +23,7 @@ export const precedence = {
   LOWER_THAN: 2,
   GREATER_THAN_OR_EQUAL: 2,
   LOWER_THAN_OR_EQUAL: 2,
-  DIV: 2,
+  DIVISION: 2,
   MULTIPLICATION: 2,
   NOT: 3,
 };

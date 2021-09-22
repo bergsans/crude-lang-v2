@@ -8,6 +8,7 @@ export const R_PAREN = ')';
 export const PLUS = '+';
 export const MULTIPLICATION = '*';
 export const MINUS = '-';
+export const DIVISION = '/';
 export const EQUAL = '==';
 export const BANG = '!';
 export const NOT_EQUAL = '!=';
@@ -28,6 +29,7 @@ export const OR = '||';
 
 export const characterNames = {
   [MULTIPLICATION]: 'MULTIPLICATION',
+  [DIVISION]: 'DIVISION',
   [PLUS]: 'PLUS',
   [MINUS]: 'MINUS',
   [BANG]: 'NOT',

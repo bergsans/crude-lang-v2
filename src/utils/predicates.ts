@@ -1,5 +1,6 @@
 import {
   NUL,
+  DIVISION,
   BANG,
   AND_SIGN,
   OR_SIGN,
@@ -99,7 +100,7 @@ export function isParens(currentCharacter: string) {
 }
 
 export function isOperator(currentCharacter: string) {
-  return [MINUS, PLUS, MULTIPLICATION].includes(currentCharacter);
+  return [MINUS, PLUS, MULTIPLICATION, DIVISION].includes(currentCharacter);
 }
 
 export function isSemicolon(currentCharacter: string) {
@@ -127,6 +128,7 @@ export const isOperatorType = isOfType(
   'LOWER_THAN',
   'LOWER_THAN_OR_EQUAL',
   'GREATER_THAN_OR_EQUAL',
+  'DIVISION',
   'PLUS',
   'MINUS',
   'MULTIPLICATION',

@@ -90,6 +90,8 @@ describe('Evaluate', () => {
       ['+(4);', 4],
       ['-(-4);', 4],
       ['-(4);', -4],
+      ['4 / 2;', 2],
+      ['4 / 3;', 1],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
