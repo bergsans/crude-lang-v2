@@ -19,6 +19,7 @@ import {
   GREATER_THAN,
   LOWER_THAN,
   SPACE,
+  RETURN_STATEMENT,
   RETURN,
   NEW_LINE,
   TAB,
@@ -156,6 +157,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.FALSE,
     RESERVED_KEYWORD.TRUE,
     RESERVED_KEYWORD.IF,
+    RESERVED_KEYWORD.RETURN,
   ].includes(nextToken.name);
 }
 

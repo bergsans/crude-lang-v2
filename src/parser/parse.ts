@@ -4,6 +4,7 @@ import {
   SEMICOLON,
   LET,
   ASSIGN,
+  RETURN_STATEMENT,
   BOOLEAN,
   EOF,
   IF,
@@ -232,6 +233,7 @@ function parseBlockStatement(li: List<Token>) {
     li.next();
     statements.push(statement);
   }
+  li.next();
   return {
     type: 'BlockStatement',
     statements,
@@ -239,7 +241,11 @@ function parseBlockStatement(li: List<Token>) {
 }
 
 export function parseIfStatement(li: List<Token>) {
-  li.next();
+  // Here be dragons... refactor!!!
+  if (li.head().type === 'IF') {
+    li.next();
+  }
+  // -----------------------------
   if (li.head().type !== 'L_PAREN') {
     throw new Error('Expected grouped expression.');
   }
@@ -249,7 +255,8 @@ export function parseIfStatement(li: List<Token>) {
   if (li.head().type !== 'L_BRACE') {
     throw new Error('Expected block statement.');
   }
-  const consequence = parseBlockStatement(li);
+  const c = parseBlockStatement(li);
+  const consequence = { ...c, statements: c.statements.filter((n: any) => n) };
   return {
     type: 'IfStatement',
     condition,
@@ -257,12 +264,24 @@ export function parseIfStatement(li: List<Token>) {
   };
 }
 
+export function parseReturnStatement(li: List<Token>) {
+  li.next();
+  return {
+    type: 'ReturnStatement',
+    value: parseExpressionStatement(li),
+  };
+}
+
 function parseStatement(token: Token, li: List<Token>) {
+  if (token.type === RETURN_STATEMENT) {
+    return parseReturnStatement(li);
+  }
   if (token.type === LET) {
     return parseLetStatement(li);
   }
   if (token.type === IF) {
-    return parseIfStatement(li);
+    const r = parseIfStatement(li);
+    return r;
   }
   //  li.next();
   return parseExpressionStatement(li);

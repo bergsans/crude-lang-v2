@@ -4,6 +4,8 @@ import {
   _parseBinaryExpression,
   parseExpressionStatement,
   parseIfStatement,
+  parseReturnStatement,
+  parse,
 } from '../src/parser/parse';
 import {
   evaluateIfStatement,
@@ -119,13 +121,53 @@ describe('Evaluate', () => {
   });
 
   describe('If statement', () => {
-    it.only('...', () => {
-      const code = 'if(5 > 4) { 5; }';
-      const tokens = tokenize(code);
-      const li = list(tokens);
-      const parsed = parseIfStatement(li);
-      const result = evaluateIfStatement(parsed);
-      expect(result).to.eq(5);
-    });
+    const examples: Example[] = [
+      [
+        `
+if(5 > 3) {
+  return 55;
+}`,
+        55,
+      ],
+      [
+        `
+if(5 > 3) {
+  if(10 > 4) {
+    return 999;
+  }
+  return 666;
+}`,
+        999,
+      ],
+      [
+        `
+if(5 > 3 && 4 < 6) {
+  return 55;
+}`,
+        55,
+      ],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${formatCodeString(
+        code.replace('\n', '')
+      )} is ${expectedResult}`, () => {
+        const tokens = tokenize(code);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.eq(expectedResult);
+      });
+    }
+  });
+
+  describe('Return statement', () => {
+    const examples: Example[] = [['if(1 < 2) { return 555; }', 555]];
+    for (const [code, expectedResult] of examples) {
+      it(`${formatCodeString(code)} is ${expectedResult}`, () => {
+        const tokens = tokenize(code as string);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.eq(expectedResult);
+      });
+    }
   });
 });

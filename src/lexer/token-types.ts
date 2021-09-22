@@ -3,6 +3,7 @@ export const NIL = undefined;
 export const EOF = 'EOF';
 export const IF = 'IF';
 export const LET = 'LET';
+export const RETURN_STATEMENT = 'RETURN';
 export const L_PAREN = '(';
 export const R_PAREN = ')';
 export const PLUS = '+';

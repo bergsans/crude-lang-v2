@@ -6,7 +6,6 @@ import {
   GREATER_THAN,
   GREATER_THAN_OR_EQUAL,
   IDENTIFIER,
-  LET,
   INTEGER,
   UNALLOWED_CHARACTER,
   characterNames,
@@ -115,6 +114,25 @@ export function newToken(type: string, literal: string, meta: Metadata): Token {
   return { type, literal, meta };
 }
 
+function switchKeyValue(object: Record<string, string>) {
+  return Object.entries(object).reduce(
+    (acc, [k, v]) => ({
+      ...acc,
+      [v]: k,
+    }),
+    {}
+  );
+}
+
+const invertReservedKeywords = switchKeyValue(RESERVED_KEYWORDS);
+
+function getIdentifierType(name: string) {
+  if ([RESERVED_KEYWORDS.TRUE, RESERVED_KEYWORDS.FALSE].includes(name)) {
+    return BOOLEAN;
+  }
+  return invertReservedKeywords[name];
+}
+
 export function produceIdentifier(
   input: string,
   nextPosition: number,
@@ -132,7 +150,7 @@ export function produceIdentifier(
     return {
       nextPosition,
       currentToken: newToken(
-        nextToken.name === RESERVED_KEYWORDS.LET ? LET : BOOLEAN,
+        getIdentifierType(nextToken.name),
         nextToken.name,
         meta
       ),

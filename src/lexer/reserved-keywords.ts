@@ -3,4 +3,5 @@ export default {
   TRUE: 'true',
   FALSE: 'false',
   IF: 'if',
+  RETURN: 'return',
 };

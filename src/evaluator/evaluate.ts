@@ -34,10 +34,11 @@ export function evaluateBinaryExpression(node: NodeTree) {
     );
   }
 }
-interface BlockStatement {
+
+type BlockStatement = {
   type: string;
   statements: Statement[];
-}
+};
 export function evaluateIfStatement(node: {
   type: string;
   condition: Expression;
@@ -45,13 +46,34 @@ export function evaluateIfStatement(node: {
 }) {
   const condition = evaluate(node.condition);
   if (condition) {
-    // must implement return
-    return evaluate(node.consequence.statements[0]);
+    return node.consequence.statements.length > 0
+      ? evaluateBlockStatements(node.consequence.statements)
+      : NIL;
   }
   return NIL;
 }
 
+function evaluateBlockStatements(statements: Statement[]) {
+  for (const statement of statements) {
+    const result = evaluate(statement);
+    if (result !== NIL) {
+      return result;
+    }
+  }
+  return NIL;
+}
+
+function evaluateReturnStatement(node: any) {
+  return evaluate(node.value);
+}
+
 export function evaluate(node: any) {
+  if (node.body || isNodeType(node, 'BlockStatement')) {
+    return evaluateBlockStatements(node.body);
+  }
+  if (isNodeType(node, 'ReturnStatement')) {
+    return evaluateReturnStatement(node);
+  }
   if (isNodeType(node, 'IfStatement')) {
     return evaluateIfStatement(node);
   }
