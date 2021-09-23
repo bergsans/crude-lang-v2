@@ -1,14 +1,21 @@
-# Goal 1
+TODO:
 
-## Errors
-- throw errors in evaluator and parser
-- colors in error messages
+[] if-else
 
-----------------------------
---------------------REFACTOR
-----------------------------
+[] environment (let)
 
-# Goal 2
-- Add strings and list
-- Add if while function return for
+[] function
 
+[] string
+
+[] built-in functions
+
+[] array
+
+[] object
+
+[] while
+
+[] for
+
+[] errors
