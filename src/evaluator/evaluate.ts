@@ -5,6 +5,9 @@ import {
   UnaryExpression,
   BinaryExpression,
   ExpressionStatement,
+  BlockStatement,
+  IfStatement,
+  ReturnStatement,
   LITERAL_PRIMITIVES,
 } from '../parser/parse-types';
 import { isNodeType, isOperatorType } from '../utils/predicates';
@@ -68,13 +71,13 @@ function evaluateReturnStatement(node: any) {
 }
 
 export function evaluate(node: any) {
-  if (node.body || isNodeType(node, 'BlockStatement')) {
+  if (node.body || isNodeType(node, BlockStatement)) {
     return evaluateBlockStatements(node.body);
   }
-  if (isNodeType(node, 'ReturnStatement')) {
+  if (isNodeType(node, ReturnStatement)) {
     return evaluateReturnStatement(node);
   }
-  if (isNodeType(node, 'IfStatement')) {
+  if (isNodeType(node, IfStatement)) {
     return evaluateIfStatement(node);
   }
   if (isNodeType(node, UnaryExpression)) {

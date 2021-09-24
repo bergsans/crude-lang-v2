@@ -3,6 +3,9 @@ export const ExpressionStatement = 'ExpressionStatement';
 export const BinaryExpression = 'BinaryExpression';
 export const LiteralExpression = 'LiteralExpression';
 export const LetDeclaration = 'LetDeclaration';
+export const IfStatement = 'IfStatement';
+export const ReturnStatement = 'ReturnStatement';
+export const BlockStatement = 'BlockStatement';
 export const Program = 'Program';
 
 export const INFIX_ARITHMETIC_TYPES = ['MINUS', 'PLUS'];
