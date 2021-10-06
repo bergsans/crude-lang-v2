@@ -1,7 +1,7 @@
 TODO:
 
-* [ ] if-else
-* [ ] environment (let)
+* [x] if-else - only if
+* [x] environment (let) - only global
 * [ ] function
 * [ ] string
 * [ ] built-in functions

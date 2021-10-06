@@ -7,6 +7,7 @@ import {
   ExpressionStatement,
   BlockStatement,
   IfStatement,
+  LetDeclaration,
   ReturnStatement,
   LITERAL_PRIMITIVES,
 } from '../parser/parse-types';
@@ -79,32 +80,22 @@ function evaluateLetDeclaration(node) {
   }
 }
 
+const evaluateTypes = {
+  [LetDeclaration]: (node) => evaluateLetDeclaration(node),
+  [ReturnStatement]: (node) => evaluateReturnStatement(node),
+  [IfStatement]: (node) => evaluateIfStatement(node),
+  [UnaryExpression]: (node) => evaluateUnaryExpression[node.literal](node),
+  [BinaryExpression]: (node) => evaluateBinaryExpression(node),
+  [ExpressionStatement]: (node) =>
+    evaluateLiteralExpression[node.expression.type](node.expression.literal),
+};
+
 export function evaluate(node) {
   if (node.body || isNodeType(node, BlockStatement)) {
     return evaluateBlockStatements(node.body);
   }
-  if (isNodeType(node, 'LetDeclaration')) {
-    return evaluateLetDeclaration(node);
-  }
-  if (isNodeType(node, ReturnStatement)) {
-    return evaluateReturnStatement(node);
-  }
-  if (isNodeType(node, IfStatement)) {
-    return evaluateIfStatement(node);
-  }
-  if (isNodeType(node, UnaryExpression)) {
-    return evaluateUnaryExpression[node.literal](node);
-  }
-  if (isNodeType(node, BinaryExpression)) {
-    return evaluateBinaryExpression(node);
-  }
-  //if (isNodeType(node, 'Identifier')) {
-  //return evaluate(environment.get(node.name));
-  //}
-  if (isNodeType(node, ExpressionStatement)) {
-    return evaluateLiteralExpression[node.expression.type](
-      node.expression.literal
-    );
+  if (node.type in evaluateTypes) {
+    return evaluateTypes[node.type](node);
   }
   if (LITERAL_PRIMITIVES.includes(node.value.type)) {
     return evaluateLiteralExpression[node.value.type](node.value.literal);

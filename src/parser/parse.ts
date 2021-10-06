@@ -6,7 +6,6 @@ import {
   ASSIGN,
   RETURN_STATEMENT,
   BOOLEAN,
-  EOF,
   IF,
   INTEGER,
   NIL,
@@ -17,6 +16,9 @@ import {
   BinaryExpression,
   LetDeclaration,
   ExpressionStatement,
+  BlockStatement,
+  IfStatement,
+  ReturnStatement,
   Program,
   precedence,
   INFIX_ARITHMETIC_TYPES,
@@ -65,7 +67,7 @@ interface AST {
 
 type TokenList = List<Token>;
 
-function Tree(left: Left, node: Token, right: Right) {
+function tree(left: Left, node: Token, right: Right) {
   return {
     left,
     value: node,
@@ -84,11 +86,11 @@ function nud(li: TokenList, node: Token) {
     node = li.next();
     node.literal = sign + node.literal;
   }
-  return Tree(null, node, null);
+  return tree(null, node, null);
 }
 
 function led(li: TokenList, left: Left, operator: Token) {
-  return Tree(
+  return tree(
     left,
     operator,
     parseBinaryExpression(li, precedence[operator.type])
@@ -151,10 +153,11 @@ export function parseLiteralExpression(token: Token) {
   };
 }
 
+// TODO: refactor -> create predicates
 export function parseExpressionStatement(li: List<Token>) {
   if (
     (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
-    isPeekToken(li.lookAt(1), 'SEMICOLON')
+    isPeekToken(li.lookAt(1), END_OF_STATEMENT)
   ) {
     const currentToken = li.next();
     li.next();
@@ -225,8 +228,6 @@ export function parseLetStatement(li: List<Token>) {
     return NIL;
   }
   const statement = parseExpressionStatement(li);
-  //li.next();
-  //li.next();
   return { type: LetDeclaration, id, statement };
 }
 
@@ -258,10 +259,10 @@ export function parseIfStatement(li: List<Token>) {
     throw new Error('Expected block statement.');
   }
   li.next();
-  const c = { type: 'BlockStatement', statements: parseBlockStatement(li) };
+  const c = { type: BlockStatement, statements: parseBlockStatement(li) };
   const consequence = { ...c, statements: c.statements.filter((n: any) => n) };
   return {
-    type: 'IfStatement',
+    type: IfStatement,
     condition,
     consequence,
   };
@@ -269,21 +270,20 @@ export function parseIfStatement(li: List<Token>) {
 
 export function parseReturnStatement(li: List<Token>) {
   return {
-    type: 'ReturnStatement',
+    type: ReturnStatement,
     value: parseExpressionStatement(li),
   };
 }
 
+const statementTypes = {
+  [RETURN_STATEMENT]: (li: List<Token>) => parseReturnStatement(li),
+  [LET]: (li: List<Token>) => parseLetStatement(li),
+  [IF]: (li: List<Token>) => parseIfStatement(li),
+};
+
 function parseStatement(li: List<Token>) {
-  const token = li.next();
-  if (token.type === RETURN_STATEMENT) {
-    return parseReturnStatement(li);
-  }
-  if (token.type === LET) {
-    return parseLetStatement(li);
-  }
-  if (token.type === IF) {
-    return parseIfStatement(li);
-  }
-  return parseExpressionStatement(li);
+  const currentToken = li.next();
+  return currentToken.type in statementTypes
+    ? statementTypes[currentToken.type](li)
+    : parseExpressionStatement(li);
 }
