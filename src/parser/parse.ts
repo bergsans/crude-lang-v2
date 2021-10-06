@@ -121,16 +121,8 @@ function removeDeadNodes(node: NodeTree) {
 }
 
 export function parse(tokens: Tokens): AST {
-  const statements = [];
   const li = list(tokens);
-  let currentToken = li.next();
-  while (currentToken.type !== EOF) {
-    const statement = parseStatement(currentToken, li);
-    if (statement !== NIL) {
-      statements.push(statement);
-    }
-    currentToken = li.next() ?? ({ type: EOF } as Token);
-  }
+  const statements = parseBlockStatement(li);
   return {
     type: Program,
     body: statements,
@@ -139,6 +131,9 @@ export function parse(tokens: Tokens): AST {
 
 export function _parseBinaryExpression(li: List<Token>) {
   const result = parseBinaryExpression(li);
+  if (li.head().type === END_OF_STATEMENT) {
+    li.next();
+  }
   const purifiedNode = removeDeadNodes(result);
   return {
     type: BinaryExpression,
@@ -157,6 +152,14 @@ export function parseLiteralExpression(token: Token) {
 }
 
 export function parseExpressionStatement(li: List<Token>) {
+  if (
+    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
+    isPeekToken(li.lookAt(1), 'SEMICOLON')
+  ) {
+    const currentToken = li.next();
+    li.next();
+    return parseLiteralExpression(currentToken);
+  }
   if (isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN) {
     li.next();
     return {
@@ -189,18 +192,21 @@ export function parseExpressionStatement(li: List<Token>) {
     };
   }
   if (
-    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
-    isPeekToken(li.lookAt(1), characterNames[SEMICOLON])
-  ) {
-    return parseLiteralExpression(li.head());
-  }
-  if (
     isPeekToken(li.head(), INTEGER) ||
+    isPeekToken(li.head(), IDENTIFIER) ||
     (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
     isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
     INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   ) {
     return _parseBinaryExpression(li);
+  }
+  if (li.head().type === IDENTIFIER && li.lookAt(1).type === SEMICOLON) {
+    const currentToken = li.next();
+    li.next();
+    return {
+      type: 'Identifier',
+      name: currentToken.literal,
+    };
   }
   return NIL;
 }
@@ -219,33 +225,29 @@ export function parseLetStatement(li: List<Token>) {
     return NIL;
   }
   const statement = parseExpressionStatement(li);
-  li.next();
-  li.next();
+  //li.next();
+  //li.next();
   return { type: LetDeclaration, id, statement };
 }
 
 function parseBlockStatement(li: List<Token>) {
   const statements = [];
-  li.next();
-  while (li.head().type !== 'R_BRACE') {
-    const currentToken = li.head();
-    const statement = parseStatement(currentToken, li);
-    li.next();
+  while (
+    li.get().length &&
+    li.head().type !== 'R_BRACE' &&
+    li.head().type !== 'EOF'
+  ) {
+    const statement = parseStatement(li);
     statements.push(statement);
   }
   li.next();
-  return {
-    type: 'BlockStatement',
-    statements,
-  };
+  return statements;
 }
 
 export function parseIfStatement(li: List<Token>) {
-  // Here be dragons... refactor!!!
   if (li.head().type === 'IF') {
     li.next();
   }
-  // -----------------------------
   if (li.head().type !== 'L_PAREN') {
     throw new Error('Expected grouped expression.');
   }
@@ -255,7 +257,8 @@ export function parseIfStatement(li: List<Token>) {
   if (li.head().type !== 'L_BRACE') {
     throw new Error('Expected block statement.');
   }
-  const c = parseBlockStatement(li);
+  li.next();
+  const c = { type: 'BlockStatement', statements: parseBlockStatement(li) };
   const consequence = { ...c, statements: c.statements.filter((n: any) => n) };
   return {
     type: 'IfStatement',
@@ -265,14 +268,14 @@ export function parseIfStatement(li: List<Token>) {
 }
 
 export function parseReturnStatement(li: List<Token>) {
-  li.next();
   return {
     type: 'ReturnStatement',
     value: parseExpressionStatement(li),
   };
 }
 
-function parseStatement(token: Token, li: List<Token>) {
+function parseStatement(li: List<Token>) {
+  const token = li.next();
   if (token.type === RETURN_STATEMENT) {
     return parseReturnStatement(li);
   }
@@ -280,9 +283,7 @@ function parseStatement(token: Token, li: List<Token>) {
     return parseLetStatement(li);
   }
   if (token.type === IF) {
-    const r = parseIfStatement(li);
-    return r;
+    return parseIfStatement(li);
   }
-  //  li.next();
   return parseExpressionStatement(li);
 }

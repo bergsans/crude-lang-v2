@@ -13,6 +13,8 @@ import {
 import { isNodeType, isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 
+const environment = new Map();
+
 const evaluateUnaryExpression = {
   NOT: (node: Expression) => !evaluate(node.argument),
   MINUS: (node: Expression) => -evaluate(node.argument),
@@ -24,6 +26,7 @@ const evaluateLiteralExpression = {
     return literal === RESERVED_KEYWORDS.TRUE ? true : false;
   },
   INTEGER: (literal: string) => parseInt(literal, 10),
+  IDENTIFIER: (literal: string) => environment.get(literal),
 };
 
 export function evaluateBinaryExpression(node: NodeTree) {
@@ -66,13 +69,22 @@ function evaluateBlockStatements(statements: Statement[]) {
   return NIL;
 }
 
-function evaluateReturnStatement(node: any) {
+function evaluateReturnStatement(node) {
   return evaluate(node.value);
 }
 
-export function evaluate(node: any) {
+function evaluateLetDeclaration(node) {
+  if (!environment.has(node.name)) {
+    environment.set(node.id.name, evaluate(node.statement));
+  }
+}
+
+export function evaluate(node) {
   if (node.body || isNodeType(node, BlockStatement)) {
     return evaluateBlockStatements(node.body);
+  }
+  if (isNodeType(node, 'LetDeclaration')) {
+    return evaluateLetDeclaration(node);
   }
   if (isNodeType(node, ReturnStatement)) {
     return evaluateReturnStatement(node);
@@ -86,6 +98,9 @@ export function evaluate(node: any) {
   if (isNodeType(node, BinaryExpression)) {
     return evaluateBinaryExpression(node);
   }
+  //if (isNodeType(node, 'Identifier')) {
+  //return evaluate(environment.get(node.name));
+  //}
   if (isNodeType(node, ExpressionStatement)) {
     return evaluateLiteralExpression[node.expression.type](
       node.expression.literal

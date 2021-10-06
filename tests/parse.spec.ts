@@ -2,60 +2,54 @@ import { expect } from 'chai';
 import { Token, tokenize } from '../src/lexer/tokenize';
 import {
   parse,
-  parseIfStatement,
-  parseLetStatement,
   parseLiteralExpression,
   _parseBinaryExpression,
 } from '../src/parser/parse';
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
-  describe('IfStatement', () => {
-    it('if(3 > 4) { 1; }', () => {
-      const code = 'if(3 > 4) { 3 + 3; }';
-      const tokens = tokenize(code);
-      const li = list(tokens);
-      const result = parseIfStatement(li);
-      const expectedResult = {
-        type: 'IfStatement',
-        condition: {
-          type: 'BinaryExpression',
-          left: {
-            value: {
+  it('Parse let declaration and assignment', () => {
+    const code = 'let x = 3;';
+    const tokens = tokenize(code);
+    const parsed = parse(tokens);
+    const expectedResult = {
+      type: 'Program',
+      body: [
+        {
+          type: 'LetDeclaration',
+          id: {
+            type: 'IDENTIFIER',
+            name: 'x',
+          },
+          statement: {
+            type: 'ExpressionStatement',
+            expression: {
               type: 'INTEGER',
               literal: '3',
               meta: {
                 ln: 1,
-                col: 4,
-                realPosition: 3,
-              },
-            },
-          },
-          value: {
-            type: 'GREATER_THAN',
-            literal: '>',
-            meta: {
-              ln: 1,
-              col: 6,
-              realPosition: 5,
-            },
-          },
-          right: {
-            value: {
-              type: 'INTEGER',
-              literal: '4',
-              meta: {
-                ln: 1,
-                col: 8,
-                realPosition: 7,
+                col: 9,
+                realPosition: 8,
               },
             },
           },
         },
-        consequence: {
-          type: 'BlockStatement',
-          statements: [
-            {
+      ],
+    };
+    expect(parsed).to.deep.equal(expectedResult);
+  });
+
+  describe('IfStatement', () => {
+    it('if(3 > 4) { return 1; }', () => {
+      const code = 'if(3 > 4) { return 1; }';
+      const tokens = tokenize(code);
+      const result = parse(tokens);
+      const expectedResult = {
+        type: 'Program',
+        body: [
+          {
+            type: 'IfStatement',
+            condition: {
               type: 'BinaryExpression',
               left: {
                 value: {
@@ -63,34 +57,54 @@ describe('Parser', () => {
                   literal: '3',
                   meta: {
                     ln: 1,
-                    col: 13,
-                    realPosition: 12,
+                    col: 4,
+                    realPosition: 3,
                   },
                 },
               },
               value: {
-                type: 'PLUS',
-                literal: '+',
+                type: 'GREATER_THAN',
+                literal: '>',
                 meta: {
                   ln: 1,
-                  col: 15,
-                  realPosition: 14,
+                  col: 6,
+                  realPosition: 5,
                 },
               },
               right: {
                 value: {
                   type: 'INTEGER',
-                  literal: '3',
+                  literal: '4',
                   meta: {
                     ln: 1,
-                    col: 17,
-                    realPosition: 16,
+                    col: 8,
+                    realPosition: 7,
                   },
                 },
               },
             },
-          ],
-        },
+            consequence: {
+              type: 'BlockStatement',
+              statements: [
+                {
+                  type: 'ReturnStatement',
+                  value: {
+                    type: 'ExpressionStatement',
+                    expression: {
+                      type: 'INTEGER',
+                      literal: '1',
+                      meta: {
+                        ln: 1,
+                        col: 20,
+                        realPosition: 19,
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
       };
       expect(result).to.deep.equal(expectedResult);
     });
@@ -131,51 +145,55 @@ describe('Parser', () => {
         expect(result).to.deep.equal(expectedResult);
       });
 
-      it('4 == 4;', () => {
+      it('let x = 4 == 4;', () => {
         const code = 'let x = 4 == 4;';
-        const tokens = tokenize(code).slice(1); // remove 'let'
-        const li = list(tokens);
-        const result = parseLetStatement(li);
+        const tokens = tokenize(code);
+        const result = parse(tokens);
         const expectedResult = {
-          type: 'LetDeclaration',
-          id: {
-            type: 'IDENTIFIER',
-            name: 'x',
-          },
-          statement: {
-            type: 'BinaryExpression',
-            left: {
-              value: {
-                type: 'INTEGER',
-                literal: '4',
-                meta: {
-                  ln: 1,
-                  col: 9,
-                  realPosition: 8,
+          type: 'Program',
+          body: [
+            {
+              type: 'LetDeclaration',
+              id: {
+                type: 'IDENTIFIER',
+                name: 'x',
+              },
+              statement: {
+                type: 'BinaryExpression',
+                left: {
+                  value: {
+                    type: 'INTEGER',
+                    literal: '4',
+                    meta: {
+                      ln: 1,
+                      col: 9,
+                      realPosition: 8,
+                    },
+                  },
+                },
+                value: {
+                  type: 'EQUAL',
+                  literal: '==',
+                  meta: {
+                    ln: 1,
+                    col: 11,
+                    realPosition: 10,
+                  },
+                },
+                right: {
+                  value: {
+                    type: 'INTEGER',
+                    literal: '4',
+                    meta: {
+                      ln: 1,
+                      col: 14,
+                      realPosition: 13,
+                    },
+                  },
                 },
               },
             },
-            value: {
-              type: 'EQUAL',
-              literal: '==',
-              meta: {
-                ln: 1,
-                col: 11,
-                realPosition: 10,
-              },
-            },
-            right: {
-              value: {
-                type: 'INTEGER',
-                literal: '4',
-                meta: {
-                  ln: 1,
-                  col: 14,
-                  realPosition: 13,
-                },
-              },
-            },
-          },
+          ],
         };
         expect(result).to.deep.equal(expectedResult);
       });
@@ -184,76 +202,84 @@ describe('Parser', () => {
     describe('LetDeclaration', () => {
       it('let x = 4;', () => {
         const code = 'let x = 4;';
-        const tokens = tokenize(code).slice(1); // remove 'let'
-        const li = list(tokens);
-        const result = parseLetStatement(li);
+        const tokens = tokenize(code);
+        const result = parse(tokens);
         const expectedResult = {
-          type: 'LetDeclaration',
-          id: {
-            type: 'IDENTIFIER',
-            name: 'x',
-          },
-          statement: {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'INTEGER',
-              literal: '4',
-              meta: {
-                ln: 1,
-                col: 9,
-                realPosition: 8,
+          type: 'Program',
+          body: [
+            {
+              type: 'LetDeclaration',
+              id: {
+                type: 'IDENTIFIER',
+                name: 'x',
+              },
+              statement: {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'INTEGER',
+                  literal: '4',
+                  meta: {
+                    ln: 1,
+                    col: 9,
+                    realPosition: 8,
+                  },
+                },
               },
             },
-          },
+          ],
         };
         expect(result).to.deep.equal(expectedResult);
       });
 
       it('let x = 4 + 4;', () => {
         const code = 'let x = 4 + 4;';
-        const tokens = tokenize(code).slice(1); // remove 'let'
-        const li = list(tokens);
-        const result = parseLetStatement(li);
+        const tokens = tokenize(code);
+        const result = parse(tokens);
         const expectedResult = {
-          type: 'LetDeclaration',
-          id: {
-            type: 'IDENTIFIER',
-            name: 'x',
-          },
-          statement: {
-            type: 'BinaryExpression',
-            left: {
-              value: {
-                type: 'INTEGER',
-                literal: '4',
-                meta: {
-                  ln: 1,
-                  col: 9,
-                  realPosition: 8,
+          type: 'Program',
+          body: [
+            {
+              type: 'LetDeclaration',
+              id: {
+                type: 'IDENTIFIER',
+                name: 'x',
+              },
+              statement: {
+                type: 'BinaryExpression',
+                left: {
+                  value: {
+                    type: 'INTEGER',
+                    literal: '4',
+                    meta: {
+                      ln: 1,
+                      col: 9,
+                      realPosition: 8,
+                    },
+                  },
+                },
+                value: {
+                  type: 'PLUS',
+                  literal: '+',
+                  meta: {
+                    ln: 1,
+                    col: 11,
+                    realPosition: 10,
+                  },
+                },
+                right: {
+                  value: {
+                    type: 'INTEGER',
+                    literal: '4',
+                    meta: {
+                      ln: 1,
+                      col: 13,
+                      realPosition: 12,
+                    },
+                  },
                 },
               },
             },
-            value: {
-              type: 'PLUS',
-              literal: '+',
-              meta: {
-                ln: 1,
-                col: 11,
-                realPosition: 10,
-              },
-            },
-            right: {
-              value: {
-                type: 'INTEGER',
-                literal: '4',
-                meta: {
-                  ln: 1,
-                  col: 13,
-                  realPosition: 12,
-                },
-              },
-            },
-          },
+          ],
         };
         expect(result).to.deep.equal(expectedResult);
       });
@@ -295,12 +321,12 @@ let numOne = 100;
 let numTwo = 200;
 `;
         const tokens = tokenize(code);
-        const ast = parse(tokens);
-        expect(ast.body.length).to.eql(2);
-        expect(ast.body[0].id.name).to.equal('numOne');
-        expect(ast.body[0].statement.expression.literal).to.equal('100');
-        expect(ast.body[1].id.name).to.equal('numTwo');
-        expect(ast.body[1].statement.expression.literal).to.equal('200');
+        const result = parse(tokens);
+        expect(result.body.length).to.eql(2);
+        expect(result.body[0].id.name).to.equal('numOne');
+        expect(result.body[0].statement.expression.literal).to.equal('100');
+        expect(result.body[1].id.name).to.equal('numTwo');
+        expect(result.body[1].statement.expression.literal).to.equal('200');
       });
     });
 
