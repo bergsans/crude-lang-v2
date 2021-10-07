@@ -75,7 +75,7 @@ describe('Evaluate', () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = _parseBinaryExpression(li);
-        const result = evaluateBinaryExpression(parsed);
+        const result = evaluateBinaryExpression(parsed, {});
         expect(result).to.eq(expectedResult);
       });
     }
@@ -117,9 +117,10 @@ describe('Evaluate', () => {
       [
         `
 let x = 3;
-return x;
+let y = 44;
+return y;
       }`,
-        3,
+        44,
       ],
       [
         `
@@ -128,9 +129,28 @@ return x + 3;
       }`,
         6,
       ],
+      [
+        `
+if(3 > 2) {
+  let x = 3;
+}
+return x;
+      }`,
+        false,
+      ],
+      [
+        `
+let x = 3;
+if(3 > 2) {
+  let y = 3;
+}
+return x;
+      }`,
+        3,
+      ],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code.replace('\n', '')} is ${expectedResult}`, () => {
+      it(`${code.trim().replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
@@ -167,7 +187,7 @@ if(5 > 3) {
       ],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code.replace('\n', '')} is ${expectedResult}`, () => {
+      it(`${code.trim().replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
@@ -183,7 +203,7 @@ if(5 > 3) {
       ['if(1 < 2) { return 555; }', 555],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code.replace('\n', '')} is ${expectedResult}`, () => {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const parsed = parse(tokens);
         const result = evaluate(parsed);

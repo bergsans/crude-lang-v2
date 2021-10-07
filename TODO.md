@@ -1,7 +1,5 @@
 TODO:
 
-* [x] if-else - only if
-* [x] environment (let) - only global
 * [ ] function
 * [ ] string
 * [ ] built-in functions
@@ -10,3 +8,4 @@ TODO:
 * [ ] while
 * [ ] for
 * [ ] errors
+* [ ] else

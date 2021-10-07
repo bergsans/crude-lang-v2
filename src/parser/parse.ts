@@ -48,6 +48,11 @@ export interface Expression extends NodeTree {
   argument?: Expression;
 }
 
+export type BlockStatement = {
+  type: string;
+  statements: Statement[];
+};
+
 interface Identifier {
   type: string;
   name: string;
