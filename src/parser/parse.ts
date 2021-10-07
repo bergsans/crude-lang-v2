@@ -1,13 +1,10 @@
 import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
-  SEMICOLON,
   LET,
   ASSIGN,
   RETURN_STATEMENT,
-  BOOLEAN,
   IF,
-  INTEGER,
   NIL,
   IDENTIFIER,
 } from '../lexer/token-types';
@@ -26,7 +23,14 @@ import {
   END_OF_STATEMENT,
   OPEN_GROUPED_EXPRESSION,
 } from './parse-types';
-import { isOperatorType, isPeekToken } from '../utils/predicates';
+import {
+  isArithmeticOperatorAndGroupedExpression,
+  isPrimitiveAndEndOfStatement,
+  isPartOfBinaryExpression,
+  isIdentifierAndEndOfStatement,
+  isInfixNotAndBoolean,
+  isInfixNotAndGroupedExpression,
+} from '../utils/predicates';
 import { list, List } from '../utils/list';
 
 type Value = Token;
@@ -65,7 +69,7 @@ export interface Statement {
   expression?: Expression;
 }
 
-interface AST {
+export interface AST {
   type: 'Program';
   body: Statement[];
 }
@@ -160,15 +164,12 @@ export function parseLiteralExpression(token: Token) {
 
 // TODO: refactor -> create predicates
 export function parseExpressionStatement(li: List<Token>) {
-  if (
-    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
-    isPeekToken(li.lookAt(1), END_OF_STATEMENT)
-  ) {
+  if (isPrimitiveAndEndOfStatement(li)) {
     const currentToken = li.next();
     li.next();
     return parseLiteralExpression(currentToken);
   }
-  if (isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN) {
+  if (isInfixNotAndBoolean(li)) {
     li.next();
     return {
       type: UnaryExpression,
@@ -176,10 +177,7 @@ export function parseExpressionStatement(li: List<Token>) {
       argument: parseExpressionStatement(li),
     };
   }
-  if (
-    isPeekToken(li.head(), INFIX_NOT) &&
-    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
-  ) {
+  if (isInfixNotAndGroupedExpression(li)) {
     li.next();
     return {
       type: UnaryExpression,
@@ -187,10 +185,7 @@ export function parseExpressionStatement(li: List<Token>) {
       argument: parseExpressionStatement(li),
     };
   }
-  if (
-    INFIX_ARITHMETIC_TYPES.includes(li.head().type) &&
-    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
-  ) {
+  if (isArithmeticOperatorAndGroupedExpression(li)) {
     const type = li.head().type;
     li.next();
     return {
@@ -199,16 +194,10 @@ export function parseExpressionStatement(li: List<Token>) {
       argument: parseExpressionStatement(li),
     };
   }
-  if (
-    isPeekToken(li.head(), INTEGER) ||
-    isPeekToken(li.head(), IDENTIFIER) ||
-    (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
-    isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
-    INFIX_ARITHMETIC_TYPES.includes(li.head().type)
-  ) {
+  if (isPartOfBinaryExpression(li)) {
     return _parseBinaryExpression(li);
   }
-  if (li.head().type === IDENTIFIER && li.lookAt(1).type === SEMICOLON) {
+  if (isIdentifierAndEndOfStatement(li)) {
     const currentToken = li.next();
     li.next();
     return {

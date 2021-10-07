@@ -19,6 +19,16 @@ import {
 import { isNodeType, isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 
+interface LexicalScope {
+  [key: string]: any;
+}
+
+export interface Environment {
+  scope: LexicalScope;
+  parent: LexicalScope;
+  get(key: string): any;
+}
+
 const evaluateUnaryExpression = {
   NOT: (node: Expression) => !evaluate(node.argument),
   MINUS: (node: Expression) => -evaluate(node.argument),
@@ -26,16 +36,13 @@ const evaluateUnaryExpression = {
 };
 
 const evaluateLiteralExpression = {
-  BOOLEAN: (literal: string, context) => {
-    return literal === RESERVED_KEYWORDS.TRUE ? true : false;
-  },
-  INTEGER: (literal: string, context) => parseInt(literal, 10),
-  IDENTIFIER: (literal: string, context) => {
-    return context.get(literal);
-  },
+  BOOLEAN: (literal: string, context: Environment) =>
+    literal === RESERVED_KEYWORDS.TRUE ? true : false,
+  INTEGER: (literal: string, context: Environment) => parseInt(literal, 10),
+  IDENTIFIER: (literal: string, context: Environment) => context.get(literal),
 };
 
-export function evaluateBinaryExpression(node: NodeTree, context: any) {
+export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
     return evaluateLiteralExpression[node.value.type](
       node.value.literal,
@@ -50,7 +57,7 @@ export function evaluateBinaryExpression(node: NodeTree, context: any) {
   }
 }
 
-function environment(scope: any, parent?: any) {
+function environment(scope: LexicalScope, parent?: LexicalScope): Environment {
   return {
     scope,
     parent,
@@ -68,7 +75,7 @@ export function evaluateIfStatement(
     condition: Expression;
     consequence: BlockStatementType;
   },
-  context
+  context: Environment
 ) {
   const condition = evaluate(node.condition, context);
   if (condition) {
@@ -79,7 +86,10 @@ export function evaluateIfStatement(
   return NIL;
 }
 
-function evaluateBlockStatements(statements: Statement[], context) {
+function evaluateBlockStatements(
+  statements: Statement[],
+  context: Environment
+) {
   const localEnvironment = environment(context);
   for (const statement of statements) {
     const result = evaluate(statement, localEnvironment);
@@ -90,11 +100,11 @@ function evaluateBlockStatements(statements: Statement[], context) {
   return NIL;
 }
 
-function evaluateReturnStatement(node, context) {
+function evaluateReturnStatement(node, context: Environment) {
   return evaluate(node.value, context);
 }
 
-function evaluateLetDeclaration(node, context) {
+function evaluateLetDeclaration(node, context: Environment) {
   if (!context.get(node.id.name)) {
     context.scope[node.id.name] = evaluate(node.statement, context);
   }
@@ -102,13 +112,17 @@ function evaluateLetDeclaration(node, context) {
 }
 
 const evaluateTypes = {
-  [ReturnStatement]: (node, context) => evaluateReturnStatement(node, context),
-  [IfStatement]: (node, context) => evaluateIfStatement(node, context),
-  [UnaryExpression]: (node, context) =>
+  [LetDeclaration]: (node, context: Environment) =>
+    evaluateLetDeclaration(node, context),
+  [ReturnStatement]: (node, context: Environment) =>
+    evaluateReturnStatement(node, context),
+  [IfStatement]: (node, context: Environment) =>
+    evaluateIfStatement(node, context),
+  [UnaryExpression]: (node, context: Environment) =>
     evaluateUnaryExpression[node.literal](node, context),
-  [BinaryExpression]: (node, context) =>
+  [BinaryExpression]: (node, context: Environment) =>
     evaluateBinaryExpression(node, context),
-  [ExpressionStatement]: (node, context) => {
+  [ExpressionStatement]: (node, context: Environment) => {
     return evaluateLiteralExpression[node.expression.type](
       node.expression.literal,
       context
@@ -119,9 +133,6 @@ const evaluateTypes = {
 export function evaluate(node, context = environment({})) {
   if (node.body || isNodeType(node, BlockStatement)) {
     return evaluateBlockStatements(node.body, context);
-  }
-  if (node.type === LetDeclaration) {
-    return evaluateLetDeclaration(node, context);
   }
   if (node.type in evaluateTypes) {
     return evaluateTypes[node.type](node, context);

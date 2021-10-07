@@ -2,6 +2,9 @@ import {
   NUL,
   L_BRACE,
   R_BRACE,
+  IDENTIFIER,
+  BOOLEAN,
+  INTEGER,
   DIVISION,
   BANG,
   AND_SIGN,
@@ -19,13 +22,19 @@ import {
   GREATER_THAN,
   LOWER_THAN,
   SPACE,
-  RETURN_STATEMENT,
   RETURN,
   NEW_LINE,
   TAB,
 } from '../lexer/token-types';
+import { List } from '../utils/list';
 import { peekCharacter, Token, NextToken } from '../lexer/tokenize';
 import { Expression } from '../parser/parse';
+import {
+  INFIX_ARITHMETIC_TYPES,
+  INFIX_NOT,
+  END_OF_STATEMENT,
+  OPEN_GROUPED_EXPRESSION,
+} from '../parser/parse-types';
 import RESERVED_KEYWORD from '../lexer/reserved-keywords';
 
 type Predicate<T> = (x: T, y?: T) => boolean;
@@ -190,5 +199,46 @@ export function isSingleSign(character: string) {
   return isOr(
     [isNot, isAssign, isBrace, isParens, isOperator, isSemicolon],
     character
+  );
+}
+
+export function isPrimitiveAndEndOfStatement(li: List<Token>) {
+  return (
+    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
+    isPeekToken(li.lookAt(1), END_OF_STATEMENT)
+  );
+}
+
+export function isInfixNotAndBoolean(li: List<Token>) {
+  return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN;
+}
+
+export function isInfixNotAndGroupedExpression(li: List<Token>) {
+  return (
+    isPeekToken(li.head(), INFIX_NOT) &&
+    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
+  );
+}
+
+export function isArithmeticOperatorAndGroupedExpression(li: List<Token>) {
+  return (
+    INFIX_ARITHMETIC_TYPES.includes(li.head().type) &&
+    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
+  );
+}
+
+export function isIdentifierAndEndOfStatement(li: List<Token>) {
+  return (
+    li.head().type === IDENTIFIER && li.lookAt(1).type === END_OF_STATEMENT
+  );
+}
+
+export function isPartOfBinaryExpression(li: List<Token>) {
+  return (
+    isPeekToken(li.head(), INTEGER) ||
+    isPeekToken(li.head(), IDENTIFIER) ||
+    (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
+    isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
+    INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   );
 }

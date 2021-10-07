@@ -5,7 +5,11 @@ import {
   parseExpressionStatement,
   parse,
 } from '../src/parser/parse';
-import { evaluateBinaryExpression, evaluate } from '../src/evaluator/evaluate';
+import {
+  Environment,
+  evaluateBinaryExpression,
+  evaluate,
+} from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
 
 type Example = [string, any];
@@ -75,7 +79,7 @@ describe('Evaluate', () => {
         const tokens = tokenize(code as string);
         const li = list(tokens);
         const parsed = _parseBinaryExpression(li);
-        const result = evaluateBinaryExpression(parsed, {});
+        const result = evaluateBinaryExpression(parsed, {} as Environment);
         expect(result).to.eq(expectedResult);
       });
     }
