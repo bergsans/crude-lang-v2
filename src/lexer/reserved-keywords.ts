@@ -4,4 +4,5 @@ export default {
   FALSE: 'false',
   IF: 'if',
   RETURN: 'return',
+  DEFINE: 'define',
 };

@@ -39,6 +39,84 @@ describe('Parser', () => {
     expect(parsed).to.deep.equal(expectedResult);
   });
 
+  describe('DefinitionStatement', () => {
+    it('define add(a, b) { return a + b; }', () => {
+      const code = 'define add(a, b) { return a + b; }';
+      const tokens = tokenize(code);
+      const result = parse(tokens);
+      const expectedResult = {
+        type: 'Program',
+        body: [
+          {
+            type: 'DefinitionStatement',
+            name: 'add',
+            params: [
+              {
+                type: 'IDENTIFIER',
+                literal: 'a',
+                meta: {
+                  ln: 1,
+                  col: 12,
+                  realPosition: 11,
+                },
+              },
+              {
+                type: 'IDENTIFIER',
+                literal: 'b',
+                meta: {
+                  ln: 1,
+                  col: 15,
+                  realPosition: 14,
+                },
+              },
+            ],
+            body: [
+              {
+                type: 'ReturnStatement',
+                value: {
+                  type: 'BinaryExpression',
+                  left: {
+                    value: {
+                      type: 'IDENTIFIER',
+                      literal: 'a',
+                      meta: {
+                        ln: 1,
+                        col: 27,
+                        realPosition: 26,
+                      },
+                    },
+                  },
+                  value: {
+                    type: 'PLUS',
+                    literal: '+',
+                    meta: {
+                      ln: 1,
+                      col: 29,
+                      realPosition: 28,
+                    },
+                  },
+                  right: {
+                    value: {
+                      type: 'IDENTIFIER',
+                      literal: 'b',
+                      meta: {
+                        ln: 1,
+                        col: 31,
+                        realPosition: 30,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(result).to.deep.equal(expectedResult);
+    });
+  });
+
   describe('IfStatement', () => {
     it('if(3 > 4) { return 1; }', () => {
       const code = 'if(3 > 4) { return 1; }';

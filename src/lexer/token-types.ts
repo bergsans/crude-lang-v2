@@ -1,9 +1,11 @@
 export const NUL = '\0';
 export const NIL = undefined;
+export const DEFINE = 'DEFINE';
 export const EOF = 'EOF';
 export const IF = 'IF';
 export const LET = 'LET';
 export const RETURN_STATEMENT = 'RETURN';
+export const COMMA = ',';
 export const L_PAREN = '(';
 export const R_PAREN = ')';
 export const PLUS = '+';
@@ -54,6 +56,7 @@ export const characterNames = {
   [L_PAREN]: 'L_PAREN',
   [R_PAREN]: 'R_PAREN',
   [SEMICOLON]: 'SEMICOLON',
+  [COMMA]: 'COMMA',
   [AND]: 'AND',
   [OR]: 'OR',
   [L_BRACE]: 'L_BRACE',

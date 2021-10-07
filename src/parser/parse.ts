@@ -2,7 +2,13 @@ import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
   LET,
+  L_BRACE,
+  R_BRACE,
+  L_PAREN,
+  R_PAREN,
+  COMMA,
   ASSIGN,
+  DEFINE,
   RETURN_STATEMENT,
   IF,
   NIL,
@@ -13,6 +19,7 @@ import {
   BinaryExpression,
   LetDeclaration,
   ExpressionStatement,
+  DefinitionStatement,
   BlockStatement,
   IfStatement,
   ReturnStatement,
@@ -24,6 +31,7 @@ import {
   OPEN_GROUPED_EXPRESSION,
 } from './parse-types';
 import {
+  isPeekToken,
   isArithmeticOperatorAndGroupedExpression,
   isPrimitiveAndEndOfStatement,
   isPartOfBinaryExpression,
@@ -162,7 +170,7 @@ export function parseLiteralExpression(token: Token) {
   };
 }
 
-// TODO: refactor -> create predicates
+// TODO: refactor -> create predicates -> producer (like token handler)
 export function parseExpressionStatement(li: List<Token>) {
   if (isPrimitiveAndEndOfStatement(li)) {
     const currentToken = li.next();
@@ -269,8 +277,43 @@ export function parseReturnStatement(li: List<Token>) {
   };
 }
 
+export function parseDefinitionStatement(li: List<Token>) {
+  const name = li.next();
+  if (name.type !== IDENTIFIER) {
+    throw new Error('Expected definition name.');
+  }
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const params = [];
+  while (!isPeekToken(li.head(), 'R_PAREN')) {
+    if (!isPeekToken(li.head(), IDENTIFIER)) {
+      throw new Error('Expected definition parameter.');
+    }
+    const currentToken = li.next();
+    params.push(currentToken);
+    if (isPeekToken(li.head(), 'COMMA')) {
+      li.next();
+    }
+  }
+  li.next();
+  if (!isPeekToken(li.head(), 'L_BRACE')) {
+    throw new Error('Expected definition body.');
+  }
+  li.next();
+  const body = parseBlockStatement(li);
+  return {
+    type: DefinitionStatement,
+    name: name.literal,
+    params,
+    body,
+  };
+}
+
 const statementTypes = {
   [RETURN_STATEMENT]: (li: List<Token>) => parseReturnStatement(li),
+  [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),
 };

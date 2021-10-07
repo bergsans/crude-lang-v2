@@ -1,4 +1,5 @@
 import {
+  COMMA,
   NUL,
   L_BRACE,
   R_BRACE,
@@ -111,6 +112,11 @@ export function isAssign(currentCharacter: string) {
 export function isBrace(currentCharacter: string) {
   return [L_BRACE, R_BRACE].includes(currentCharacter);
 }
+
+export function isComma(currentCharacter: string) {
+  return currentCharacter === COMMA;
+}
+
 export function isParens(currentCharacter: string) {
   return [L_PAREN, R_PAREN].includes(currentCharacter);
 }
@@ -165,6 +171,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.LET,
     RESERVED_KEYWORD.FALSE,
     RESERVED_KEYWORD.TRUE,
+    RESERVED_KEYWORD.DEFINE,
     RESERVED_KEYWORD.IF,
     RESERVED_KEYWORD.RETURN,
   ].includes(nextToken.name);
@@ -197,7 +204,7 @@ export function isComparisonOperator(
 
 export function isSingleSign(character: string) {
   return isOr(
-    [isNot, isAssign, isBrace, isParens, isOperator, isSemicolon],
+    [isNot, isAssign, isComma, isBrace, isParens, isOperator, isSemicolon],
     character
   );
 }

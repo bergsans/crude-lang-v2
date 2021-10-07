@@ -7,6 +7,7 @@ export const IfStatement = 'IfStatement';
 export const ReturnStatement = 'ReturnStatement';
 export const BlockStatement = 'BlockStatement';
 export const Program = 'Program';
+export const DefinitionStatement = 'DefinitionStatement';
 
 export const INFIX_ARITHMETIC_TYPES = ['MINUS', 'PLUS'];
 export const LITERAL_PRIMITIVES = ['BOOLEAN', 'INTEGER'];
