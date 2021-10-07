@@ -2,13 +2,7 @@
 
 import { createInterface } from 'readline';
 
-import { evaluateBinaryExpression } from '../evaluator/evaluate';
-import { _parseBinaryExpression } from '../parser/parse';
-import { tokenize } from '../lexer/tokenize';
-import { list } from '../utils/list';
-
-const interpret = (inp: string) =>
-  evaluateBinaryExpression(_parseBinaryExpression(list(tokenize(inp))));
+import interpret from '../index';
 
 const repl = createInterface({
   input: process.stdin,
