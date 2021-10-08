@@ -174,6 +174,16 @@ return x;
       ],
       [
         `
+let x = 5;
+let y = 4;
+if(x > y) {
+  return 55;
+}
+return 44;`,
+        55,
+      ],
+      [
+        `
 if(5 > 3) {
   if(10 > 4) {
     return 999;

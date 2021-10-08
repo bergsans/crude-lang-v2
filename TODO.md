@@ -1,7 +1,6 @@
 TODO:
 
-* [ ] fix bug: if(y == 3) not possible
-* [ ] function
+* [ ] function and function call 
 * [ ] string
 * [ ] built-in functions
 * [ ] array
