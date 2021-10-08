@@ -71,7 +71,10 @@ interface Identifier {
 }
 
 export interface Statement {
-  type: typeof LetDeclaration | typeof ExpressionStatement;
+  type:
+    | typeof LetDeclaration
+    | typeof ExpressionStatement
+    | typeof BinaryExpression;
   statement: Statement;
   id?: Identifier;
   expression?: Expression;

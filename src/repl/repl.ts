@@ -2,8 +2,9 @@
 
 import { createInterface } from 'readline';
 
-import interpret from '../index';
-
+import methods from '../index';
+import { list } from '../utils/list';
+const { interpret, tokenize, parse, environment, evaluate } = methods;
 const repl = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -49,10 +50,27 @@ console.log(msg);
   });
 })();
 
+const replContext = environment({});
+
 function handleUserInput(inp: string) {
   try {
-    const input = inp.endsWith(';') ? inp : inp + ';';
-    console.log(interpret(input));
+    const input = inp.endsWith(';') ? inp : `${inp};`;
+    const tokens = tokenize(input);
+    if ([1, 2].includes(tokens.length)) {
+      if (tokens[0].type === 'IDENTIFIER') {
+        console.log(replContext[tokens[0].literal]);
+      } else {
+        console.log(tokens[0].literal);
+      }
+      return;
+    }
+    const ast = parse(tokens);
+    if (ast.body.length === 1 && ast.body[0].type === 'BinaryExpression') {
+      const inputWithReturn = `return ${input}`;
+      console.log(evaluate(parse(tokenize(inputWithReturn)), replContext));
+    } else {
+      console.log(interpret(input, replContext));
+    }
   } catch (e) {
     console.log(e);
   }

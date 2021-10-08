@@ -211,7 +211,9 @@ export function isSingleSign(character: string) {
 
 export function isPrimitiveAndEndOfStatement(li: List<Token>) {
   return (
-    (isPeekToken(li.head(), INTEGER) || isPeekToken(li.head(), BOOLEAN)) &&
+    (isPeekToken(li.head(), INTEGER) ||
+      isPeekToken(li.head(), 'IDENTIFIER') ||
+      isPeekToken(li.head(), BOOLEAN)) &&
     isPeekToken(li.lookAt(1), END_OF_STATEMENT)
   );
 }

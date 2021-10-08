@@ -30,9 +30,12 @@ export interface Environment {
 }
 
 const evaluateUnaryExpression = {
-  NOT: (node: Expression) => !evaluate(node.argument),
-  MINUS: (node: Expression) => -evaluate(node.argument),
-  PLUS: (node: Expression) => +evaluate(node.argument),
+  NOT: (node: Expression, context: Environment) =>
+    !evaluate(node.argument, context),
+  MINUS: (node: Expression, context: Environment) =>
+    -evaluate(node.argument, context),
+  PLUS: (node: Expression, context: Environment) =>
+    +evaluate(node.argument, context),
 };
 
 const evaluateLiteralExpression = {
@@ -57,7 +60,10 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   }
 }
 
-function environment(scope: LexicalScope, parent?: LexicalScope): Environment {
+export function environment(
+  scope: LexicalScope,
+  parent?: LexicalScope
+): Environment {
   return {
     scope,
     parent,
@@ -106,7 +112,9 @@ function evaluateReturnStatement(node, context: Environment) {
 
 function evaluateLetDeclaration(node, context: Environment) {
   if (!context.get(node.id.name)) {
-    context.scope[node.id.name] = evaluate(node.statement, context);
+    const value = evaluate(node.statement, context);
+    context.scope[node.id.name] = value;
+    //return value;
   }
   return NIL;
 }

@@ -9,5 +9,4 @@ TODO:
 * [ ] for
 * [ ] errors
 * [ ] else
-* [ ] fix repl (now you have to return expressions...)
 * [ ] cli
