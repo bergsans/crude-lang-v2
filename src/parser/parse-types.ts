@@ -1,6 +1,7 @@
 export const UnaryExpression = 'UnaryExpression';
 export const ExpressionStatement = 'ExpressionStatement';
 export const BinaryExpression = 'BinaryExpression';
+export const CallExpression = 'CallExpression';
 export const LiteralExpression = 'LiteralExpression';
 export const LetDeclaration = 'LetDeclaration';
 export const IfStatement = 'IfStatement';

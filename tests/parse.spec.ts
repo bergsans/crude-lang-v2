@@ -8,6 +8,48 @@ import {
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
+  it('Parse call-expression', () => {
+    const code = 'add(3, 3);';
+    const tokens = tokenize(code);
+    const parsed = parse(tokens);
+    const expectedResult = {
+      type: 'Program',
+      body: [
+        {
+          type: 'CallExpression',
+          name: 'add',
+          args: [
+            {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'INTEGER',
+                literal: '3',
+                meta: {
+                  ln: 1,
+                  col: 5,
+                  realPosition: 4,
+                },
+              },
+            },
+            {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'INTEGER',
+                literal: '3',
+                meta: {
+                  ln: 1,
+                  col: 8,
+                  realPosition: 7,
+                },
+              },
+            },
+          ],
+        },
+      ],
+    };
+    expect(parsed).to.deep.equal(expectedResult);
+  });
+
   it('Parse let declaration and assignment', () => {
     const code = 'let x = 3;';
     const tokens = tokenize(code);

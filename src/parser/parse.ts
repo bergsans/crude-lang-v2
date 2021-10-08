@@ -36,6 +36,7 @@ import {
   isPrimitiveAndEndOfStatement,
   isPartOfBinaryExpression,
   isIdentifierAndEndOfStatement,
+  isPrimitive,
   isInfixNotAndBoolean,
   isInfixNotAndGroupedExpression,
 } from '../utils/predicates';
@@ -208,6 +209,10 @@ export function parseExpressionStatement(li: List<Token>) {
   if (isPartOfBinaryExpression(li)) {
     return _parseBinaryExpression(li);
   }
+  if (isPrimitive(li)) {
+    const currentToken = li.next();
+    return parseLiteralExpression(currentToken);
+  }
   if (isIdentifierAndEndOfStatement(li)) {
     const currentToken = li.next();
     li.next();
@@ -323,6 +328,25 @@ const statementTypes = {
 
 function parseStatement(li: List<Token>) {
   const currentToken = li.next();
+  if (currentToken.type === 'IDENTIFIER' && li.head().type === 'L_PAREN') {
+    const name = currentToken.literal;
+    li.next();
+    const args = [];
+    while (li.head().type !== 'R_PAREN') {
+      const expression = parseExpressionStatement(li);
+      args.push(expression);
+      if (li.head().type === 'COMMA') {
+        li.next();
+      }
+    }
+    li.next();
+    li.next();
+    return {
+      type: 'CallExpression',
+      name,
+      args,
+    };
+  }
   return currentToken.type in statementTypes
     ? statementTypes[currentToken.type](li)
     : parseExpressionStatement(li);

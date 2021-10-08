@@ -218,6 +218,14 @@ export function isPrimitiveAndEndOfStatement(li: List<Token>) {
   );
 }
 
+export function isPrimitive(li: List<Token>) {
+  return (
+    isPeekToken(li.head(), INTEGER) ||
+    isPeekToken(li.head(), 'IDENTIFIER') ||
+    isPeekToken(li.head(), BOOLEAN)
+  );
+}
+
 export function isInfixNotAndBoolean(li: List<Token>) {
   return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN;
 }
@@ -244,9 +252,10 @@ export function isIdentifierAndEndOfStatement(li: List<Token>) {
 
 export function isPartOfBinaryExpression(li: List<Token>) {
   return (
-    isPeekToken(li.head(), INTEGER) ||
-    isPeekToken(li.head(), IDENTIFIER) ||
-    (isPeekToken(li.head(), BOOLEAN) && isOperatorType(li.lookAt(1).type)) ||
+    ((isPeekToken(li.head(), INTEGER) ||
+      isPeekToken(li.head(), IDENTIFIER) ||
+      isPeekToken(li.head(), BOOLEAN)) &&
+      isOperatorType(li.lookAt(1).type)) ||
     isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
     INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   );
