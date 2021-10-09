@@ -192,14 +192,14 @@ export function parseCallExpression(li: List<Token>) {
 // TODO: refactor -> create predicates -> producer (like token handler)
 export function parseExpressionStatement(li: List<Token>) {
   if (li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
-    //let i = 0;
-    //while (li.get()[i + 2].type !== 'R_PAREN') {
-    //i++;
-    //}
-    //i++;
-    //if (li.get()[i + 2].type === 'PLUS') {
-    //return _parseBinaryExpression(li);
-    //}
+    let i = 0;
+    while (li.get()[i + 2].type !== 'R_PAREN') {
+      i++;
+    }
+    i++;
+    if (li.get()[i + 2].type === 'PLUS') {
+      return _parseBinaryExpression(li);
+    }
     return parseCallExpression(li);
   }
   if (isPrimitiveAndEndOfStatement(li)) {

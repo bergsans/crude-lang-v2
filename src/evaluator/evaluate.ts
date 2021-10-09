@@ -139,7 +139,7 @@ function evaluateCallExpression(node, context: Environment) {
   const updateEnv = params.reduce(
     (acc, v, i) => ({
       ...acc,
-      [v.literal]: evaluate(node.args[i]),
+      [v.literal]: evaluate(node.args[i], context),
     }),
     env
   );
