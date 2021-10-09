@@ -2,11 +2,6 @@ import { Tokens, Token } from '../lexer/tokenize';
 import {
   characterNames,
   LET,
-  L_BRACE,
-  R_BRACE,
-  L_PAREN,
-  R_PAREN,
-  COMMA,
   ASSIGN,
   DEFINE,
   RETURN_STATEMENT,
@@ -174,8 +169,39 @@ export function parseLiteralExpression(token: Token) {
   };
 }
 
+export function parseCallExpression(li: List<Token>) {
+  const name = li.next().literal;
+  li.next();
+  const args = [];
+  while (li.head().type !== 'R_PAREN') {
+    const expression = parseExpressionStatement(li);
+    args.push(expression);
+    if (li.head().type === 'COMMA') {
+      li.next();
+    }
+  }
+  li.next();
+  li.next();
+  return {
+    type: 'CallExpression',
+    name,
+    args,
+  };
+}
+
 // TODO: refactor -> create predicates -> producer (like token handler)
 export function parseExpressionStatement(li: List<Token>) {
+  if (li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
+    //let i = 0;
+    //while (li.get()[i + 2].type !== 'R_PAREN') {
+    //i++;
+    //}
+    //i++;
+    //if (li.get()[i + 2].type === 'PLUS') {
+    //return _parseBinaryExpression(li);
+    //}
+    return parseCallExpression(li);
+  }
   if (isPrimitiveAndEndOfStatement(li)) {
     const currentToken = li.next();
     li.next();
@@ -225,6 +251,7 @@ export function parseExpressionStatement(li: List<Token>) {
 }
 
 export function parseLetStatement(li: List<Token>) {
+  li.next();
   let currentToken = li.next();
   if (currentToken.type !== IDENTIFIER) {
     return NIL;
@@ -279,6 +306,7 @@ export function parseIfStatement(li: List<Token>) {
 }
 
 export function parseReturnStatement(li: List<Token>) {
+  li.next();
   return {
     type: ReturnStatement,
     value: parseExpressionStatement(li),
@@ -286,6 +314,7 @@ export function parseReturnStatement(li: List<Token>) {
 }
 
 export function parseDefinitionStatement(li: List<Token>) {
+  li.next();
   const name = li.next();
   if (name.type !== IDENTIFIER) {
     throw new Error('Expected definition name.');
@@ -324,29 +353,11 @@ const statementTypes = {
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),
+  // [IDENTIFIER]: (li: List<Token>) => parseCallExpression(li),
 };
 
 function parseStatement(li: List<Token>) {
-  const currentToken = li.next();
-  if (currentToken.type === 'IDENTIFIER' && li.head().type === 'L_PAREN') {
-    const name = currentToken.literal;
-    li.next();
-    const args = [];
-    while (li.head().type !== 'R_PAREN') {
-      const expression = parseExpressionStatement(li);
-      args.push(expression);
-      if (li.head().type === 'COMMA') {
-        li.next();
-      }
-    }
-    li.next();
-    li.next();
-    return {
-      type: 'CallExpression',
-      name,
-      args,
-    };
-  }
+  const currentToken = li.head();
   return currentToken.type in statementTypes
     ? statementTypes[currentToken.type](li)
     : parseExpressionStatement(li);

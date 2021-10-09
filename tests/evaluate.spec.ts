@@ -225,4 +225,44 @@ if(5 > 3) {
       });
     }
   });
+
+  describe('Define statement & call expression', () => {
+    const examples: Example[] = [
+      ['define add(a, b) { return a + b; } return add(1, 3);', 4],
+      //      ['define add(a, b) { return a + b; } return add(1, 3) + 1;', 5],
+      ['define add(a, b) { return a + b; } return add(1 + 5, 3);', 9],
+      //[
+      //`
+      //define add(a, b) {
+      //return a + b;
+      //}
+
+      //define inc(x) {
+      //return x + 1;
+      //}
+      //`, //return add(1, inc(1));`,
+      //3,
+      //],
+      ['define isOdd(x) { return x % 2 != 0; } return isOdd(5);', true],
+      //[
+      //`
+      //define factorial(x) {
+      //if(x == 0) {
+      //return 1;
+      //}
+      //return x * factorial(x - 1);
+      //}
+      //return factorial(3);`,
+      //4,
+      //],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
+        const tokens = tokenize(code as string);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.eq(expectedResult);
+      });
+    }
+  });
 });

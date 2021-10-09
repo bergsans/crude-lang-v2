@@ -12,6 +12,8 @@ import {
   ExpressionStatement,
   BlockStatement,
   IfStatement,
+  DefinitionStatement,
+  CallExpression,
   LetDeclaration,
   ReturnStatement,
   LITERAL_PRIMITIVES,
@@ -42,7 +44,9 @@ const evaluateLiteralExpression = {
   BOOLEAN: (literal: string, context: Environment) =>
     literal === RESERVED_KEYWORDS.TRUE ? true : false,
   INTEGER: (literal: string, context: Environment) => parseInt(literal, 10),
-  IDENTIFIER: (literal: string, context: Environment) => context.get(literal),
+  IDENTIFIER: (literal: string, context: Environment) => {
+    return context.get(literal);
+  },
 };
 
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
@@ -96,7 +100,7 @@ function evaluateBlockStatements(
   statements: Statement[],
   context: Environment
 ) {
-  const localEnvironment = environment(context);
+  const localEnvironment = environment({}, context);
   for (const statement of statements) {
     const result = evaluate(statement, localEnvironment);
     if (result !== NIL) {
@@ -119,6 +123,30 @@ function evaluateLetDeclaration(node, context: Environment) {
   return NIL;
 }
 
+function evaluateDefinitionStatement(node, context: Environment) {
+  context.scope[node.name] = {
+    env: environment({}),
+    params: node.params,
+    body: node.body,
+  };
+}
+
+function evaluateCallExpression(node, context: Environment) {
+  if (!(node.name in context.scope)) {
+    throw new Error('Unknown definition.');
+  }
+  const { env, params, body } = context.scope[node.name];
+  const updateEnv = params.reduce(
+    (acc, v, i) => ({
+      ...acc,
+      [v.literal]: evaluate(node.args[i]),
+    }),
+    env
+  );
+  const functionEnvironment = environment(updateEnv, context);
+  return evaluateBlockStatements(body, functionEnvironment);
+}
+
 const evaluateTypes = {
   [LetDeclaration]: (node, context: Environment) =>
     evaluateLetDeclaration(node, context),
@@ -136,14 +164,20 @@ const evaluateTypes = {
       context
     );
   },
+  [DefinitionStatement]: (node, context: Environment) => {
+    return evaluateDefinitionStatement(node, context);
+  },
+  [CallExpression]: (node, context: Environment) => {
+    return evaluateCallExpression(node, context);
+  },
 };
 
 export function evaluate(node, context = environment({})) {
-  if (node.body || isNodeType(node, BlockStatement)) {
-    return evaluateBlockStatements(node.body, context);
-  }
   if (node.type in evaluateTypes) {
     return evaluateTypes[node.type](node, context);
+  }
+  if (node.body || isNodeType(node, BlockStatement)) {
+    return evaluateBlockStatements(node.body, context);
   }
   if (LITERAL_PRIMITIVES.includes(node.value.type)) {
     return evaluateLiteralExpression[node.value.type](

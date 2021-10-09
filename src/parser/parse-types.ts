@@ -33,4 +33,5 @@ export const precedence = {
   MULTIPLICATION: 2,
   POWER: 3,
   NOT: 3,
+  L_PAREN: 4,
 };
