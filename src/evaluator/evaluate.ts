@@ -41,9 +41,9 @@ const evaluateUnaryExpression = {
 };
 
 const evaluateLiteralExpression = {
-  BOOLEAN: (literal: string, context: Environment) =>
+  BOOLEAN: (literal: string, _context: Environment) =>
     literal === RESERVED_KEYWORDS.TRUE ? true : false,
-  INTEGER: (literal: string, context: Environment) => parseInt(literal, 10),
+  INTEGER: (literal: string, _context: Environment) => parseInt(literal, 10),
   IDENTIFIER: (literal: string, context: Environment) => {
     return context.get(literal);
   },
@@ -51,6 +51,9 @@ const evaluateLiteralExpression = {
 
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
+    if (node.value.type === 'CallExpression') {
+      return evaluateCallExpression(node.value, context);
+    }
     return evaluateLiteralExpression[node.value.type](
       node.value.literal,
       context
@@ -102,7 +105,7 @@ function evaluateBlockStatements(
 ) {
   const localEnvironment = environment({}, context);
   for (const statement of statements) {
-    const result = evaluate(statement, localEnvironment);
+    const result = evaluate(statement, context); ///localEnvironment);
     if (result !== NIL) {
       return result;
     }
@@ -132,10 +135,10 @@ function evaluateDefinitionStatement(node, context: Environment) {
 }
 
 function evaluateCallExpression(node, context: Environment) {
-  if (!(node.name in context.scope)) {
+  if (!context.get(node.name)) {
     throw new Error('Unknown definition.');
   }
-  const { env, params, body } = context.scope[node.name];
+  const { env, params, body } = context.get(node.name);
   const updateEnv = params.reduce(
     (acc, v, i) => ({
       ...acc,

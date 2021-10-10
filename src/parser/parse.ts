@@ -83,7 +83,7 @@ export interface AST {
 
 type TokenList = List<Token>;
 
-function tree(left: Left, node: Token, right: Right) {
+function tree(left: any, node: any, right: any) {
   return {
     left,
     value: node,
@@ -91,18 +91,25 @@ function tree(left: Left, node: Token, right: Right) {
   };
 }
 
-function nud(li: TokenList, node: Token) {
-  if (node.type === OPEN_GROUPED_EXPRESSION) {
+function nud(li: TokenList) {
+  const head = li.head();
+  if (head.type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
+    const callExpression = parseCallExpression(li);
+    return tree(null, callExpression, null);
+  }
+  if (head.type === OPEN_GROUPED_EXPRESSION) {
+    li.next();
     const expression = parseBinaryExpression(li, 0);
     li.next();
     return expression;
   }
-  if (INFIX_ARITHMETIC_TYPES.includes(node.type)) {
-    const sign = node.literal;
-    node = li.next();
+  if (INFIX_ARITHMETIC_TYPES.includes(head.type)) {
+    const sign = head.literal;
+    const node = li.next();
     node.literal = sign + node.literal;
+    return tree(null, node, null);
   }
-  return tree(null, node, null);
+  return tree(null, li.next(), null);
 }
 
 function led(li: TokenList, left: Left, operator: Token) {
@@ -114,7 +121,7 @@ function led(li: TokenList, left: Left, operator: Token) {
 }
 
 function parseBinaryExpression(li: TokenList, currentPrecedence = 0) {
-  let left = nud(li, li.next());
+  let left = nud(li);
   if (li.head().type === END_OF_STATEMENT) {
     return left;
   }
@@ -181,7 +188,6 @@ export function parseCallExpression(li: List<Token>) {
     }
   }
   li.next();
-  li.next();
   return {
     type: 'CallExpression',
     name,
@@ -200,7 +206,9 @@ export function parseExpressionStatement(li: List<Token>) {
     if (li.get()[i + 2].type === 'PLUS') {
       return _parseBinaryExpression(li);
     }
-    return parseCallExpression(li);
+    const callExpression = parseCallExpression(li);
+    li.next();
+    return callExpression;
   }
   if (isPrimitiveAndEndOfStatement(li)) {
     const currentToken = li.next();
