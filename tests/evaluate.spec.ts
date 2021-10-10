@@ -138,9 +138,8 @@ return x + 3;
 if(3 > 2) {
   let x = 3;
 }
-return x;
-      }`,
-        false,
+return x;`,
+        3,
       ],
       [
         `
@@ -226,23 +225,25 @@ if(5 > 3) {
     }
   });
 
-  describe.only('Define statement & call expression', () => {
+  describe('Define statement & call expression', () => {
     const examples: Example[] = [
       ['define add(a, b) { return a + b; } return add(1, 3);', 4],
       ['define add(a, b) { return a + b; } return add(add(1, 1), 3);', 5],
       ['define add(a, b) { return a + b; } return add(1, 3) + 1;', 5],
       ['define add(a, b) { return a + b; } return add(1 + 5, 3);', 9],
-      //[
-      //`
-      //define add(a, b) {
-      //return a + b;
-      //}
-      //define inc(x) {
-      //return x + 1;
-      //}
-      //return add(1, inc(1));`,
-      //3,
-      //],
+      [
+        `
+      define inc(x) {
+      return x + 1;
+      }
+
+      define add(a, b) {
+      return a + b;
+      }
+      return add(inc(1), 1);
+      `,
+        3,
+      ],
       ['define isOdd(x) { return x % 2 != 0; } return isOdd(5);', true],
       [
         `

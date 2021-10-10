@@ -93,10 +93,6 @@ function tree(left: any, node: any, right: any) {
 
 function nud(li: TokenList) {
   const head = li.head();
-  if (head.type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
-    const callExpression = parseCallExpression(li);
-    return tree(null, callExpression, null);
-  }
   if (head.type === OPEN_GROUPED_EXPRESSION) {
     li.next();
     const expression = parseBinaryExpression(li, 0);
@@ -104,10 +100,14 @@ function nud(li: TokenList) {
     return expression;
   }
   if (INFIX_ARITHMETIC_TYPES.includes(head.type)) {
-    const sign = head.literal;
+    const sign = li.next().literal;
     const node = li.next();
     node.literal = sign + node.literal;
     return tree(null, node, null);
+  }
+  if (head.type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
+    const callExpression = parseCallExpression(li);
+    return tree(null, callExpression, null);
   }
   return tree(null, li.next(), null);
 }
@@ -182,6 +182,7 @@ export function parseCallExpression(li: List<Token>) {
   const args = [];
   while (li.head().type !== 'R_PAREN') {
     const expression = parseExpressionStatement(li);
+    //console.log(JSON.stringify({name, expression}, null, 2))
     args.push(expression);
     if (li.head().type === 'COMMA') {
       li.next();

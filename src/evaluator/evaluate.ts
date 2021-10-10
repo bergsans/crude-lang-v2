@@ -54,6 +54,7 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
     if (node.value.type === 'CallExpression') {
       return evaluateCallExpression(node.value, context);
     }
+    console.log(node.value.type);
     return evaluateLiteralExpression[node.value.type](
       node.value.literal,
       context
@@ -135,6 +136,7 @@ function evaluateDefinitionStatement(node, context: Environment) {
 }
 
 function evaluateCallExpression(node, context: Environment) {
+  //console.log(JSON.stringify({ node, context }, null, 2));
   if (!context.get(node.name)) {
     throw new Error('Unknown definition.');
   }
