@@ -105,7 +105,7 @@ function evaluateBlockStatements(
 ) {
   const localEnvironment = environment({}, context);
   for (const statement of statements) {
-    const result = evaluate(statement, context); ///localEnvironment);
+    const result = evaluate(statement, localEnvironment);
     if (result !== NIL) {
       return result;
     }

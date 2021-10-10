@@ -139,7 +139,7 @@ if(3 > 2) {
   let x = 3;
 }
 return x;`,
-        3,
+        false,
       ],
       [
         `
