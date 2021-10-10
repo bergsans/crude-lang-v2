@@ -1,15 +1,16 @@
 TODO:
 
-* built-in functions:
-   - slice
+* integer to string | string to integer -> parse (one function)
 * array
 * built-in functions:
    - concat array
    - length array
    - slice
-* while
-* object - perhaps
 * errors
+* cli
+
+# perhaps
+* while
 * for
 * else
-* cli
+

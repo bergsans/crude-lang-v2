@@ -212,6 +212,9 @@ if(5 > 3) {
   describe('string & slice statement', () => {
     const examples: Example[] = [
       ['return "Gandalf" + " " + "the White";', 'Gandalf the White'],
+      ['return "Gandalf" + " " + "the White" == "Gandalf the White";', true],
+      ['return "Gandal" == "Gandalf";', false],
+      ['return "Gandal" != "Gandalf";', true],
       ['return length("hello");', 5],
       ['return slice("hello, world", 0, 5);', 'hello'],
       ['return length("hello") + 5;', 10],
@@ -287,6 +290,22 @@ define apply(fn, x) {
 return apply(inc, 3);
 `,
         4,
+      ],
+      [
+        `
+define repeat(repeatMe, numTimes) {
+  define count(n, str) {
+    if(n == 0) {
+      return str;
+    }
+    return count(n - 1, str + repeatMe);
+  }
+  return count(numTimes, "");
+}
+
+return repeat("hello ", 4);
+`,
+        'hello hello hello hello ',
       ],
     ];
     for (const [code, expectedResult] of examples) {
