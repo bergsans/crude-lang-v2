@@ -51,7 +51,7 @@ const evaluateLiteralExpression = {
 
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
-    if (node.value.type === 'CallExpression') {
+    if (node.value.type === CallExpression) {
       return evaluateCallExpression(node.value, context);
     }
     return evaluateLiteralExpression[node.value.type](

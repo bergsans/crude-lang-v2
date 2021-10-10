@@ -230,6 +230,30 @@ export function isInfixNotAndBoolean(li: List<Token>) {
   return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN;
 }
 
+export function isGroupedExpression(token: Token) {
+  return token.type === OPEN_GROUPED_EXPRESSION;
+}
+
+export function isArithmeticInfix(token: Token) {
+  return INFIX_ARITHMETIC_TYPES.includes(token.type);
+}
+
+export function isCallExpression(li: List<Token>) {
+  return li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isCallExpressionInBinaryExpression(li: List<Token>) {
+  let i = 0;
+  while (li.get()[i + 2].type !== 'R_PAREN') {
+    i++;
+  }
+  i++;
+  if (isOperatorType(li.get()[i + 2].type)) {
+    return true;
+  }
+  return false;
+}
+
 export function isInfixNotAndGroupedExpression(li: List<Token>) {
   return (
     isPeekToken(li.head(), INFIX_NOT) &&

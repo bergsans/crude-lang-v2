@@ -10,7 +10,6 @@ import {
   IDENTIFIER,
 } from '../lexer/token-types';
 import {
-  UnaryExpression,
   BinaryExpression,
   LetDeclaration,
   ExpressionStatement,
@@ -20,17 +19,26 @@ import {
   ReturnStatement,
   Program,
   precedence,
-  INFIX_ARITHMETIC_TYPES,
-  INFIX_NOT,
   END_OF_STATEMENT,
-  OPEN_GROUPED_EXPRESSION,
 } from './parse-types';
+import {
+  produceCallExpression,
+  producePrimitive,
+  produceInfixNotAndBoolean,
+  producePrimitiveAndEndOfStatement,
+  produceIdentifierAndEndOfStatement,
+  produceInfixNotAndGroupedExpression,
+  produceArithmeticOperatorAndGroupedExpression,
+} from './parse-helpers';
 import {
   isPeekToken,
   isArithmeticOperatorAndGroupedExpression,
   isPrimitiveAndEndOfStatement,
   isPartOfBinaryExpression,
   isIdentifierAndEndOfStatement,
+  isGroupedExpression,
+  isArithmeticInfix,
+  isCallExpression,
   isPrimitive,
   isInfixNotAndBoolean,
   isInfixNotAndGroupedExpression,
@@ -83,6 +91,29 @@ export interface AST {
 
 type TokenList = List<Token>;
 
+type ParseExpressionPredicate = (li: List<Token>) => boolean;
+
+type ParseExpressionProducer = any; // Fix node types
+
+type ParseExpressionHandler = [
+  ParseExpressionPredicate,
+  ParseExpressionProducer
+];
+
+const parseExpressionHandlers: ParseExpressionHandler[] = [
+  [isCallExpression, produceCallExpression],
+  [isPrimitiveAndEndOfStatement, producePrimitiveAndEndOfStatement],
+  [isInfixNotAndBoolean, produceInfixNotAndBoolean],
+  [isInfixNotAndGroupedExpression, produceInfixNotAndGroupedExpression],
+  [
+    isArithmeticOperatorAndGroupedExpression,
+    produceArithmeticOperatorAndGroupedExpression,
+  ],
+  [isPartOfBinaryExpression, _parseBinaryExpression],
+  [isPrimitive, producePrimitive],
+  [isIdentifierAndEndOfStatement, produceIdentifierAndEndOfStatement],
+];
+
 function tree(left: any, node: any, right: any) {
   return {
     left,
@@ -93,19 +124,19 @@ function tree(left: any, node: any, right: any) {
 
 function nud(li: TokenList) {
   const head = li.head();
-  if (head.type === OPEN_GROUPED_EXPRESSION) {
+  if (isGroupedExpression(head)) {
     li.next();
     const expression = parseBinaryExpression(li, 0);
     li.next();
     return expression;
   }
-  if (INFIX_ARITHMETIC_TYPES.includes(head.type)) {
+  if (isArithmeticInfix(head)) {
     const sign = li.next().literal;
     const node = li.next();
     node.literal = sign + node.literal;
     return tree(null, node, null);
   }
-  if (head.type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
+  if (isCallExpression(li)) {
     const callExpression = parseCallExpression(li);
     return tree(null, callExpression, null);
   }
@@ -182,7 +213,6 @@ export function parseCallExpression(li: List<Token>) {
   const args = [];
   while (li.head().type !== 'R_PAREN') {
     const expression = parseExpressionStatement(li);
-    //console.log(JSON.stringify({name, expression}, null, 2))
     args.push(expression);
     if (li.head().type === 'COMMA') {
       li.next();
@@ -196,65 +226,11 @@ export function parseCallExpression(li: List<Token>) {
   };
 }
 
-// TODO: refactor -> create predicates -> producer (like token handler)
 export function parseExpressionStatement(li: List<Token>) {
-  if (li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN') {
-    let i = 0;
-    while (li.get()[i + 2].type !== 'R_PAREN') {
-      i++;
+  for (const [predicate, producer] of parseExpressionHandlers) {
+    if (predicate(li)) {
+      return producer(li);
     }
-    i++;
-    if (li.get()[i + 2].type === 'PLUS') {
-      return _parseBinaryExpression(li);
-    }
-    const callExpression = parseCallExpression(li);
-    li.next();
-    return callExpression;
-  }
-  if (isPrimitiveAndEndOfStatement(li)) {
-    const currentToken = li.next();
-    li.next();
-    return parseLiteralExpression(currentToken);
-  }
-  if (isInfixNotAndBoolean(li)) {
-    li.next();
-    return {
-      type: UnaryExpression,
-      literal: INFIX_NOT,
-      argument: parseExpressionStatement(li),
-    };
-  }
-  if (isInfixNotAndGroupedExpression(li)) {
-    li.next();
-    return {
-      type: UnaryExpression,
-      literal: INFIX_NOT,
-      argument: parseExpressionStatement(li),
-    };
-  }
-  if (isArithmeticOperatorAndGroupedExpression(li)) {
-    const type = li.head().type;
-    li.next();
-    return {
-      type: UnaryExpression,
-      literal: type,
-      argument: parseExpressionStatement(li),
-    };
-  }
-  if (isPartOfBinaryExpression(li)) {
-    return _parseBinaryExpression(li);
-  }
-  if (isPrimitive(li)) {
-    const currentToken = li.next();
-    return parseLiteralExpression(currentToken);
-  }
-  if (isIdentifierAndEndOfStatement(li)) {
-    const currentToken = li.next();
-    li.next();
-    return {
-      type: 'Identifier',
-      name: currentToken.literal,
-    };
   }
   return NIL;
 }
@@ -362,7 +338,6 @@ const statementTypes = {
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),
-  // [IDENTIFIER]: (li: List<Token>) => parseCallExpression(li),
 };
 
 function parseStatement(li: List<Token>) {

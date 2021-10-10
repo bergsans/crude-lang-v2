@@ -4,8 +4,13 @@ TODO:
 * built-in functions:
    - concat string
    - length string
-* while
+   - slice
 * array
+* built-in functions:
+   - concat array
+   - length array
+   - slice
+* while
 * object - perhaps
 * errors
 * for
