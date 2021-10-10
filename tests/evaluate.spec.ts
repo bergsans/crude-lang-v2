@@ -256,6 +256,20 @@ define factorial(x) {
 return factorial(10);`,
         3628800,
       ],
+      [
+        `
+define inc(x) {
+  return x + 1;
+}
+
+define apply(fn, x) {
+  return fn(x);
+}
+
+return apply(inc, 3);
+`,
+        4,
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
