@@ -8,8 +8,10 @@ import {
   isSingleSign,
   isComparisonOperator,
   isNUL,
+  isQuoteSign,
 } from '../utils/predicates';
 import {
+  produceString,
   produceNULToken,
   produceComparisionOperatorToken,
   produceIdentifier,
@@ -49,6 +51,7 @@ export interface Data {
 export interface NextToken extends Partial<Data> {
   name?: string;
   number?: string;
+  string?: string;
 }
 
 type Predicate =
@@ -72,6 +75,7 @@ const tokenHandlers: TokenHandler[] = [
   [isSingleSign, produceSingleSign],
   [isASCIIAlphabetic, produceIdentifier],
   [isDigit, produceNumber],
+  [isQuoteSign, produceString],
   [defaultAlwaysTrue, produceUnallowedCharacter],
 ];
 

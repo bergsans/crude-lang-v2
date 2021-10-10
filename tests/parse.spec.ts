@@ -8,6 +8,38 @@ import {
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
+  it('Parse string', () => {
+    const code = 'let name = "Gandalf the White";';
+    const tokens = tokenize(code);
+    const parsed = parse(tokens);
+    const expectedResult = {
+      type: 'Program',
+      body: [
+        {
+          type: 'LetDeclaration',
+          id: {
+            type: 'IDENTIFIER',
+            name: 'name',
+          },
+          statement: {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'STRING',
+              literal: 'Gandalf the White',
+              meta: {
+                ln: 1,
+                col: 12,
+                realPosition: 11,
+              },
+            },
+          },
+        },
+      ],
+    };
+
+    expect(parsed).to.deep.equal(expectedResult);
+  });
+
   it('Parse call-expression', () => {
     const code = 'add(3, 3);';
     const tokens = tokenize(code);

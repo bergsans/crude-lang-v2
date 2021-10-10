@@ -63,6 +63,10 @@ export function isDigit(character: string) {
   return character >= '0' && character <= '9';
 }
 
+export function isQuoteSign(character: string) {
+  return character.toLowerCase() === '"';
+}
+
 export function isUnallowedToken(token: Token) {
   return token.type === UNALLOWED_CHARACTER;
 }
@@ -210,20 +214,11 @@ export function isSingleSign(character: string) {
 }
 
 export function isPrimitiveAndEndOfStatement(li: List<Token>) {
-  return (
-    (isPeekToken(li.head(), INTEGER) ||
-      isPeekToken(li.head(), 'IDENTIFIER') ||
-      isPeekToken(li.head(), BOOLEAN)) &&
-    isPeekToken(li.lookAt(1), END_OF_STATEMENT)
-  );
+  return isPrimitive(li) && isPeekToken(li.lookAt(1), END_OF_STATEMENT);
 }
 
 export function isPrimitive(li: List<Token>) {
-  return (
-    isPeekToken(li.head(), INTEGER) ||
-    isPeekToken(li.head(), 'IDENTIFIER') ||
-    isPeekToken(li.head(), BOOLEAN)
-  );
+  return [INTEGER, 'IDENTIFIER', 'STRING', BOOLEAN].includes(li.head().type);
 }
 
 export function isInfixNotAndBoolean(li: List<Token>) {
@@ -276,10 +271,7 @@ export function isIdentifierAndEndOfStatement(li: List<Token>) {
 
 export function isPartOfBinaryExpression(li: List<Token>) {
   return (
-    ((isPeekToken(li.head(), INTEGER) ||
-      isPeekToken(li.head(), IDENTIFIER) ||
-      isPeekToken(li.head(), BOOLEAN)) &&
-      isOperatorType(li.lookAt(1).type)) ||
+    (isPrimitive(li) && isOperatorType(li.lookAt(1).type)) ||
     isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
     INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   );

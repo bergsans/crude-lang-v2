@@ -209,6 +209,20 @@ if(5 > 3) {
     }
   });
 
+  describe('string statement', () => {
+    const examples: Example[] = [
+      ['return "Gandalf" + " " + "the White";', 'Gandalf the White'],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code} is ${expectedResult}`, () => {
+        const tokens = tokenize(code as string);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.equal(expectedResult);
+      });
+    }
+  });
+
   describe('Return statement', () => {
     const examples: Example[] = [
       ['if(1 < 2) { let x = 3; let y = 4; return x; }', 3],

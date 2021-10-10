@@ -1,6 +1,7 @@
 export const NUL = '\0';
 export const NIL = undefined;
 export const DEFINE = 'DEFINE';
+export const QUOTE_SIGN = '"';
 export const EOF = 'EOF';
 export const IF = 'IF';
 export const LET = 'LET';
@@ -59,6 +60,7 @@ export const characterNames = {
   [COMMA]: 'COMMA',
   [AND]: 'AND',
   [OR]: 'OR',
+  [QUOTE_SIGN]: 'QUOTE_SIGN',
   [L_BRACE]: 'L_BRACE',
   [R_BRACE]: 'R_BRACE',
 };

@@ -17,6 +17,7 @@ import {
   isASCIIAlphabetic,
   isIdentifier,
   isReservedKeyword,
+  isQuoteSign,
 } from '../utils/predicates';
 import { Data, NextToken, Metadata, Token, peekCharacter } from './tokenize';
 import RESERVED_KEYWORDS from './reserved-keywords';
@@ -38,6 +39,8 @@ export function readCharacter(
 const IDENTIFIER_TYPE_NAME = 'name';
 
 const NUMBER_TYPE_NAME = 'number';
+
+const STRING_TYPE_NAME = 'STRING';
 
 function read(
   data: Data,
@@ -201,5 +204,25 @@ export function produceNumber(
   return {
     currentToken: newToken(INTEGER, nextToken.number, meta),
     nextPosition: nextToken.nextPosition,
+  };
+}
+
+export function produceString(
+  input: string,
+  nextPosition: number,
+  character: string,
+  meta: Metadata
+) {
+  let str: string = '';
+  character = input[nextPosition];
+  while (!isQuoteSign(character)) {
+    str += character;
+    nextPosition++;
+    character = input[nextPosition];
+  }
+  nextPosition++;
+  return {
+    nextPosition,
+    currentToken: newToken(STRING_TYPE_NAME, str, meta),
   };
 }
