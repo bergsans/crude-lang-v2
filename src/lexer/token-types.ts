@@ -1,6 +1,8 @@
 export const NUL = '\0';
 export const NIL = undefined;
 export const DEFINE = 'DEFINE';
+export const SLICE = 'SLICE';
+export const LENGTH = 'LENGTH';
 export const QUOTE_SIGN = '"';
 export const EOF = 'EOF';
 export const IF = 'IF';

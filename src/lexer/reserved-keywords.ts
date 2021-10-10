@@ -5,4 +5,6 @@ export default {
   IF: 'if',
   RETURN: 'return',
   DEFINE: 'define',
+  SLICE: 'slice',
+  LENGTH: 'length',
 };

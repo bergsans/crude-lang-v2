@@ -209,9 +209,13 @@ if(5 > 3) {
     }
   });
 
-  describe('string statement', () => {
+  describe('string & slice statement', () => {
     const examples: Example[] = [
       ['return "Gandalf" + " " + "the White";', 'Gandalf the White'],
+      ['return length("hello");', 5],
+      ['return slice("hello, world", 0, 5);', 'hello'],
+      ['return length("hello") + 5;', 10],
+      ['let name = "Gandalf"; return length(name);', 7],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {

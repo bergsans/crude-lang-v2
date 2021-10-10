@@ -1,9 +1,6 @@
 TODO:
 
-* string
 * built-in functions:
-   - concat string
-   - length string
    - slice
 * array
 * built-in functions:

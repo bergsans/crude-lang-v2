@@ -3,6 +3,8 @@ import {
   characterNames,
   LET,
   ASSIGN,
+  SLICE,
+  LENGTH,
   DEFINE,
   RETURN_STATEMENT,
   IF,
@@ -22,6 +24,8 @@ import {
   END_OF_STATEMENT,
 } from './parse-types';
 import {
+  produceSliceStatement,
+  produceLengthStatement,
   produceCallExpression,
   producePrimitive,
   produceInfixNotAndBoolean,
@@ -37,6 +41,8 @@ import {
   isPartOfBinaryExpression,
   isIdentifierAndEndOfStatement,
   isGroupedExpression,
+  isSliceStatement,
+  isLengthStatement,
   isArithmeticInfix,
   isCallExpression,
   isPrimitive,
@@ -101,6 +107,8 @@ type ParseExpressionHandler = [
 ];
 
 const parseExpressionHandlers: ParseExpressionHandler[] = [
+  [isSliceStatement, produceSliceStatement],
+  [isLengthStatement, produceLengthStatement],
   [isCallExpression, produceCallExpression],
   [isPrimitiveAndEndOfStatement, producePrimitiveAndEndOfStatement],
   [isInfixNotAndBoolean, produceInfixNotAndBoolean],
@@ -135,6 +143,10 @@ function nud(li: TokenList) {
     const node = li.next();
     node.literal = sign + node.literal;
     return tree(null, node, null);
+  }
+  if (isLengthStatement(li)) {
+    const expression = parseLengthStatement(li);
+    return tree(null, expression, null);
   }
   if (isCallExpression(li)) {
     const callExpression = parseCallExpression(li);
@@ -292,9 +304,60 @@ export function parseIfStatement(li: List<Token>) {
 
 export function parseReturnStatement(li: List<Token>) {
   li.next();
+  const value = parseExpressionStatement(li);
+  if (li.get().length > 0 && li.head().type === END_OF_STATEMENT) {
+    li.next();
+  }
   return {
     type: ReturnStatement,
-    value: parseExpressionStatement(li),
+    value,
+  };
+}
+
+export function parseSliceStatement(li: List<Token>) {
+  li.next();
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const value = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'COMMA')) {
+    throw new Error('Expected start value.');
+  }
+  li.next();
+  const start = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'COMMA')) {
+    throw new Error('Expected end value.');
+  }
+  li.next();
+  const end = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'R_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  return {
+    type: 'Slice',
+    value,
+    start,
+    end,
+  };
+}
+
+export function parseLengthStatement(li: List<Token>) {
+  li.next();
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const value = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'R_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  // li.next();
+  return {
+    type: 'Length',
+    value,
   };
 }
 
@@ -336,6 +399,8 @@ export function parseDefinitionStatement(li: List<Token>) {
 const statementTypes = {
   [RETURN_STATEMENT]: (li: List<Token>) => parseReturnStatement(li),
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
+  [SLICE]: (li: List<Token>) => parseSliceStatement(li),
+  [LENGTH]: (li: List<Token>) => parseLengthStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),
 };

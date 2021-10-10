@@ -50,8 +50,43 @@ const evaluateLiteralExpression = {
   },
 };
 
+export function evaluateLengthStatement(node, context: Environment) {
+  const value = evaluate(node.value, context);
+  if (typeof value !== 'string') {
+    throw new Error('length expected string.');
+  }
+  return value.length;
+}
+
+export function evaluateSliceStatement(node, context: Environment) {
+  const value = evaluate(node.value, context);
+  if (typeof value !== 'string') {
+    throw new Error('slice expected string for value.');
+  }
+  const start = evaluate(node.start, context);
+  if (typeof start !== 'number') {
+    throw new Error('slice expected number for start.');
+  }
+  if (start < 0) {
+    throw new Error('start value cannot be negative.');
+  }
+  const end = evaluate(node.end, context);
+  if (typeof end !== 'number') {
+    throw new Error('slice expected number for end.');
+  }
+  if (end > value.length) {
+    throw new Error(
+      `End value cannot be greater than value length, ${value.length}.`
+    );
+  }
+  return (value as string).slice(start, end);
+}
+
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
+    if (node.value.type === 'Length') {
+      return evaluateLengthStatement(node.value, context);
+    }
     if (node.value.type === CallExpression) {
       return evaluateCallExpression(node.value, context);
     }
@@ -122,7 +157,6 @@ function evaluateLetDeclaration(node, context: Environment) {
   if (!context.get(node.id.name)) {
     const value = evaluate(node.statement, context);
     context.scope[node.id.name] = value;
-    //return value;
   }
   return NIL;
 }
@@ -168,6 +202,9 @@ const evaluateTypes = {
       context
     );
   },
+  Slice: (node, context: Environment) => evaluateSliceStatement(node, context),
+  Length: (node, context: Environment) =>
+    evaluateLengthStatement(node, context),
   [DefinitionStatement]: (node, context: Environment) => {
     return evaluateDefinitionStatement(node, context);
   },

@@ -1,16 +1,37 @@
 import { Token } from '../lexer/tokenize';
 import { UnaryExpression, INFIX_NOT } from './parse-types';
-import { isCallExpressionInBinaryExpression } from '../utils/predicates';
+import { isInBinaryExpression } from '../utils/predicates';
 import { List } from '../utils/list';
 import {
   _parseBinaryExpression,
   parseCallExpression,
+  parseSliceStatement,
+  parseLengthStatement,
   parseLiteralExpression,
   parseExpressionStatement,
 } from './parse';
 
+export function produceLengthStatement(li: List<Token>) {
+  if (isInBinaryExpression(li)) {
+    const expression = _parseBinaryExpression(li);
+    return expression;
+  }
+  const expression = parseLengthStatement(li);
+  li.next();
+  return expression;
+}
+
+export function produceSliceStatement(li: List<Token>) {
+  if (isInBinaryExpression(li)) {
+    return _parseBinaryExpression(li);
+  }
+  const expression = parseSliceStatement(li);
+  li.next();
+  return expression;
+}
+
 export function produceCallExpression(li: List<Token>) {
-  if (isCallExpressionInBinaryExpression(li)) {
+  if (isInBinaryExpression(li)) {
     return _parseBinaryExpression(li);
   }
   const callExpression = parseCallExpression(li);

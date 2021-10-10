@@ -176,6 +176,8 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.FALSE,
     RESERVED_KEYWORD.TRUE,
     RESERVED_KEYWORD.DEFINE,
+    RESERVED_KEYWORD.SLICE,
+    RESERVED_KEYWORD.LENGTH,
     RESERVED_KEYWORD.IF,
     RESERVED_KEYWORD.RETURN,
   ].includes(nextToken.name);
@@ -237,7 +239,15 @@ export function isCallExpression(li: List<Token>) {
   return li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN';
 }
 
-export function isCallExpressionInBinaryExpression(li: List<Token>) {
+export function isLengthStatement(li: List<Token>) {
+  return li.head().type === 'LENGTH' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isSliceStatement(li: List<Token>) {
+  return li.head().type === 'SLICE' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isInBinaryExpression(li: List<Token>) {
   let i = 0;
   while (li.get()[i + 2].type !== 'R_PAREN') {
     i++;
