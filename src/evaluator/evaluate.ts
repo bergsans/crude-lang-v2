@@ -192,7 +192,7 @@ function evaluateDefinitionStatement(node, context: Environment) {
 
 function evaluateCallExpression(node, context: Environment) {
   if (!context.get(node.name)) {
-    throw new Error('Unknown definition.');
+    throw new Error(`Unknown definition: ${node.name}`);
   }
   const { env, params, body } = context.get(node.name);
   const updateEnv = params.reduce(

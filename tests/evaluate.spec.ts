@@ -390,6 +390,30 @@ return trimStart("  hello");
       ],
       [
         `
+define isOdd(x) {
+  return x % 2 != 0;
+}
+
+define filter(predicate, li) {
+  let liLength = length(li);
+  define loop(list, i) {
+    if(i < liLength) {
+      if(pred(li[i])) {
+        return loop(concat(list, li[i]), i + 1);
+      }
+      return loop(list, i + 1);
+    }
+    return list;
+  }
+  return loop([], 0);
+}
+
+return filter(isOdd, [1,2,3]);
+`,
+        [2, 3, 4],
+      ],
+      [
+        `
 define inc(x) {
   return x + 1;
 }
@@ -437,7 +461,6 @@ return isOneOrTwo(1);
         1,
       ],
       [
-        // why doesn't n == 0 || n == 1 work???
         `
 define fib(n) {
   if((n == 0) || (n == 1)) {
