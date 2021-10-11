@@ -393,7 +393,6 @@ export function parseConcatStatement(li: List<Token>) {
   li.next();
   const secondValue = parseExpressionStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    console.log(li.get());
     throw new Error('Expected closing parenthesis.');
   }
   li.next();
