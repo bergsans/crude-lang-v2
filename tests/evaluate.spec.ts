@@ -398,7 +398,7 @@ define filter(predicate, li) {
   let liLength = length(li);
   define loop(list, i) {
     if(i < liLength) {
-      if(pred(li[i])) {
+      if(predicate(li[i])) {
         return loop(concat(list, li[i]), i + 1);
       }
       return loop(list, i + 1);
@@ -408,9 +408,9 @@ define filter(predicate, li) {
   return loop([], 0);
 }
 
-return filter(isOdd, [1,2,3]);
+return filter(isOdd, [1, 2, 3, 4, 5, 6]);
 `,
-        [2, 3, 4],
+        [1, 3, 5],
       ],
       [
         `
