@@ -25,6 +25,8 @@ interface LexicalScope {
   [key: string]: any;
 }
 
+const debug = (v) => console.log(JSON.stringify(v, null, 2));
+
 export interface Environment {
   scope: LexicalScope;
   parent: LexicalScope;
@@ -50,15 +52,25 @@ const evaluateLiteralExpression = {
   },
 };
 
-export function evaluateLengthStatement(node, context: Environment) {
+function evaluateArray(node, context: Environment) {
+  return node.elements.map((el) => evaluate(el, context));
+}
+
+function evaluateElement(node, context: Environment) {
+  const elements = context.get(node.collection.literal);
+  const index = evaluate(node.index, context);
+  return elements[index];
+}
+
+function evaluateLengthStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
-  if (typeof value !== 'string') {
-    throw new Error('length expected string.');
-  }
+  //if (typeof value !== 'string') {
+  //throw new Error('length expected string.');
+  //}
   return value.length;
 }
 
-export function evaluateSliceStatement(node, context: Environment) {
+function evaluateSliceStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
   if (typeof value !== 'string') {
     throw new Error('slice expected string for value.');
@@ -79,13 +91,16 @@ export function evaluateSliceStatement(node, context: Environment) {
       `End value cannot be greater than value length, ${value.length}.`
     );
   }
-  return (value as string).slice(start, end);
+  return value.slice(start, end);
 }
 
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
     if (node.value.type === 'Length') {
       return evaluateLengthStatement(node.value, context);
+    }
+    if (node.value.type === 'Slice') {
+      return evaluateSliceStatement(node.value, context);
     }
     if (node.value.type === CallExpression) {
       return evaluateCallExpression(node.value, context);
@@ -103,10 +118,7 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   }
 }
 
-export function environment(
-  scope: LexicalScope,
-  parent?: LexicalScope
-): Environment {
+function environment(scope: LexicalScope, parent?: LexicalScope): Environment {
   return {
     scope,
     parent,
@@ -118,7 +130,7 @@ export function environment(
   };
 }
 
-export function evaluateIfStatement(
+function evaluateIfStatement(
   node: {
     type: string;
     condition: Expression;
@@ -151,6 +163,12 @@ function evaluateBlockStatements(
 
 function evaluateReturnStatement(node, context: Environment) {
   return evaluate(node.value, context);
+}
+
+function evaluatePrintStatement(node, context: Environment) {
+  const value = evaluate(node.value, context);
+  console.log(value);
+  return;
 }
 
 function evaluateLetDeclaration(node, context: Environment) {
@@ -202,6 +220,7 @@ const evaluateTypes = {
       context
     );
   },
+  Print: (node, context: Environment) => evaluatePrintStatement(node, context),
   Slice: (node, context: Environment) => evaluateSliceStatement(node, context),
   Length: (node, context: Environment) =>
     evaluateLengthStatement(node, context),
@@ -219,6 +238,12 @@ export function evaluate(node, context = environment({})) {
   }
   if (node.body || isNodeType(node, BlockStatement)) {
     return evaluateBlockStatements(node.body, context);
+  }
+  if (node.type === 'ARRAY') {
+    return evaluateArray(node, context);
+  }
+  if (node.type === 'ELEMENT') {
+    return evaluateElement(node, context);
   }
   if (LITERAL_PRIMITIVES.includes(node.value.type)) {
     return evaluateLiteralExpression[node.value.type](

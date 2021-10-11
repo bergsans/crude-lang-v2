@@ -6,10 +6,58 @@ import {
   _parseBinaryExpression,
   parseCallExpression,
   parseSliceStatement,
+  //  parsePrintStatement,
   parseLengthStatement,
   parseLiteralExpression,
   parseExpressionStatement,
 } from './parse';
+
+//export function producePrintStatement(li: List<Token>) {
+//const expression = parsePrintStatement(li);
+//li.next();
+//return expression;
+//}
+
+export function produceArray(li: List<Token>) {
+  li.next();
+  const elements = [];
+  while (li.head().type !== 'R_BRACKET') {
+    const expression = parseExpressionStatement(li);
+    elements.push(expression);
+    if (li.head().type === 'COMMA') {
+      li.next();
+    }
+  }
+  li.next();
+  if (li.head().type === 'SEMICOLON') {
+    li.next();
+  }
+  return {
+    type: 'ARRAY',
+    elements,
+  };
+}
+
+export function produceArrayIndex(li: List<Token>) {
+  const collection = li.next();
+  if (li.head().type !== 'L_BRACKET') {
+    throw new Error('Expected opening bracket.');
+  }
+  li.next();
+  const index = parseExpressionStatement(li);
+  if (li.head().type !== 'R_BRACKET') {
+    throw new Error('Expected closing bracket.');
+  }
+  li.next();
+  if (li.head().type === 'SEMICOLON') {
+    li.next();
+  }
+  return {
+    type: 'ELEMENT',
+    collection,
+    index,
+  };
+}
 
 export function produceLengthStatement(li: List<Token>) {
   if (isInBinaryExpression(li)) {

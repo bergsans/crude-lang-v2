@@ -198,6 +198,7 @@ if(5 > 3) {
       }`,
         55,
       ],
+      ['if("hello" == "hello") { return 3; }', 3],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.trim().replace(/\n/g, '')} is ${expectedResult}`, () => {
@@ -215,8 +216,26 @@ if(5 > 3) {
       ['return "Gandalf" + " " + "the White" == "Gandalf the White";', true],
       ['return "Gandal" == "Gandalf";', false],
       ['return "Gandal" != "Gandalf";', true],
+      ['let len = length("hello"); if(len == 5) { return "true" }', 'true'],
       ['return length("hello");', 5],
-      ['return slice("hello, world", 0, 5);', 'hello'],
+      ['let name = "Gandalf"; return slice(name, 0, 1);', 'G'],
+      [
+        'let name = "Gandalf"; let len = length(name); return slice(name, 1, len);',
+        'andalf',
+      ],
+      [
+        'let first = slice("hello, world", 0, 1); if(first == "h") { return first; }',
+        'h',
+      ],
+      ['return slice("hello, world", 7, 12);', 'world'],
+      [
+        'let name = "Gandalf"; let len = length(name); let newName = slice(name, 1, len); return newName;',
+        'andalf',
+      ],
+      [
+        'let world = slice("hello, world", 7, 12); if(world == "world") { return "hello"; }',
+        'hello',
+      ],
       ['return length("hello") + 5;', 10],
       ['let name = "Gandalf"; return length(name);', 7],
     ];
@@ -226,6 +245,21 @@ if(5 > 3) {
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.equal(expectedResult);
+      });
+    }
+  });
+
+  describe('Print statement - side effect (check manually)', () => {
+    const examples: Example[] = [
+      ['print(3);', undefined],
+      ['let name = "Gandalf the White"; print(name);', undefined],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
+        const tokens = tokenize(code as string);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.eq(expectedResult);
       });
     }
   });
@@ -242,6 +276,23 @@ if(5 > 3) {
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
+      });
+    }
+  });
+
+  describe('Arrays', () => {
+    const examples: Example[] = [
+      ['return [1, 2, 3];', [1, 2, 3]],
+      ['let nums = [1, 2]; return nums;', [1, 2]],
+      ['let nums = [1, 2, 3, 4, 5]; return nums[2];', 3],
+      ['return length([1, 2, 3, 4]);', 4],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
+        const tokens = tokenize(code as string);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.deep.equal(expectedResult);
       });
     }
   });
@@ -307,12 +358,28 @@ return repeat("hello ", 4);
 `,
         'hello hello hello hello ',
       ],
+      [
+        `
+define trimStart(s) {
+  define count(n) {
+    if(slice(s, n, n + 1)!= " ") {
+      let len = length(s);
+      return slice(s, n, len);
+    }
+    return count(n + 1);
+  }
+  return count(0);
+}
+
+return trimStart("  hello");
+      `,
+        'hello',
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code as string);
         const parsed = parse(tokens);
-        // console.log(JSON.stringify(parsed, null, 2));
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });

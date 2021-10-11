@@ -1,11 +1,10 @@
 TODO:
 
-* integer to string | string to integer -> parse (one function)
-* array
 * built-in functions:
    - concat array
-   - length array
-   - slice
+   - slice array
+* integer to string | string to integer -> parse (one function)
+* standard lib: map, filter etc.
 * errors
 * cli
 

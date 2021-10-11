@@ -1,6 +1,8 @@
 import {
   COMMA,
   NUL,
+  L_BRACKET,
+  R_BRACKET,
   L_BRACE,
   R_BRACE,
   IDENTIFIER,
@@ -117,6 +119,10 @@ export function isBrace(currentCharacter: string) {
   return [L_BRACE, R_BRACE].includes(currentCharacter);
 }
 
+export function isBracket(currentCharacter: string) {
+  return [L_BRACKET, R_BRACKET].includes(currentCharacter);
+}
+
 export function isComma(currentCharacter: string) {
   return currentCharacter === COMMA;
 }
@@ -177,6 +183,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.TRUE,
     RESERVED_KEYWORD.DEFINE,
     RESERVED_KEYWORD.SLICE,
+    RESERVED_KEYWORD.PRINT,
     RESERVED_KEYWORD.LENGTH,
     RESERVED_KEYWORD.IF,
     RESERVED_KEYWORD.RETURN,
@@ -210,13 +217,32 @@ export function isComparisonOperator(
 
 export function isSingleSign(character: string) {
   return isOr(
-    [isNot, isAssign, isComma, isBrace, isParens, isOperator, isSemicolon],
+    [
+      isNot,
+      isAssign,
+      isComma,
+      isBracket,
+      isBrace,
+      isParens,
+      isOperator,
+      isSemicolon,
+    ],
     character
   );
 }
 
 export function isPrimitiveAndEndOfStatement(li: List<Token>) {
   return isPrimitive(li) && isPeekToken(li.lookAt(1), END_OF_STATEMENT);
+}
+
+export function isArrayIndex(li: List<Token>) {
+  return (
+    isPeekToken(li.head(), IDENTIFIER) && li.lookAt(1).type === 'L_BRACKET'
+  );
+}
+
+export function isArray(li: List<Token>) {
+  return isPeekToken(li.head(), 'L_BRACKET');
 }
 
 export function isPrimitive(li: List<Token>) {
@@ -237,6 +263,10 @@ export function isArithmeticInfix(token: Token) {
 
 export function isCallExpression(li: List<Token>) {
   return li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isPrintStatement(li: List<Token>) {
+  return li.head().type === 'PRINT' && li.get()[1].type === 'L_PAREN';
 }
 
 export function isLengthStatement(li: List<Token>) {

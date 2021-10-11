@@ -7,6 +7,7 @@ import {
   LENGTH,
   DEFINE,
   RETURN_STATEMENT,
+  PRINT,
   IF,
   NIL,
   IDENTIFIER,
@@ -25,7 +26,10 @@ import {
 } from './parse-types';
 import {
   produceSliceStatement,
+  //  producePrintStatement,
   produceLengthStatement,
+  produceArray,
+  produceArrayIndex,
   produceCallExpression,
   producePrimitive,
   produceInfixNotAndBoolean,
@@ -42,6 +46,9 @@ import {
   isIdentifierAndEndOfStatement,
   isGroupedExpression,
   isSliceStatement,
+  isArray,
+  isArrayIndex,
+  isPrintStatement,
   isLengthStatement,
   isArithmeticInfix,
   isCallExpression,
@@ -109,6 +116,8 @@ type ParseExpressionHandler = [
 const parseExpressionHandlers: ParseExpressionHandler[] = [
   [isSliceStatement, produceSliceStatement],
   [isLengthStatement, produceLengthStatement],
+  [isArrayIndex, produceArrayIndex],
+  [isArray, produceArray],
   [isCallExpression, produceCallExpression],
   [isPrimitiveAndEndOfStatement, producePrimitiveAndEndOfStatement],
   [isInfixNotAndBoolean, produceInfixNotAndBoolean],
@@ -143,6 +152,10 @@ function nud(li: TokenList) {
     const node = li.next();
     node.literal = sign + node.literal;
     return tree(null, node, null);
+  }
+  if (isSliceStatement(li)) {
+    const expression = parseSliceStatement(li);
+    return tree(null, expression, null);
   }
   if (isLengthStatement(li)) {
     const expression = parseLengthStatement(li);
@@ -343,6 +356,24 @@ export function parseSliceStatement(li: List<Token>) {
   };
 }
 
+export function parsePrintStatement(li: List<Token>) {
+  li.next();
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const value = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'R_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  li.next();
+  return {
+    type: 'Print',
+    value,
+  };
+}
+
 export function parseLengthStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
@@ -354,7 +385,6 @@ export function parseLengthStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  // li.next();
   return {
     type: 'Length',
     value,
@@ -400,6 +430,7 @@ const statementTypes = {
   [RETURN_STATEMENT]: (li: List<Token>) => parseReturnStatement(li),
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [SLICE]: (li: List<Token>) => parseSliceStatement(li),
+  [PRINT]: (li: List<Token>) => parsePrintStatement(li),
   [LENGTH]: (li: List<Token>) => parseLengthStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),

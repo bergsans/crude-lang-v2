@@ -8,6 +8,55 @@ import {
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
+  it('Parse array', () => {
+    const code = 'let nums = [1, 2];';
+    const tokens = tokenize(code);
+    const parsed = parse(tokens);
+    console.log(JSON.stringify(parsed, null, 2));
+    const expectedResult = {
+      type: 'Program',
+      body: [
+        {
+          type: 'LetDeclaration',
+          id: {
+            type: 'IDENTIFIER',
+            name: 'nums',
+          },
+          statement: {
+            type: 'ARRAY',
+            elements: [
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'INTEGER',
+                  literal: '1',
+                  meta: {
+                    ln: 1,
+                    col: 13,
+                    realPosition: 12,
+                  },
+                },
+              },
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'INTEGER',
+                  literal: '2',
+                  meta: {
+                    ln: 1,
+                    col: 16,
+                    realPosition: 15,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    };
+    expect(parsed).to.deep.equal(expectedResult);
+  });
+
   it('Parse string', () => {
     const code = 'let name = "Gandalf the White";';
     const tokens = tokenize(code);

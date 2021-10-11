@@ -3,12 +3,15 @@ export const NIL = undefined;
 export const DEFINE = 'DEFINE';
 export const SLICE = 'SLICE';
 export const LENGTH = 'LENGTH';
+export const PRINT = 'PRINT';
 export const QUOTE_SIGN = '"';
 export const EOF = 'EOF';
 export const IF = 'IF';
 export const LET = 'LET';
 export const RETURN_STATEMENT = 'RETURN';
 export const COMMA = ',';
+export const L_BRACKET = '[';
+export const R_BRACKET = ']';
 export const L_PAREN = '(';
 export const R_PAREN = ')';
 export const PLUS = '+';
@@ -65,4 +68,6 @@ export const characterNames = {
   [QUOTE_SIGN]: 'QUOTE_SIGN',
   [L_BRACE]: 'L_BRACE',
   [R_BRACE]: 'R_BRACE',
+  [L_BRACKET]: 'L_BRACKET',
+  [R_BRACKET]: 'R_BRACKET',
 };
