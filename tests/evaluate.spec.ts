@@ -395,9 +395,8 @@ define isOdd(x) {
 }
 
 define filter(predicate, li) {
-  let liLength = length(li);
   define loop(list, i) {
-    if(i < liLength) {
+    if(i < length(li)) {
       if(predicate(li[i])) {
         return loop(concat(list, li[i]), i + 1);
       }
@@ -419,9 +418,8 @@ define inc(x) {
 }
 
 define map(fn, li) {
-  let liLength = length(li);
   define loop(list, i) {
-    if(i < liLength) {
+    if(i < length(li)) {
       return loop(concat(list, fn(li[i])), i + 1);
     }
     return list;
@@ -432,6 +430,50 @@ define map(fn, li) {
 return map(inc, [1,2,3]);
 `,
         [2, 3, 4],
+      ],
+      [
+        `
+define isOdd(x) {
+  return x % 2 != 0;
+}
+
+define every(predicate, li) {
+  define loop(i) {
+    if(i < length(li)) {
+      if(predicate(li[i]) == false) {
+        return false;
+      }
+      return loop(i + 1);
+    }
+    return true;
+  }
+  return loop(0);
+}
+return every(isOdd, [1,3,5]);
+`,
+        true,
+      ],
+      [
+        `
+define isOdd(x) {
+  return x % 2 != 0;
+}
+
+define some(predicate, li) {
+  define loop(i) {
+    if(i < length(li)) {
+      if(predicate(li[i]) == true) {
+        return true;
+      }
+      return loop(i + 1);
+    }
+    return false;
+  }
+  return loop(0);
+}
+return some(isOdd, [2,2,2,2,3,2]);
+`,
+        true,
       ],
       [
         `
