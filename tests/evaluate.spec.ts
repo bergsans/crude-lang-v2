@@ -477,6 +477,27 @@ return some(isOdd, [2,2,2,2,3,2]);
       ],
       [
         `
+define add(a, b) {
+  return a + b;
+}
+
+define foldl(fn, curr, li) {
+  define loop(i, currentValue) {
+    if(i < length(li)) {
+      return loop(i + 1, fn(currentValue, li[i]));
+    }
+    return currentValue;
+  }
+  return loop(0, curr);
+}
+
+return foldl(add, 0, [1,2,3,4,5]);
+`,
+
+        15,
+      ],
+      [
+        `
 define fib(n) {
   if(n == 0) {
     return 0;
