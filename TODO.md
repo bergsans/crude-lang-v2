@@ -1,7 +1,7 @@
 TODO:
 
 * integer to string | string to integer -> parse (one function)
-* standard lib: map, filter etc. - include in environment (C-ish def file)
+* standard lib: include in environment (C-ish def file)
 * errors
 * cli
 
@@ -10,3 +10,5 @@ TODO:
 * for
 * else
 
+# future
+* add support for canvas graphics
