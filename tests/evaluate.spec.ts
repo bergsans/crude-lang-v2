@@ -375,10 +375,46 @@ define trimStart(s) {
   }
   return count(0);
 }
-
 return trimStart("  hello");
       `,
         'hello',
+      ],
+      [
+        `
+define inc(x) {
+  return x + 1;
+}
+
+define map(fn, li) {
+  let liLength = length(li);
+  define loop(list, i) {
+    if(i < liLength) {
+      return loop(concat(list, fn(li[i])), i + 1);
+    }
+    return list;
+  }
+  return loop([], 0);
+}
+
+return map(inc, [1,2,3]);
+`,
+        [2, 3, 4],
+      ],
+      [
+        // why doesn't n == 0 || n == 1 work???
+        `
+define fib(n) {
+  if(n == 0) {
+    return 0;
+  }
+  if(n == 1) {
+    return 1;
+  }
+  return fib(n - 1) + fib(n - 2);
+}
+return fib(11);
+`,
+        89,
       ],
     ];
     for (const [code, expectedResult] of examples) {
@@ -386,7 +422,7 @@ return trimStart("  hello");
         const tokens = tokenize(code as string);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
-        expect(result).to.eq(expectedResult);
+        expect(result).to.deep.equal(expectedResult);
       });
     }
   });

@@ -351,7 +351,7 @@ export function parseSliceStatement(li: List<Token>) {
   li.next();
   const end = parseExpressionStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error('Expected closing parenthesis.');
   }
   li.next();
   return {
@@ -370,7 +370,7 @@ export function parsePrintStatement(li: List<Token>) {
   li.next();
   const value = parseExpressionStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error('Expected closing parenthesis.');
   }
   li.next();
   li.next();
@@ -393,7 +393,8 @@ export function parseConcatStatement(li: List<Token>) {
   li.next();
   const secondValue = parseExpressionStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    console.log(li.get());
+    throw new Error('Expected closing parenthesis.');
   }
   li.next();
   return {

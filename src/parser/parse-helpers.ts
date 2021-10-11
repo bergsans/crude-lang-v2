@@ -87,7 +87,9 @@ export function produceCallExpression(li: List<Token>) {
     return _parseBinaryExpression(li);
   }
   const callExpression = parseCallExpression(li);
-  li.next();
+  if (li.head().type === 'SEMICOLON') {
+    li.next();
+  }
   return callExpression;
 }
 
