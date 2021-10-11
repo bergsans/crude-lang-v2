@@ -427,7 +427,7 @@ return fib(11);
       [
         `
 define isOneOrTwo(n) {
-  if(n == 1 || n == 2) {
+  if((n == 1) || (n == 2)) {
     return n;
   }
   return false;
@@ -436,12 +436,11 @@ return isOneOrTwo(1);
 `,
         1,
       ],
-      /*
       [
         // why doesn't n == 0 || n == 1 work???
         `
 define fib(n) {
-  if(n == 0 || n == 1) {
+  if((n == 0) || (n == 1)) {
     return n;
   }
   return fib(n - 1) + fib(n - 2);
@@ -450,7 +449,6 @@ return fib(11);
 `,
         89,
       ],
-      */
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
