@@ -25,8 +25,6 @@ interface LexicalScope {
   [key: string]: any;
 }
 
-const debug = (v) => console.log(JSON.stringify(v, null, 2));
-
 export interface Environment {
   scope: LexicalScope;
   parent: LexicalScope;
@@ -62,19 +60,21 @@ function evaluateElement(node, context: Environment) {
   return elements[index];
 }
 
+function evaluateConcatStatement(node, context: Environment) {
+  const [firstValue, secondValue] = node.args;
+  return [].concat(
+    evaluate(firstValue, context),
+    evaluate(secondValue, context)
+  );
+}
+
 function evaluateLengthStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
-  //if (typeof value !== 'string') {
-  //throw new Error('length expected string.');
-  //}
   return value.length;
 }
 
 function evaluateSliceStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
-  if (typeof value !== 'string') {
-    throw new Error('slice expected string for value.');
-  }
   const start = evaluate(node.start, context);
   if (typeof start !== 'number') {
     throw new Error('slice expected number for start.');
@@ -96,6 +96,9 @@ function evaluateSliceStatement(node, context: Environment) {
 
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
+    if (node.value.type === 'Concat') {
+      return evaluateConcatStatement(node.value, context);
+    }
     if (node.value.type === 'Length') {
       return evaluateLengthStatement(node.value, context);
     }
@@ -221,6 +224,8 @@ const evaluateTypes = {
     );
   },
   Print: (node, context: Environment) => evaluatePrintStatement(node, context),
+  Concat: (node, context: Environment) =>
+    evaluateConcatStatement(node, context),
   Slice: (node, context: Environment) => evaluateSliceStatement(node, context),
   Length: (node, context: Environment) =>
     evaluateLengthStatement(node, context),

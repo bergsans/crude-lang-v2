@@ -4,6 +4,7 @@ import {
   LET,
   ASSIGN,
   SLICE,
+  CONCAT,
   LENGTH,
   DEFINE,
   RETURN_STATEMENT,
@@ -26,7 +27,7 @@ import {
 } from './parse-types';
 import {
   produceSliceStatement,
-  //  producePrintStatement,
+  produceConcatStatement,
   produceLengthStatement,
   produceArray,
   produceArrayIndex,
@@ -48,7 +49,7 @@ import {
   isSliceStatement,
   isArray,
   isArrayIndex,
-  isPrintStatement,
+  isConcatStatement,
   isLengthStatement,
   isArithmeticInfix,
   isCallExpression,
@@ -115,6 +116,7 @@ type ParseExpressionHandler = [
 
 const parseExpressionHandlers: ParseExpressionHandler[] = [
   [isSliceStatement, produceSliceStatement],
+  [isConcatStatement, produceConcatStatement],
   [isLengthStatement, produceLengthStatement],
   [isArrayIndex, produceArrayIndex],
   [isArray, produceArray],
@@ -155,6 +157,10 @@ function nud(li: TokenList) {
   }
   if (isSliceStatement(li)) {
     const expression = parseSliceStatement(li);
+    return tree(null, expression, null);
+  }
+  if (isConcatStatement(li)) {
+    const expression = parseConcatStatement(li);
     return tree(null, expression, null);
   }
   if (isLengthStatement(li)) {
@@ -374,6 +380,28 @@ export function parsePrintStatement(li: List<Token>) {
   };
 }
 
+export function parseConcatStatement(li: List<Token>) {
+  li.next();
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const firstValue = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'COMMA')) {
+    throw new Error('Expected another argument.');
+  }
+  li.next();
+  const secondValue = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'R_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  return {
+    type: 'Concat',
+    args: [firstValue, secondValue],
+  };
+}
+
 export function parseLengthStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
@@ -431,6 +459,7 @@ const statementTypes = {
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [SLICE]: (li: List<Token>) => parseSliceStatement(li),
   [PRINT]: (li: List<Token>) => parsePrintStatement(li),
+  [CONCAT]: (li: List<Token>) => parseConcatStatement(li),
   [LENGTH]: (li: List<Token>) => parseLengthStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),

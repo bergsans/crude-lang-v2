@@ -5,18 +5,12 @@ import { List } from '../utils/list';
 import {
   _parseBinaryExpression,
   parseCallExpression,
+  parseConcatStatement,
   parseSliceStatement,
-  //  parsePrintStatement,
   parseLengthStatement,
   parseLiteralExpression,
   parseExpressionStatement,
 } from './parse';
-
-//export function producePrintStatement(li: List<Token>) {
-//const expression = parsePrintStatement(li);
-//li.next();
-//return expression;
-//}
 
 export function produceArray(li: List<Token>) {
   li.next();
@@ -57,6 +51,16 @@ export function produceArrayIndex(li: List<Token>) {
     collection,
     index,
   };
+}
+
+export function produceConcatStatement(li: List<Token>) {
+  if (isInBinaryExpression(li)) {
+    const expression = _parseBinaryExpression(li);
+    return expression;
+  }
+  const expression = parseConcatStatement(li);
+  li.next();
+  return expression;
 }
 
 export function produceLengthStatement(li: List<Token>) {

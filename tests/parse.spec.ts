@@ -12,7 +12,6 @@ describe('Parser', () => {
     const code = 'let nums = [1, 2];';
     const tokens = tokenize(code);
     const parsed = parse(tokens);
-    console.log(JSON.stringify(parsed, null, 2));
     const expectedResult = {
       type: 'Program',
       body: [

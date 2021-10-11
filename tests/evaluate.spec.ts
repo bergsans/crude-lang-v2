@@ -285,7 +285,12 @@ if(5 > 3) {
       ['return [1, 2, 3];', [1, 2, 3]],
       ['let nums = [1, 2]; return nums;', [1, 2]],
       ['let nums = [1, 2, 3, 4, 5]; return nums[2];', 3],
+      [
+        'let nums = [1, 2, 3]; let numsLength = length(nums); return slice(nums, 1, numsLength);',
+        [2, 3],
+      ],
       ['return length([1, 2, 3, 4]);', 4],
+      ['return concat([1, 2, 3], [4]);', [1, 2, 3, 4]],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {

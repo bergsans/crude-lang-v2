@@ -6,6 +6,7 @@ export default {
   RETURN: 'return',
   DEFINE: 'define',
   SLICE: 'slice',
+  CONCAT: 'concat',
   PRINT: 'print',
   LENGTH: 'length',
 };

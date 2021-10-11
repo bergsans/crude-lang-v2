@@ -184,6 +184,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.DEFINE,
     RESERVED_KEYWORD.SLICE,
     RESERVED_KEYWORD.PRINT,
+    RESERVED_KEYWORD.CONCAT,
     RESERVED_KEYWORD.LENGTH,
     RESERVED_KEYWORD.IF,
     RESERVED_KEYWORD.RETURN,
@@ -267,6 +268,10 @@ export function isCallExpression(li: List<Token>) {
 
 export function isPrintStatement(li: List<Token>) {
   return li.head().type === 'PRINT' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isConcatStatement(li: List<Token>) {
+  return li.head().type === 'CONCAT' && li.get()[1].type === 'L_PAREN';
 }
 
 export function isLengthStatement(li: List<Token>) {

@@ -3,6 +3,7 @@ export const NIL = undefined;
 export const DEFINE = 'DEFINE';
 export const SLICE = 'SLICE';
 export const LENGTH = 'LENGTH';
+export const CONCAT = 'CONCAT';
 export const PRINT = 'PRINT';
 export const QUOTE_SIGN = '"';
 export const EOF = 'EOF';
