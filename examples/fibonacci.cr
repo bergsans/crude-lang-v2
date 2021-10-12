@@ -4,4 +4,4 @@ define fib(n) {
   }
   return fib(n - 1) + fib(n - 2);
 }
-return fib(11);
+fib(11);
