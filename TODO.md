@@ -8,4 +8,6 @@ TODO:
 * fix () == ()
 * concat in foldl (*elsewhere_?
 * enums for operators - inspiration:  https://github.com/estree/estree/blob/master/es5.md
-* crude-tools
+* fix array bugs
+* add array indexing: arr[0] = 3;
+* crude-tools - red errors
