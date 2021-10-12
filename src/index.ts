@@ -10,6 +10,6 @@ export default {
   parse,
   parseExpressionStatement,
   interpret,
-  evaluate,
   environment,
+  evaluate,
 };

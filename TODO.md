@@ -1,14 +1,11 @@
 TODO:
 
+* fix types - inspiration: https://github.com/estree/estree/blob/master/es5.md
 * integer to string | string to integer -> parse (one function)
-* standard lib: include in environment (C-ish def file)
-* errors
-* cli
-
-# perhaps
-* while
+* range operator .. in array and for
 * for
-* else
-
-# future
-* add support for canvas graphics
+* Error handling
+* fix () == ()
+* concat in foldl (*elsewhere_?
+* enums for operators - inspiration:  https://github.com/estree/estree/blob/master/es5.md
+* crude-tools

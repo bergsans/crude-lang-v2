@@ -3,8 +3,8 @@
 import { createInterface } from 'readline';
 
 import methods from '../index';
-import { list } from '../utils/list';
-const { interpret, tokenize, parse, environment, evaluate } = methods;
+import importStdLib from '../utils/import-std-lib';
+const { interpret, tokenize, environment, parse, evaluate } = methods;
 const repl = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -36,6 +36,8 @@ function getHelpTexts() {
 }
 const { helpMsg, msg } = getHelpTexts();
 
+let replContext = [];
+
 const commands = {
   ':exit': () => process.exit(0),
   ':help': () => console.log(helpMsg),
@@ -43,34 +45,26 @@ const commands = {
 
 console.log(msg);
 
-(function main() {
-  repl.question('> ', (input) => {
-    input in commands ? commands[input]() : handleUserInput(input);
-    main();
-  });
+(async function initWithStdLib() {
+  const stdLib = await importStdLib();
+  main(stdLib);
 })();
 
-const replContext = environment({});
+function main(stdLib) {
+  repl.question('> ', (input) => {
+    input in commands ? commands[input]() : handleUserInput(input, stdLib);
+    main(stdLib);
+  });
+}
 
-function handleUserInput(inp: string) {
+function handleUserInput(inp: string, stdLib) {
   try {
-    const input = inp.endsWith(';') ? inp : `${inp};`;
-    const tokens = tokenize(input);
-    if ([1, 2].includes(tokens.length)) {
-      if (tokens[0].type === 'IDENTIFIER') {
-        console.log(replContext[tokens[0].literal]);
-      } else {
-        console.log(tokens[0].literal);
-      }
-      return;
+    const input = [...replContext, inp].join('\n');
+    const result = evaluate(parse(tokenize(input), stdLib));
+    if (['let', 'define'].some((expr) => inp.includes(expr))) {
+      replContext.push(inp);
     }
-    const ast = parse(tokens);
-    if (ast.body.length === 1 && ast.body[0].type === 'BinaryExpression') {
-      const inputWithReturn = `return ${input}`;
-      console.log(evaluate(parse(tokenize(inputWithReturn)), replContext));
-    } else {
-      console.log(interpret(input, replContext));
-    }
+    console.log(result);
   } catch (e) {
     console.log(e);
   }

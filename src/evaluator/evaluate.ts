@@ -7,15 +7,8 @@ import {
   NodeTree,
 } from '../parser/parse';
 import {
-  UnaryExpression,
-  BinaryExpression,
-  ExpressionStatement,
   BlockStatement,
-  IfStatement,
-  DefinitionStatement,
   CallExpression,
-  LetDeclaration,
-  ReturnStatement,
   LITERAL_PRIMITIVES,
 } from '../parser/parse-types';
 import { isNodeType, isOperatorType } from '../utils/predicates';
@@ -28,6 +21,7 @@ interface LexicalScope {
 export interface Environment {
   scope: LexicalScope;
   parent: LexicalScope;
+  set(key: string, value: any): any;
   get(key: string): any;
 }
 
@@ -55,6 +49,9 @@ function evaluateArray(node, context: Environment) {
 }
 
 function evaluateElement(node, context: Environment) {
+  if (!context.get(node.collection.literal)) {
+    throw new Error(`Unknown literal: ${node.collection.literal}`);
+  }
   const elements = context.get(node.collection.literal);
   const index = evaluate(node.index, context);
   return elements[index];
@@ -62,10 +59,9 @@ function evaluateElement(node, context: Environment) {
 
 function evaluateConcatStatement(node, context: Environment) {
   const [firstValue, secondValue] = node.args;
-  return [].concat(
-    evaluate(firstValue, context),
-    evaluate(secondValue, context)
-  );
+  const a = evaluate(firstValue, context);
+  const b = evaluate(secondValue, context);
+  return [].concat(a, b);
 }
 
 function evaluateLengthStatement(node, context: Environment) {
@@ -121,10 +117,21 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   }
 }
 
-function environment(scope: LexicalScope, parent?: LexicalScope): Environment {
+export function environment(
+  scope: LexicalScope,
+  parent?: LexicalScope
+): Environment {
   return {
     scope,
     parent,
+    set: (name: string, value) => {
+      if (name in scope) {
+        scope = value;
+      }
+      if (parent !== undefined) {
+        return parent.set(name, value);
+      }
+    },
     get: (name: string) => {
       return name in scope
         ? scope[name]
@@ -175,10 +182,8 @@ function evaluatePrintStatement(node, context: Environment) {
 }
 
 function evaluateLetDeclaration(node, context: Environment) {
-  if (!context.get(node.id.name)) {
-    const value = evaluate(node.statement, context);
-    context.scope[node.id.name] = value;
-  }
+  const value = evaluate(node.statement, context);
+  context.scope[node.id.name] = value;
   return NIL;
 }
 
@@ -188,6 +193,7 @@ function evaluateDefinitionStatement(node, context: Environment) {
     params: node.params,
     body: node.body,
   };
+  return NIL;
 }
 
 function evaluateCallExpression(node, context: Environment) {
@@ -207,17 +213,17 @@ function evaluateCallExpression(node, context: Environment) {
 }
 
 const evaluateTypes = {
-  [LetDeclaration]: (node, context: Environment) =>
+  LetDeclaration: (node, context: Environment) =>
     evaluateLetDeclaration(node, context),
-  [ReturnStatement]: (node, context: Environment) =>
+  ReturnStatement: (node, context: Environment) =>
     evaluateReturnStatement(node, context),
-  [IfStatement]: (node, context: Environment) =>
+  IfStatement: (node, context: Environment) =>
     evaluateIfStatement(node, context),
-  [UnaryExpression]: (node, context: Environment) =>
+  UnaryExpression: (node, context: Environment) =>
     evaluateUnaryExpression[node.literal](node, context),
-  [BinaryExpression]: (node, context: Environment) =>
+  BinaryExpression: (node, context: Environment) =>
     evaluateBinaryExpression(node, context),
-  [ExpressionStatement]: (node, context: Environment) => {
+  ExpressionStatement: (node, context: Environment) => {
     return evaluateLiteralExpression[node.expression.type](
       node.expression.literal,
       context
@@ -229,10 +235,10 @@ const evaluateTypes = {
   Slice: (node, context: Environment) => evaluateSliceStatement(node, context),
   Length: (node, context: Environment) =>
     evaluateLengthStatement(node, context),
-  [DefinitionStatement]: (node, context: Environment) => {
+  DefinitionStatement: (node, context: Environment) => {
     return evaluateDefinitionStatement(node, context);
   },
-  [CallExpression]: (node, context: Environment) => {
+  CallExpression: (node, context: Environment) => {
     return evaluateCallExpression(node, context);
   },
 };

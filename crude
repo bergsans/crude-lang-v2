@@ -1,0 +1,2 @@
+chmod +x .build/src/cli/crude.js
+.build/src/cli/crude.js $(echo "$(pwd)/$1")

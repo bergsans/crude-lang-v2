@@ -58,6 +58,7 @@ import {
   isInfixNotAndGroupedExpression,
 } from '../utils/predicates';
 import { list, List } from '../utils/list';
+import importStdLib from '../utils/import-std-lib';
 
 type Value = Token;
 
@@ -207,12 +208,12 @@ function removeDeadNodes(node: NodeTree) {
   return node;
 }
 
-export function parse(tokens: Tokens): AST {
+export function parse(tokens: Tokens, stdLib?) {
   const li = list(tokens);
   const statements = parseBlockStatement(li);
   return {
     type: Program,
-    body: statements,
+    body: stdLib ? [].concat(stdLib, statements) : statements,
   };
 }
 
@@ -268,6 +269,11 @@ export function parseExpressionStatement(li: List<Token>) {
 
 export function parseLetStatement(li: List<Token>) {
   li.next();
+  const { id, statement } = parseAssignment(li);
+  return { type: LetDeclaration, id, statement };
+}
+
+export function parseAssignment(li: List<Token>) {
   let currentToken = li.next();
   if (currentToken.type !== IDENTIFIER) {
     return NIL;
@@ -281,10 +287,10 @@ export function parseLetStatement(li: List<Token>) {
     return NIL;
   }
   const statement = parseExpressionStatement(li);
-  return { type: LetDeclaration, id, statement };
+  return { id, statement };
 }
 
-function parseBlockStatement(li: List<Token>) {
+export function parseBlockStatement(li: List<Token>) {
   const statements = [];
   while (
     li.get().length &&

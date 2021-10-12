@@ -11,6 +11,7 @@ import {
   evaluate,
 } from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
+import importStdLib from '../src/utils/import-std-lib';
 
 type Example = [string, any];
 
@@ -28,7 +29,7 @@ describe('Evaluate', () => {
     ];
     for (const [code, expectedResult] of truthTable) {
       it(`${code} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
         const result = evaluate(parsed);
@@ -51,7 +52,7 @@ describe('Evaluate', () => {
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
         const result = evaluate(parsed);
@@ -76,7 +77,7 @@ describe('Evaluate', () => {
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const li = list(tokens);
         const parsed = _parseBinaryExpression(li);
         const result = evaluateBinaryExpression(parsed, {} as Environment);
@@ -107,7 +108,7 @@ describe('Evaluate', () => {
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const li = list(tokens);
         const parsed = parseExpressionStatement(li);
         const result = evaluate(parsed);
@@ -250,7 +251,7 @@ if(5 > 3) {
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.equal(expectedResult);
@@ -262,10 +263,25 @@ if(5 > 3) {
     const examples: Example[] = [
       ['print(3);', undefined],
       ['let name = "Gandalf the White"; print(name);', undefined],
+      [
+        `
+define printCountTo(n) {
+  define loop(i) {
+    if(i <= n) {
+      print(i);
+      return loop(i + 1);
+    }
+  }
+  return loop(1);
+}
+return printCountTo(5);
+`,
+        undefined,
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
@@ -281,10 +297,51 @@ if(5 > 3) {
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
+      });
+    }
+  });
+
+  describe('Using standard library', () => {
+    const examples: Example[] = [
+      ['setEl(1, 666, [1,2,3,4]);', [1, 666, 3, 4]],
+      ['let new = setEl(1, 666, [1,2,3,4]); new;', [1, 666, 3, 4]],
+      ['let ns = [1,2,3,4]; let new = setEl(1, 666, ns); new;', [1, 666, 3, 4]],
+      ['map(inc, [1, 2, 3]);', [2, 3, 4]],
+      // TODO: foldl(add, 0, concat(nums, someOtherNums)) doesn't work
+      // foldl only takes evaluated list
+      [
+        `
+let nums = [1,2,3,4,5];
+let someOtherNums = map(inc, nums);
+let concatenated = concat(nums, someOtherNums);
+return foldl(add, 0, concatenated);
+`,
+        35,
+      ],
+      [
+        `
+define myMap(func, arr) {
+  define concatAndFunc(l, el) {
+    return concat(l, func(el));
+  }
+  return foldl(concatAndFunc, [], arr);
+}
+return myMap(inc, [1,2,3]);
+`,
+        [2, 3, 4],
+      ],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, async () => {
+        const stdLib = await importStdLib();
+        const tokens = tokenize(code);
+        const parsed = parse(tokens, stdLib);
+        const result = evaluate(parsed);
+        expect(result).to.deep.equal(expectedResult);
       });
     }
   });
@@ -293,6 +350,8 @@ if(5 > 3) {
     const examples: Example[] = [
       ['return [1, 2, 3];', [1, 2, 3]],
       ['let nums = [1, 2]; return nums;', [1, 2]],
+      // TODO: arr[1];
+      ['let nums = [1,2,3]; define id(x) { return x; } id(nums[0]);', 1],
       ['let nums = [1, 2, 3, 4, 5]; return nums[2];', 3],
       [
         'let nums = [1, 2, 3]; let numsLength = length(nums); return slice(nums, 1, numsLength);',
@@ -303,7 +362,7 @@ if(5 > 3) {
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.deep.equal(expectedResult);
@@ -339,7 +398,7 @@ define factorial(x) {
   }
   return x * factorial(x - 1);
 }
-return factorial(10);`,
+factorial(10);`,
         3628800,
       ],
       [
@@ -351,8 +410,7 @@ define inc(x) {
 define apply(fn, x) {
   return fn(x);
 }
-
-return apply(inc, 3);
+apply(inc, 3);
 `,
         4,
       ],
@@ -367,8 +425,7 @@ define repeat(repeatMe, numTimes) {
   }
   return count(numTimes, "");
 }
-
-return repeat("hello ", 4);
+repeat("hello ", 4);
 `,
         'hello hello hello hello ',
       ],
@@ -384,7 +441,7 @@ define trimStart(s) {
   }
   return count(0);
 }
-return trimStart("  hello");
+trimStart("  hello");
       `,
         'hello',
       ],
@@ -406,8 +463,7 @@ define filter(predicate, li) {
   }
   return loop([], 0);
 }
-
-return filter(isOdd, [1, 2, 3, 4, 5, 6]);
+filter(isOdd, [1, 2, 3, 4, 5, 6]);
 `,
         [1, 3, 5],
       ],
@@ -449,7 +505,7 @@ define every(predicate, li) {
   }
   return loop(0);
 }
-return every(isOdd, [1,3,5]);
+every(isOdd, [1,3,5]);
 `,
         true,
       ],
@@ -471,7 +527,7 @@ define some(predicate, li) {
   }
   return loop(0);
 }
-return some(isOdd, [2,2,2,2,3,2]);
+some(isOdd, [2,2,2,2,3,2]);
 `,
         true,
       ],
@@ -490,8 +546,7 @@ define foldl(fn, curr, li) {
   }
   return loop(0, curr);
 }
-
-return foldl(add, 0, [1,2,3,4,5]);
+foldl(add, 0, [1,2,3,4,5]);
 `,
 
         15,
@@ -507,7 +562,7 @@ define fib(n) {
   }
   return fib(n - 1) + fib(n - 2);
 }
-return fib(11);
+fib(11);
 `,
         89,
       ],
@@ -519,7 +574,7 @@ define isOneOrTwo(n) {
   }
   return false;
 }
-return isOneOrTwo(1);
+isOneOrTwo(1);
 `,
         1,
       ],
@@ -531,17 +586,36 @@ define fib(n) {
   }
   return fib(n - 1) + fib(n - 2);
 }
-return fib(11);
+fib(11);
 `,
         89,
       ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
-        const tokens = tokenize(code as string);
+        const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.deep.equal(expectedResult);
+      });
+    }
+  });
+
+  describe('test', () => {
+    const examples: Example[] = [
+      ['define a() { return 2; }', undefined],
+      ['define a() { return 2; } a();', 2],
+      ['define a() { return 2; } return a();', 2],
+      ['let a = 3; let a = 2; a;', 2],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code} is ${expectedResult}`, () => {
+        const tokens = tokenize(code);
+        // console.log(tokens);
+        const parsed = parse(tokens);
+        // console.log(JSON.stringify(parsed, null, 2));
+        const result = evaluate(parsed);
+        expect(result).to.eq(expectedResult);
       });
     }
   });
