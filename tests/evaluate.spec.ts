@@ -349,6 +349,36 @@ return myMap(inc, [1,2,3]);
 `,
         [2, 3, 4],
       ],
+      [
+        `
+define bubbleSort(arr) {
+  let len = length(arr);
+  define outerLoop(i, a) {
+    define innerLoop(j, b) {
+      if(j < len) {
+        let prevVal = id(b[j]);
+        let nextVal = id(b[j + 1]);
+        if(prevVal > nextVal) {
+          let tempArr = change(b, j, nextVal);
+          let nextArr = change(tempArr, j + 1, prevVal);
+          return innerLoop(j + 1, nextArr);
+        }
+        return innerLoop(j + 1, b);
+      }
+      return outerLoop(i + 1, b);
+    }
+
+    if(i < len) {
+      return innerLoop(0, a);
+    }
+    return a;
+  }
+  return outerLoop(0, arr);
+}
+bubbleSort([77, 33, 1, 5555, 33333, 3, 333, 0]);
+`,
+        [0, 1, 3, 33, 77, 333, 5555, 33333],
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, async () => {
@@ -624,7 +654,7 @@ fib(11);
       ['let a = 3; let a = 2; a;', 2],
     ];
     for (const [code, expectedResult] of examples) {
-      it(`${code} is ${expectedResult}`, () => {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);

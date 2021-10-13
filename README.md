@@ -37,6 +37,7 @@ Hi!
 ```
 ./crude examples/fibonacci.cr
 ./crude examples/factorial.cr
+./crude examples/bubble-sort.cr
 ```
 
 # Quirks
