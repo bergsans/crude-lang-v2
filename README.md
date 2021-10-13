@@ -54,10 +54,7 @@ and are not intuitive. Recursion is advised when not working on say simple
 lists. See `./tests/evaluate.spec.ts` for examples.
 
 # TODO's
-* make generic parseGroupedExpression
+* Fix quirks mentioned above.
+* make a generic parseGroupedExpression
+* Fix types, inspired by https://github.com/estree/estree/blob/master/es5.md
 
-* fix types - inspiration: https://github.com/estree/estree/blob/master/es5.md
-
-* refactor evaluate.ts
-
-* fix quirks

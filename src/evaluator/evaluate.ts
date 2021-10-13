@@ -12,7 +12,7 @@ import {
   CallExpression,
   LITERAL_PRIMITIVES,
 } from '../parser/parse-types';
-import { isNodeType, isOperatorType } from '../utils/predicates';
+import { isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 
 interface LexicalScope {
@@ -97,17 +97,17 @@ function evaluateSliceStatement(node, context: Environment) {
 
 export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
-    if (node.value.type === 'Concat') {
-      return evaluateConcatStatement(node.value, context);
-    }
-    if (node.value.type === 'Length') {
-      return evaluateLengthStatement(node.value, context);
-    }
-    if (node.value.type === 'Slice') {
-      return evaluateSliceStatement(node.value, context);
-    }
-    if (node.value.type === CallExpression) {
-      return evaluateCallExpression(node.value, context);
+    if (
+      [
+        'Concat',
+        'Change',
+        'Convert',
+        'Length',
+        'Slice',
+        'CallExpression',
+      ].includes(node.value.type)
+    ) {
+      return evaluate(node.value, context);
     }
     return evaluateLiteralExpression[node.value.type](
       node.value.literal,
@@ -120,6 +120,7 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
       evaluateBinaryExpression(node.right as NodeTree, context)
     );
   }
+  return NIL;
 }
 
 export function environment(
@@ -267,26 +268,22 @@ const evaluateTypes = {
   CallExpression: (node, context: Environment) => {
     return evaluateCallExpression(node, context);
   },
+  ARRAY: (node, context: Environment) => evaluateArray(node, context),
+  ELEMENT: (node, context: Environment) => evaluateElement(node, context),
+  BlockStatement: (node, context: Environment) =>
+    evaluateBlockStatements(node, context),
+  Program: (node, context: Environment) =>
+    evaluateBlockStatements(node.body, context),
+  STRING: (node, context: Environment) =>
+    evaluateLiteralExpression[node.value.type](node.value.literal, context),
+  INTEGER: (node, context: Environment) =>
+    evaluateLiteralExpression[node.value.type](node.value.literal, context),
+  BOOLEAN: (node, context: Environment) =>
+    evaluateLiteralExpression[node.value.type](node.value.literal, context),
 };
 
 export function evaluate(node, context = environment({})) {
-  if (node.type in evaluateTypes) {
-    return evaluateTypes[node.type](node, context);
-  }
-  if (node.body || isNodeType(node, BlockStatement)) {
-    return evaluateBlockStatements(node.body, context);
-  }
-  if (node.type === 'ARRAY') {
-    return evaluateArray(node, context);
-  }
-  if (node.type === 'ELEMENT') {
-    return evaluateElement(node, context);
-  }
-  if (LITERAL_PRIMITIVES.includes(node.value.type)) {
-    return evaluateLiteralExpression[node.value.type](
-      node.value.literal,
-      context
-    );
-  }
-  if (node.expression) return NIL;
+  return node.type in evaluateTypes
+    ? evaluateTypes[node.type](node, context)
+    : NIL;
 }
