@@ -59,4 +59,6 @@ lists. See `./tests/evaluate.spec.ts` for examples.
 
 * fix types - inspiration: https://github.com/estree/estree/blob/master/es5.md
 
+* refactor evaluate.ts
+
 * fix quirks
