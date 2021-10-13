@@ -21,7 +21,7 @@ interface LexicalScope {
 export interface Environment {
   scope: LexicalScope;
   parent: LexicalScope;
-  set(key: string, value: any): any;
+  //set(key: string, value: any): any;
   get(key: string): any;
 }
 
@@ -124,14 +124,14 @@ export function environment(
   return {
     scope,
     parent,
-    set: (name: string, value) => {
-      if (name in scope) {
-        scope = value;
-      }
-      if (parent !== undefined) {
-        return parent.set(name, value);
-      }
-    },
+    //set: (name: string, value) => {
+    //if (name in scope) {
+    //scope = value;
+    //}
+    //if (parent !== undefined) {
+    //return parent.set(name, value);
+    //}
+    //},
     get: (name: string) => {
       return name in scope
         ? scope[name]
@@ -183,7 +183,7 @@ function evaluateConvertStatement(node, context: Environment) {
 function evaluatePrintStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
   console.log(value);
-  return;
+  return NIL;
 }
 
 function evaluateChangeStatement(node, context: Environment) {
@@ -206,6 +206,17 @@ function evaluateDefinitionStatement(node, context: Environment) {
     params: node.params,
     body: node.body,
   };
+  return NIL;
+}
+
+function evaluateForStatement(node, context: Environment) {
+  const id = node.id.literal;
+  const start = evaluate(node.start, context);
+  const end = evaluate(node.end, context);
+  for (let i = start; i < end; i++) {
+    context.scope[id] = i;
+    evaluateBlockStatements(node.action.statements, context);
+  }
   return NIL;
 }
 
@@ -252,6 +263,7 @@ const evaluateTypes = {
   Slice: (node, context: Environment) => evaluateSliceStatement(node, context),
   Length: (node, context: Environment) =>
     evaluateLengthStatement(node, context),
+  For: (node, context: Environment) => evaluateForStatement(node, context),
   DefinitionStatement: (node, context: Environment) => {
     return evaluateDefinitionStatement(node, context);
   },

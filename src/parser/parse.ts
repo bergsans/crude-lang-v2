@@ -11,6 +11,7 @@ import {
   CONVERT,
   CHANGE,
   PRINT,
+  FOR,
   IF,
   NIL,
   IDENTIFIER,
@@ -310,6 +311,36 @@ export function parseBlockStatement(li: List<Token>) {
   return statements;
 }
 
+export function parseForStatement(li: List<Token>) {
+  li.next();
+  if (li.head().type !== 'L_PAREN') {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const id = li.next();
+  li.next();
+  const start = parseStatement(li);
+  li.next();
+  const end = parseStatement(li);
+  if (li.head().type !== 'R_PAREN') {
+    throw new Error('Expected closing parenthesis.');
+  }
+  li.next();
+  if (li.head().type !== 'L_BRACE') {
+    throw new Error('Expected block statement.');
+  }
+  li.next();
+  const c = { type: BlockStatement, statements: parseBlockStatement(li) };
+  const action = { ...c, statements: c.statements.filter((n: any) => n) };
+  return {
+    type: 'For',
+    id,
+    start,
+    end,
+    action,
+  };
+}
+
 export function parseIfStatement(li: List<Token>) {
   if (li.head().type === 'IF') {
     li.next();
@@ -351,17 +382,17 @@ export function parseSliceStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  const value = parseExpressionStatement(li);
+  const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
     throw new Error('Expected start value.');
   }
   li.next();
-  const start = parseExpressionStatement(li);
+  const start = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
     throw new Error('Expected end value.');
   }
   li.next();
-  const end = parseExpressionStatement(li);
+  const end = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
     throw new Error('Expected closing parenthesis.');
   }
@@ -380,17 +411,17 @@ export function parseChangeStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  const array = parseExpressionStatement(li);
+  const array = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
     throw new Error('Expected another argument: index.');
   }
   li.next();
-  const index = parseExpressionStatement(li);
+  const index = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
     throw new Error('Expected another argument: index.');
   }
   li.next();
-  const newValue = parseExpressionStatement(li);
+  const newValue = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
     throw new Error('Expected closing parenthesis.');
   }
@@ -412,7 +443,7 @@ export function parseConvertStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  const value = parseExpressionStatement(li);
+  const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
     throw new Error('Expected closing parenthesis.');
   }
@@ -432,7 +463,7 @@ export function parsePrintStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  const value = parseExpressionStatement(li);
+  const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
     throw new Error('Expected closing parenthesis.');
   }
@@ -450,12 +481,12 @@ export function parseConcatStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  const firstValue = parseExpressionStatement(li);
+  const firstValue = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
     throw new Error('Expected another argument.');
   }
   li.next();
-  const secondValue = parseExpressionStatement(li);
+  const secondValue = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
     throw new Error('Expected closing parenthesis.');
   }
@@ -472,7 +503,7 @@ export function parseLengthStatement(li: List<Token>) {
     throw new Error('Expected opening parenthesis.');
   }
   li.next();
-  const value = parseExpressionStatement(li);
+  const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
     throw new Error('Expected opening parenthesis.');
   }
@@ -524,6 +555,7 @@ const statementTypes = {
   [SLICE]: (li: List<Token>) => parseSliceStatement(li),
   [CONVERT]: (li: List<Token>) => parseConvertStatement(li),
   [CHANGE]: (li: List<Token>) => parseChangeStatement(li),
+  [FOR]: (li: List<Token>) => parseForStatement(li),
   [PRINT]: (li: List<Token>) => parsePrintStatement(li),
   [CONCAT]: (li: List<Token>) => parseConcatStatement(li),
   [LENGTH]: (li: List<Token>) => parseLengthStatement(li),

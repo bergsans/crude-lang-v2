@@ -11,6 +11,7 @@ export const QUOTE_SIGN = '"';
 export const EOF = 'EOF';
 export const IF = 'IF';
 export const LET = 'LET';
+export const FOR = 'FOR';
 export const RETURN_STATEMENT = 'RETURN';
 export const COMMA = ',';
 export const L_BRACKET = '[';

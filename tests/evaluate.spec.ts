@@ -260,6 +260,29 @@ if(5 > 3) {
     }
   });
 
+  describe('for statement', () => {
+    const examples: Example[] = [
+      [
+        `
+let arr = [];
+for(x, 0, 3) {
+  return change(arr, x, x + 1);
+}
+return arr;
+`,
+        [1, 2, 3],
+      ],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
+        const tokens = tokenize(code);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.deep.equal(expectedResult);
+      });
+    }
+  });
+
   describe('Change statement', () => {
     const examples: Example[] = [['change([1,2,3], 1, 3);', [1, 3, 3]]];
     for (const [code, expectedResult] of examples) {
@@ -326,6 +349,8 @@ return printCountTo(5);
         'let ns = [1,2,3,4]; let new = change(ns, 1, 666); new;',
         [1, 666, 3, 4],
       ],
+      ['filter(isOdd, [1,2,3,4,5]);', [1, 3, 5]],
+      ['filter(isOdd, [1,2,3,4,5]);', [1, 3, 5]],
       ['map(inc, [1, 2, 3]);', [2, 3, 4]],
       // TODO: foldl(add, 0, concat(nums, someOtherNums)) doesn't work
       // foldl only takes evaluated list
@@ -353,28 +378,17 @@ return myMap(inc, [1,2,3]);
       [
         `
 define bubbleSort(arr) {
-  let len = length(arr);
-  define outerLoop(i, a) {
-    define innerLoop(j, b) {
-      if(j < len) {
-        let prevVal = id(b[j]);
-        let nextVal = id(b[j + 1]);
-        if(prevVal > nextVal) {
-          let tempArr = change(b, j, nextVal);
-          let nextArr = change(tempArr, j + 1, prevVal);
-          return innerLoop(j + 1, nextArr);
-        }
-        return innerLoop(j + 1, b);
+  for(i, 0, length(arr)) {
+    for(j, 0, length(arr)) {
+      let prevVal = arr[j];
+      let nextVal = arr[j + 1];
+      if(prevVal > nextVal) {
+        let arr = change(arr, j, nextVal);
+        return change(arr, j + 1, prevVal);
       }
-      return outerLoop(i + 1, b);
     }
-
-    if(i < len) {
-      return innerLoop(0, a);
-    }
-    return a;
   }
-  return outerLoop(0, arr);
+  return arr;
 }
 bubbleSort([77, 33, 1, 5555, 33333, 3, 333, 0]);
 `,
@@ -396,13 +410,9 @@ bubbleSort([77, 33, 1, 5555, 33333, 3, 333, 0]);
     const examples: Example[] = [
       ['return [1, 2, 3];', [1, 2, 3]],
       ['let nums = [1, 2]; return nums;', [1, 2]],
-      // TODO: arr[1];
-      ['let nums = [1,2,3]; define id(x) { return x; } id(nums[0]);', 1],
+      ['let nums = [1,2,3]; define id(x) { return x; } nums[0];', 1],
       ['let nums = [1, 2, 3, 4, 5]; return nums[2];', 3],
-      [
-        'let nums = [1, 2, 3]; let numsLength = length(nums); return slice(nums, 1, numsLength);',
-        [2, 3],
-      ],
+      ['let nums = [1, 2, 3]; return slice(nums, 1, length(nums));', [2, 3]],
       ['return length([1, 2, 3, 4]);', 4],
       ['return concat([1, 2, 3], [4]);', [1, 2, 3, 4]],
       ['let arr = [1,2,3]; let arr = change(arr, 1, 99); arr;', [1, 99, 3]],
@@ -499,17 +509,14 @@ define isOdd(x) {
   return x % 2 != 0;
 }
 
-define filter(predicate, li) {
-  define loop(list, i) {
-    if(i < length(li)) {
-      if(predicate(li[i])) {
-        return loop(concat(list, li[i]), i + 1);
-      }
-      return loop(list, i + 1);
+define filter(predicate, arr) {
+  let filtArr = [];
+  for(i, 0, length(arr)) {
+    if(predicate(arr[i])) {
+      return change(filtArr, length(filtArr), arr[i]);
     }
-    return list;
   }
-  return loop([], 0);
+  return filtArr;
 }
 filter(isOdd, [1, 2, 3, 4, 5, 6]);
 `,
@@ -521,17 +528,14 @@ define inc(x) {
   return x + 1;
 }
 
-define map(fn, li) {
-  define loop(list, i) {
-    if(i < length(li)) {
-      return loop(concat(list, fn(li[i])), i + 1);
-    }
-    return list;
+define map(fn, arr) {
+  let newArr = [];
+  for(i, 0, length(arr)) {
+    return change(newArr, i, fn(arr[i]));
   }
-  return loop([], 0);
+  return newArr;
 }
-
-return map(inc, [1,2,3]);
+map(inc, [1,2,3]);
 `,
         [2, 3, 4],
       ],

@@ -184,6 +184,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.DEFINE,
     RESERVED_KEYWORD.SLICE,
     RESERVED_KEYWORD.CONVERT,
+    RESERVED_KEYWORD.FOR,
     RESERVED_KEYWORD.PRINT,
     RESERVED_KEYWORD.CHANGE,
     RESERVED_KEYWORD.CONCAT,
@@ -274,6 +275,10 @@ export function isChangeStatement(li: List<Token>) {
 
 export function isConvertStatement(li: List<Token>) {
   return li.head().type === 'CONVERT' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isForStatement(li: List<Token>) {
+  return li.head().type === 'FOR' && li.get()[1].type === 'L_PAREN';
 }
 
 export function isPrintStatement(li: List<Token>) {

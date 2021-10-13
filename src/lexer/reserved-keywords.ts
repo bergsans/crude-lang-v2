@@ -7,6 +7,7 @@ export default {
   DEFINE: 'define',
   SLICE: 'slice',
   CONVERT: 'convert',
+  FOR: 'for',
   CONCAT: 'concat',
   PRINT: 'print',
   CHANGE: 'change',
