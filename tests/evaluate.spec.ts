@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { logObj } from 'crude-dev-tools';
 import { tokenize } from '../src/lexer/tokenize';
 import {
   _parseBinaryExpression,
