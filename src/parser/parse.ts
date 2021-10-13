@@ -8,6 +8,7 @@ import {
   LENGTH,
   DEFINE,
   RETURN_STATEMENT,
+  CHANGE,
   PRINT,
   IF,
   NIL,
@@ -49,6 +50,7 @@ import {
   isSliceStatement,
   isArray,
   isArrayIndex,
+  isChangeStatement,
   isConcatStatement,
   isLengthStatement,
   isArithmeticInfix,
@@ -117,6 +119,7 @@ type ParseExpressionHandler = [
 
 const parseExpressionHandlers: ParseExpressionHandler[] = [
   [isSliceStatement, produceSliceStatement],
+  [isChangeStatement, parseChangeStatement],
   [isConcatStatement, produceConcatStatement],
   [isLengthStatement, produceLengthStatement],
   [isArrayIndex, produceArrayIndex],
@@ -368,6 +371,38 @@ export function parseSliceStatement(li: List<Token>) {
   };
 }
 
+export function parseChangeStatement(li: List<Token>) {
+  li.next();
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const array = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'COMMA')) {
+    throw new Error('Expected another argument: index.');
+  }
+  li.next();
+  const index = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'COMMA')) {
+    throw new Error('Expected another argument: index.');
+  }
+  li.next();
+  const newValue = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'R_PAREN')) {
+    throw new Error('Expected closing parenthesis.');
+  }
+  li.next();
+  if (li.head().type === 'SEMICOLON') {
+    li.next();
+  }
+  return {
+    type: 'Change',
+    array,
+    index,
+    newValue,
+  };
+}
+
 export function parsePrintStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
@@ -464,6 +499,7 @@ const statementTypes = {
   [RETURN_STATEMENT]: (li: List<Token>) => parseReturnStatement(li),
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [SLICE]: (li: List<Token>) => parseSliceStatement(li),
+  [CHANGE]: (li: List<Token>) => parseChangeStatement(li),
   [PRINT]: (li: List<Token>) => parsePrintStatement(li),
   [CONCAT]: (li: List<Token>) => parseConcatStatement(li),
   [LENGTH]: (li: List<Token>) => parseLengthStatement(li),

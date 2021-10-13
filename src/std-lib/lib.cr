@@ -87,11 +87,3 @@ define trimStart(s) {
   }
   return count(0);
 }
-
-define setEl(i, val, arr) {
-  let len = length(arr);
-  let before = slice(arr, 0, i);
-  let after = slice(arr, i + 1, len);
-  let tempCut = concat(before, [val]);
-  return concat(tempCut, after);
-}

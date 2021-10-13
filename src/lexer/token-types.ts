@@ -4,6 +4,7 @@ export const DEFINE = 'DEFINE';
 export const SLICE = 'SLICE';
 export const LENGTH = 'LENGTH';
 export const CONCAT = 'CONCAT';
+export const CHANGE = 'CHANGE';
 export const PRINT = 'PRINT';
 export const QUOTE_SIGN = '"';
 export const EOF = 'EOF';

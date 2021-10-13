@@ -181,6 +181,14 @@ function evaluatePrintStatement(node, context: Environment) {
   return;
 }
 
+function evaluateChangeStatement(node, context: Environment) {
+  const array = evaluate(node.array, context);
+  const index = evaluate(node.index, context);
+  const value = evaluate(node.newValue, context);
+  array[index] = value;
+  return array;
+}
+
 function evaluateLetDeclaration(node, context: Environment) {
   const value = evaluate(node.statement, context);
   context.scope[node.id.name] = value;
@@ -230,6 +238,8 @@ const evaluateTypes = {
     );
   },
   Print: (node, context: Environment) => evaluatePrintStatement(node, context),
+  Change: (node, context: Environment) =>
+    evaluateChangeStatement(node, context),
   Concat: (node, context: Environment) =>
     evaluateConcatStatement(node, context),
   Slice: (node, context: Environment) => evaluateSliceStatement(node, context),

@@ -259,6 +259,18 @@ if(5 > 3) {
     }
   });
 
+  describe('Change statement', () => {
+    const examples: Example[] = [['change([1,2,3], 1, 3);', [1, 3, 3]]];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
+        const tokens = tokenize(code);
+        const parsed = parse(tokens);
+        const result = evaluate(parsed);
+        expect(result).to.deep.equal(expectedResult);
+      });
+    }
+  });
+
   describe('Print statement - side effect (check manually)', () => {
     const examples: Example[] = [
       ['print(3);', undefined],
@@ -307,9 +319,12 @@ return printCountTo(5);
 
   describe('Using standard library', () => {
     const examples: Example[] = [
-      ['setEl(1, 666, [1,2,3,4]);', [1, 666, 3, 4]],
-      ['let new = setEl(1, 666, [1,2,3,4]); new;', [1, 666, 3, 4]],
-      ['let ns = [1,2,3,4]; let new = setEl(1, 666, ns); new;', [1, 666, 3, 4]],
+      ['change([1,2,3,4], 1, 666);', [1, 666, 3, 4]],
+      ['let new = change([1,2,3,4], 1, 666); new;', [1, 666, 3, 4]],
+      [
+        'let ns = [1,2,3,4]; let new = change(ns, 1, 666); new;',
+        [1, 666, 3, 4],
+      ],
       ['map(inc, [1, 2, 3]);', [2, 3, 4]],
       // TODO: foldl(add, 0, concat(nums, someOtherNums)) doesn't work
       // foldl only takes evaluated list
@@ -611,9 +626,7 @@ fib(11);
     for (const [code, expectedResult] of examples) {
       it(`${code} is ${expectedResult}`, () => {
         const tokens = tokenize(code);
-        // console.log(tokens);
         const parsed = parse(tokens);
-        // console.log(JSON.stringify(parsed, null, 2));
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });

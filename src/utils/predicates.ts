@@ -184,6 +184,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.DEFINE,
     RESERVED_KEYWORD.SLICE,
     RESERVED_KEYWORD.PRINT,
+    RESERVED_KEYWORD.CHANGE,
     RESERVED_KEYWORD.CONCAT,
     RESERVED_KEYWORD.LENGTH,
     RESERVED_KEYWORD.IF,
@@ -264,6 +265,10 @@ export function isArithmeticInfix(token: Token) {
 
 export function isCallExpression(li: List<Token>) {
   return li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isChangeStatement(li: List<Token>) {
+  return li.head().type === 'CHANGE' && li.get()[1].type === 'L_PAREN';
 }
 
 export function isPrintStatement(li: List<Token>) {

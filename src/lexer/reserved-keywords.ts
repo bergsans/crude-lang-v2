@@ -8,5 +8,6 @@ export default {
   SLICE: 'slice',
   CONCAT: 'concat',
   PRINT: 'print',
+  CHANGE: 'change',
   LENGTH: 'length',
 };
