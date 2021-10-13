@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import { tokenize } from '../src/lexer/tokenize';
-import {
-  _parseBinaryExpression,
-  parseExpressionStatement,
-  parse,
-} from '../src/parser/parse';
+import { parseExpressionStatement, parse } from '../src/parser/parse';
+import { _parseBinaryExpression } from '../src/parser/parse-binary-expression';
 import {
   Environment,
   evaluateBinaryExpression,

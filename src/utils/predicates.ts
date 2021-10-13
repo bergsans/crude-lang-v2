@@ -257,12 +257,12 @@ export function isInfixNotAndBoolean(li: List<Token>) {
   return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN;
 }
 
-export function isGroupedExpression(token: Token) {
-  return token.type === OPEN_GROUPED_EXPRESSION;
+export function isGroupedExpression(li: List<Token>) {
+  return li.head().type === OPEN_GROUPED_EXPRESSION;
 }
 
-export function isArithmeticInfix(token: Token) {
-  return INFIX_ARITHMETIC_TYPES.includes(token.type);
+export function isArithmeticInfix(li: List<Token>) {
+  return INFIX_ARITHMETIC_TYPES.includes(li.head().type);
 }
 
 export function isCallExpression(li: List<Token>) {

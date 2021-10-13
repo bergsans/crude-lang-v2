@@ -25,7 +25,6 @@ import {
   IfStatement,
   ReturnStatement,
   Program,
-  precedence,
   END_OF_STATEMENT,
 } from './parse-types';
 import {
@@ -38,9 +37,11 @@ import {
   producePrimitive,
   produceInfixNotAndBoolean,
   producePrimitiveAndEndOfStatement,
+  produceBinaryExpression,
   produceIdentifierAndEndOfStatement,
   produceInfixNotAndGroupedExpression,
   produceArithmeticOperatorAndGroupedExpression,
+  parseGroupedExpression,
 } from './parse-helpers';
 import {
   isPeekToken,
@@ -48,7 +49,6 @@ import {
   isPrimitiveAndEndOfStatement,
   isPartOfBinaryExpression,
   isIdentifierAndEndOfStatement,
-  isGroupedExpression,
   isSliceStatement,
   isArray,
   isArrayIndex,
@@ -56,7 +56,6 @@ import {
   isChangeStatement,
   isConcatStatement,
   isLengthStatement,
-  isArithmeticInfix,
   isCallExpression,
   isPrimitive,
   isInfixNotAndBoolean,
@@ -64,20 +63,18 @@ import {
 } from '../utils/predicates';
 import { list, List } from '../utils/list';
 import { fmtStr } from 'crude-dev-tools';
-import importStdLib from '../utils/import-std-lib';
 
-type Value = Token;
+export type Value = Token;
 
-type Left = NodeTree;
+export type Left = NodeTree;
 
-type Right = Left;
+export type Right = Left;
 
 export interface NodeTree {
   left: Left;
   value: Value;
   right: Right;
 }
-
 export interface Expression extends NodeTree {
   type: string;
   literal: string;
@@ -110,8 +107,6 @@ export interface AST {
   body: Statement[];
 }
 
-type TokenList = List<Token>;
-
 type ParseExpressionPredicate = (li: List<Token>) => boolean;
 
 type ParseExpressionProducer = any; // Fix node types
@@ -137,84 +132,10 @@ const parseExpressionHandlers: ParseExpressionHandler[] = [
     isArithmeticOperatorAndGroupedExpression,
     produceArithmeticOperatorAndGroupedExpression,
   ],
-  [isPartOfBinaryExpression, _parseBinaryExpression],
+  [isPartOfBinaryExpression, produceBinaryExpression],
   [isPrimitive, producePrimitive],
   [isIdentifierAndEndOfStatement, produceIdentifierAndEndOfStatement],
 ];
-
-function tree(left: any, node: any, right: any) {
-  return {
-    left,
-    value: node,
-    right,
-  };
-}
-
-function nud(li: TokenList) {
-  const head = li.head();
-  if (isGroupedExpression(head)) {
-    li.next();
-    const expression = parseBinaryExpression(li, 0);
-    li.next();
-    return expression;
-  }
-  if (isArithmeticInfix(head)) {
-    const sign = li.next().literal;
-    const node = li.next();
-    node.literal = sign + node.literal;
-    return tree(null, node, null);
-  }
-  if (isSliceStatement(li)) {
-    const expression = parseSliceStatement(li);
-    return tree(null, expression, null);
-  }
-  if (isConcatStatement(li)) {
-    const expression = parseConcatStatement(li);
-    return tree(null, expression, null);
-  }
-  if (isLengthStatement(li)) {
-    const expression = parseLengthStatement(li);
-    return tree(null, expression, null);
-  }
-  if (isCallExpression(li)) {
-    const callExpression = parseCallExpression(li);
-    return tree(null, callExpression, null);
-  }
-  return tree(null, li.next(), null);
-}
-
-function led(li: TokenList, left: Left, operator: Token) {
-  return tree(
-    left,
-    operator,
-    parseBinaryExpression(li, precedence[operator.type])
-  );
-}
-
-function parseBinaryExpression(li: TokenList, currentPrecedence = 0) {
-  let left = nud(li);
-  if (li.head().type === END_OF_STATEMENT) {
-    return left;
-  }
-  while (precedence[li.head().type] > currentPrecedence) {
-    left = led(li, left, li.next());
-  }
-  return left;
-}
-
-function removeDeadNodes(node: NodeTree) {
-  if (node.left) {
-    node.left = removeDeadNodes(node.left);
-  }
-  if (node.right) {
-    node.right = removeDeadNodes(node.right);
-  }
-  if (!node.left && !node.right) {
-    delete node.left;
-    delete node.right;
-  }
-  return node;
-}
 
 export function parse(tokens: Tokens, stdLib?) {
   const li = list(tokens);
@@ -222,18 +143,6 @@ export function parse(tokens: Tokens, stdLib?) {
   return {
     type: Program,
     body: stdLib ? [].concat(stdLib, statements) : statements,
-  };
-}
-
-export function _parseBinaryExpression(li: List<Token>) {
-  const result = parseBinaryExpression(li);
-  if (li.head().type === END_OF_STATEMENT) {
-    li.next();
-  }
-  const purifiedNode = removeDeadNodes(result);
-  return {
-    type: BinaryExpression,
-    ...purifiedNode,
   };
 }
 
@@ -314,19 +223,8 @@ export function parseBlockStatement(li: List<Token>) {
 
 export function parseForStatement(li: List<Token>) {
   li.next();
-  if (li.head().type !== 'L_PAREN') {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
-  const id = li.next();
-  li.next();
-  const start = parseStatement(li);
-  li.next();
-  const end = parseStatement(li);
-  if (li.head().type !== 'R_PAREN') {
-    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
-  }
-  li.next();
+  const id = li.get()[1];
+  const [, start, end] = parseGroupedExpression(3, li);
   if (li.head().type !== 'L_BRACE') {
     throw new Error(fmtStr('Expected block statement.', 'red'));
   }
@@ -379,25 +277,7 @@ export function parseReturnStatement(li: List<Token>) {
 
 export function parseSliceStatement(li: List<Token>) {
   li.next();
-  if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
-  const value = parseStatement(li);
-  if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error(fmtStr('Expected start value.', 'red'));
-  }
-  li.next();
-  const start = parseStatement(li);
-  if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error(fmtStr('Expected end value.', 'red'));
-  }
-  li.next();
-  const end = parseStatement(li);
-  if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
-  }
-  li.next();
+  const [value, start, end] = parseGroupedExpression(3, li);
   return {
     type: 'Slice',
     value,
@@ -408,25 +288,7 @@ export function parseSliceStatement(li: List<Token>) {
 
 export function parseChangeStatement(li: List<Token>) {
   li.next();
-  if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
-  const array = parseStatement(li);
-  if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error(fmtStr('Expected another argument: index.', 'red'));
-  }
-  li.next();
-  const index = parseStatement(li);
-  if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error(fmtStr('Expected another argument: index.', 'red'));
-  }
-  li.next();
-  const newValue = parseStatement(li);
-  if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
-  }
-  li.next();
+  const [array, index, newValue] = parseGroupedExpression(3, li);
   if (li.head().type === 'SEMICOLON') {
     li.next();
   }
@@ -440,15 +302,7 @@ export function parseChangeStatement(li: List<Token>) {
 
 export function parseConvertStatement(li: List<Token>) {
   li.next();
-  if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
-  const value = parseStatement(li);
-  if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
-  }
-  li.next();
+  const [value] = parseGroupedExpression(1, li);
   if (li.head().type === 'SEMICOLON') {
     li.next();
   }
@@ -460,16 +314,10 @@ export function parseConvertStatement(li: List<Token>) {
 
 export function parsePrintStatement(li: List<Token>) {
   li.next();
-  if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
+  const [value] = parseGroupedExpression(1, li);
+  if (li.head().type === 'SEMICOLON') {
+    li.next();
   }
-  li.next();
-  const value = parseStatement(li);
-  if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
-  }
-  li.next();
-  li.next();
   return {
     type: 'Print',
     value,
@@ -478,20 +326,7 @@ export function parsePrintStatement(li: List<Token>) {
 
 export function parseConcatStatement(li: List<Token>) {
   li.next();
-  if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
-  const firstValue = parseStatement(li);
-  if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error(fmtStr('Expected another argument.', 'red'));
-  }
-  li.next();
-  const secondValue = parseStatement(li);
-  if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
-  }
-  li.next();
+  const [firstValue, secondValue] = parseGroupedExpression(2, li);
   return {
     type: 'Concat',
     args: [firstValue, secondValue],
@@ -500,15 +335,7 @@ export function parseConcatStatement(li: List<Token>) {
 
 export function parseLengthStatement(li: List<Token>) {
   li.next();
-  if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
-  const value = parseStatement(li);
-  if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
-  }
-  li.next();
+  const [value] = parseGroupedExpression(1, li);
   return {
     type: 'Length',
     value,
@@ -564,7 +391,7 @@ const statementTypes = {
   [IF]: (li: List<Token>) => parseIfStatement(li),
 };
 
-function parseStatement(li: List<Token>) {
+export function parseStatement(li: List<Token>) {
   const currentToken = li.head();
   return currentToken.type in statementTypes
     ? statementTypes[currentToken.type](li)

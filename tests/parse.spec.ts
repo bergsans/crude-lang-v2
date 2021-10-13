@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import { Token, tokenize } from '../src/lexer/tokenize';
-import {
-  parse,
-  parseLiteralExpression,
-  _parseBinaryExpression,
-} from '../src/parser/parse';
+import { parse, parseLiteralExpression } from '../src/parser/parse';
+import { _parseBinaryExpression } from '../src/parser/parse-binary-expression';
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
