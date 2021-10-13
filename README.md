@@ -1,5 +1,3 @@
-
-
 # Setup
 ```
 npm install
@@ -55,6 +53,5 @@ lists. See `./tests/evaluate.spec.ts` for examples.
 
 # TODO's
 * Fix quirks mentioned above.
-* make a generic parseGroupedExpression
 * Fix types, inspired by https://github.com/estree/estree/blob/master/es5.md
 
