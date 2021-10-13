@@ -1,13 +1,21 @@
-TODO:
+TODO's
 
-* fix types - inspiration: https://github.com/estree/estree/blob/master/es5.md
-* integer to string | string to integer -> parse (one function)
+FEATURES:
 * range operator .. in array and for
 * for
-* Error handling
-* fix () == ()
-* concat in foldl (*elsewhere_?
+
+REFACTOR:
+* if's
+* make generic parseGroupedExpression
+
+PRETTIFY TYPES:
+* fix types - inspiration: https://github.com/estree/estree/blob/master/es5.md
 * enums for operators - inspiration:  https://github.com/estree/estree/blob/master/es5.md
-* fix array bugs
-* add array indexing: arr[0] = 3;
+
+ERROR HANDLING:
 * crude-tools - red errors
+* crude-tools - provide debuging feature (pretty)
+
+BUGS:
+* fix () == () with logical operators and comparisions: 3 == 3 || 2 == 3
+* call expression precedence issue
