@@ -8,6 +8,7 @@ import {
   LENGTH,
   DEFINE,
   RETURN_STATEMENT,
+  CONVERT,
   CHANGE,
   PRINT,
   IF,
@@ -50,6 +51,7 @@ import {
   isSliceStatement,
   isArray,
   isArrayIndex,
+  isConvertStatement,
   isChangeStatement,
   isConcatStatement,
   isLengthStatement,
@@ -119,6 +121,7 @@ type ParseExpressionHandler = [
 
 const parseExpressionHandlers: ParseExpressionHandler[] = [
   [isSliceStatement, produceSliceStatement],
+  [isConvertStatement, parseConvertStatement],
   [isChangeStatement, parseChangeStatement],
   [isConcatStatement, produceConcatStatement],
   [isLengthStatement, produceLengthStatement],
@@ -403,6 +406,26 @@ export function parseChangeStatement(li: List<Token>) {
   };
 }
 
+export function parseConvertStatement(li: List<Token>) {
+  li.next();
+  if (!isPeekToken(li.head(), 'L_PAREN')) {
+    throw new Error('Expected opening parenthesis.');
+  }
+  li.next();
+  const value = parseExpressionStatement(li);
+  if (!isPeekToken(li.head(), 'R_PAREN')) {
+    throw new Error('Expected closing parenthesis.');
+  }
+  li.next();
+  if (li.head().type === 'SEMICOLON') {
+    li.next();
+  }
+  return {
+    type: 'Convert',
+    value,
+  };
+}
+
 export function parsePrintStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
@@ -499,6 +522,7 @@ const statementTypes = {
   [RETURN_STATEMENT]: (li: List<Token>) => parseReturnStatement(li),
   [DEFINE]: (li: List<Token>) => parseDefinitionStatement(li),
   [SLICE]: (li: List<Token>) => parseSliceStatement(li),
+  [CONVERT]: (li: List<Token>) => parseConvertStatement(li),
   [CHANGE]: (li: List<Token>) => parseChangeStatement(li),
   [PRINT]: (li: List<Token>) => parsePrintStatement(li),
   [CONCAT]: (li: List<Token>) => parseConcatStatement(li),

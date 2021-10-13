@@ -183,6 +183,7 @@ export function isReservedKeyword(nextToken: NextToken) {
     RESERVED_KEYWORD.TRUE,
     RESERVED_KEYWORD.DEFINE,
     RESERVED_KEYWORD.SLICE,
+    RESERVED_KEYWORD.CONVERT,
     RESERVED_KEYWORD.PRINT,
     RESERVED_KEYWORD.CHANGE,
     RESERVED_KEYWORD.CONCAT,
@@ -269,6 +270,10 @@ export function isCallExpression(li: List<Token>) {
 
 export function isChangeStatement(li: List<Token>) {
   return li.head().type === 'CHANGE' && li.get()[1].type === 'L_PAREN';
+}
+
+export function isConvertStatement(li: List<Token>) {
+  return li.head().type === 'CONVERT' && li.get()[1].type === 'L_PAREN';
 }
 
 export function isPrintStatement(li: List<Token>) {

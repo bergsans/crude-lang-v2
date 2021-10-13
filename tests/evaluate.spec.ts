@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { logObj } from 'crude-dev-tools';
 import { tokenize } from '../src/lexer/tokenize';
 import {
   _parseBinaryExpression,
@@ -404,6 +405,8 @@ bubbleSort([77, 33, 1, 5555, 33333, 3, 333, 0]);
       ],
       ['return length([1, 2, 3, 4]);', 4],
       ['return concat([1, 2, 3], [4]);', [1, 2, 3, 4]],
+      ['let arr = [1,2,3]; let arr = change(arr, 1, 99); arr;', [1, 99, 3]],
+      ['let arr = [1,2,3]; let arr = [3,2,1]; arr;', [3, 2, 1]],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
@@ -646,11 +649,15 @@ fib(11);
     }
   });
 
-  describe('test', () => {
+  describe('temp', () => {
     const examples: Example[] = [
       ['define a() { return 2; }', undefined],
       ['define a() { return 2; } a();', 2],
       ['define a() { return 2; } return a();', 2],
+      ['let a = "1"; let b = convert(a); b;', 1],
+      ['let a = 1; let b = convert(a); b;', '1'],
+      ['return convert("66");', 66],
+      ['return convert(66);', '66'],
       ['let a = 3; let a = 2; a;', 2],
     ];
     for (const [code, expectedResult] of examples) {

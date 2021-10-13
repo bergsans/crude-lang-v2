@@ -175,6 +175,11 @@ function evaluateReturnStatement(node, context: Environment) {
   return evaluate(node.value, context);
 }
 
+function evaluateConvertStatement(node, context: Environment) {
+  const value = evaluate(node.value, context);
+  return typeof value === 'string' ? parseInt(value, 10) : value.toString();
+}
+
 function evaluatePrintStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
   console.log(value);
@@ -237,6 +242,8 @@ const evaluateTypes = {
       context
     );
   },
+  Convert: (node, context: Environment) =>
+    evaluateConvertStatement(node, context),
   Print: (node, context: Environment) => evaluatePrintStatement(node, context),
   Change: (node, context: Environment) =>
     evaluateChangeStatement(node, context),
