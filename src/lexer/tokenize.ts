@@ -37,8 +37,6 @@ export interface Token {
   meta: Metadata;
 }
 
-export type Tokens = Token[];
-
 export interface Data {
   input: string;
   currentPosition?: number;
@@ -145,7 +143,7 @@ function produceTokens(data: Data) {
   return tokens;
 }
 
-export function tokenize(input: string): Tokens {
+export function tokenize(input: string): Token[] {
   if (!input.length) {
     throwNoInput();
   }

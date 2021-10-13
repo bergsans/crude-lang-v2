@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Token, Tokens, tokenize } from '../src/lexer/tokenize';
+import { Token, tokenize } from '../src/lexer/tokenize';
 
 describe('Lexer', () => {
   describe('Without Metadata', () => {
@@ -49,7 +49,7 @@ let numTwo =333;
         [codeSnippet1, expectedRes1],
         [codeSnippet2, expectedRes2],
         [codeSnippet3, expectedRes3],
-      ].forEach(([code, res]: [string, Tokens]) => {
+      ].forEach(([code, res]: [string, Token[]]) => {
         const tokensWithoutMetadata = tokenize(code).map(
           ({ type, literal }: Partial<Token>) => ({
             type,

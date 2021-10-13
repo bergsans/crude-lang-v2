@@ -1,15 +1,3 @@
-export const UnaryExpression = 'UnaryExpression';
-export const ExpressionStatement = 'ExpressionStatement';
-export const BinaryExpression = 'BinaryExpression';
-export const CallExpression = 'CallExpression';
-export const LiteralExpression = 'LiteralExpression';
-export const LetDeclaration = 'LetDeclaration';
-export const IfStatement = 'IfStatement';
-export const ReturnStatement = 'ReturnStatement';
-export const BlockStatement = 'BlockStatement';
-export const Program = 'Program';
-export const DefinitionStatement = 'DefinitionStatement';
-
 export const INFIX_ARITHMETIC_TYPES = ['MINUS', 'PLUS'];
 export const LITERAL_PRIMITIVES = ['STRING', 'BOOLEAN', 'INTEGER'];
 export const INFIX_NOT = 'NOT';

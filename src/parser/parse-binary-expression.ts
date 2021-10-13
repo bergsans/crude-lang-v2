@@ -1,5 +1,5 @@
 import { Token } from '../lexer/tokenize';
-import { BinaryExpression, precedence, END_OF_STATEMENT } from './parse-types';
+import { precedence, END_OF_STATEMENT } from './parse-types';
 import {
   isGroupedExpression,
   isSliceStatement,
@@ -9,15 +9,11 @@ import {
   isCallExpression,
 } from '../utils/predicates';
 import { List } from '../utils/list';
-import {
-  parseConcatStatement,
-  parseLengthStatement,
-  parseCallExpression,
-  parseSliceStatement,
-  Left,
-  NodeTree,
-} from './parse';
-import { produceCallExpression } from './parse-helpers';
+import { Left, NodeTree } from './parse';
+import { parseConcatStatement } from './parse-concat-statement';
+import { parseSliceStatement } from './parse-slice-statement';
+import { parseLengthStatement } from './parse-length-statement';
+import { parseCallExpression } from './parse-call-expression';
 
 type NudPredicate = (li: List<Token>) => boolean;
 
@@ -125,7 +121,7 @@ export function _parseBinaryExpression(li: List<Token>) {
   }
   const purifiedNode = removeDeadNodes(result);
   return {
-    type: BinaryExpression,
+    type: 'BinaryExpression',
     ...purifiedNode,
   };
 }

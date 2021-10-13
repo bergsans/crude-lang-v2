@@ -1,3 +1,5 @@
+![](./crudelang-logo.png)
+
 # Setup
 ```
 npm install

@@ -1,6 +1,6 @@
 import path from 'path';
 import { tokenize } from '../lexer/tokenize';
-import { parseBlockStatement } from '../parser/parse';
+import { parseBlockStatement } from '../parser/parse-block-statement';
 import { list } from './list';
 import { fmtStr } from 'crude-dev-tools';
 import getFileContent from './get-file-utf-8';

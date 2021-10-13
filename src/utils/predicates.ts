@@ -119,12 +119,44 @@ export function isBrace(currentCharacter: string) {
   return [L_BRACE, R_BRACE].includes(currentCharacter);
 }
 
+export function isLeftBrace(li: List<Token>) {
+  return isPeekToken(li.head(), 'L_BRACE');
+}
+
+export function isRightBrace(li: List<Token>) {
+  return isPeekToken(li.head(), 'R_BRACE');
+}
+
+export function isEOF(li: List<Token>) {
+  return li.head().type === 'EOF';
+}
+
+export function isRightBracket(li: List<Token>) {
+  return li.head().type === 'R_BRACKET';
+}
+
+export function isLeftBracket(li: List<Token>) {
+  return li.head().type === 'L_BRACKET';
+}
+
 export function isBracket(currentCharacter: string) {
   return [L_BRACKET, R_BRACKET].includes(currentCharacter);
 }
 
+export function isCommaToken(li: List<Token>) {
+  return li.head().type === 'COMMA';
+}
+
 export function isComma(currentCharacter: string) {
   return currentCharacter === COMMA;
+}
+
+export function isLeftParens(li: List<Token>) {
+  return li.head().type === 'L_PAREN';
+}
+
+export function isRightParens(li: List<Token>) {
+  return li.head().type === 'R_PAREN';
 }
 
 export function isParens(currentCharacter: string) {
@@ -135,6 +167,10 @@ export function isOperator(currentCharacter: string) {
   return [MINUS, PLUS, MULTIPLICATION, DIVISION, MODULO, POWER].includes(
     currentCharacter
   );
+}
+
+export function isSemicolonToken(li: List<Token>) {
+  return li.head().type === 'SEMICOLON';
 }
 
 export function isSemicolon(currentCharacter: string) {

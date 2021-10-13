@@ -1,19 +1,11 @@
 import { NIL } from '../lexer/token-types';
 import { fmtStr } from 'crude-dev-tools';
 import RESERVED_KEYWORDS from '../lexer/reserved-keywords';
-import {
-  BlockStatement as BlockStatementType,
-  Statement,
-  Expression,
-  NodeTree,
-} from '../parser/parse';
-import {
-  BlockStatement,
-  CallExpression,
-  LITERAL_PRIMITIVES,
-} from '../parser/parse-types';
+import { Expression, NodeTree } from '../parser/parse';
 import { isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
+import { Statement } from '../parser/parse-statement';
+import { BlockStatement } from '../parser/parse-block-statement';
 
 interface LexicalScope {
   [key: string]: any;
@@ -142,7 +134,7 @@ function evaluateIfStatement(
   node: {
     type: string;
     condition: Expression;
-    consequence: BlockStatementType;
+    consequence: BlockStatement;
   },
   context: Environment
 ) {

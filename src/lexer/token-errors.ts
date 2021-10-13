@@ -1,5 +1,5 @@
 import { fmtStr } from 'crude-dev-tools';
-import { Token, Tokens } from './tokenize';
+import { Token } from './tokenize';
 
 export class TokenizeError extends Error {
   constructor(message: string) {
@@ -16,7 +16,7 @@ function unallowedTokenMessage(unallowedToken: Token) {
   return `${unallowedToken.literal} - at line ${unallowedToken.meta.ln}, column ${unallowedToken.meta.col} - is an unvalid character.`;
 }
 
-export function throwCollectedErrors(unallowedTokens: Tokens) {
+export function throwCollectedErrors(unallowedTokens: Token[]) {
   const errorMessage = unallowedTokens.reduce(
     (acc, v) => acc.concat(unallowedTokenMessage(v), '\n'.repeat(2)),
     ''
