@@ -50,14 +50,13 @@ let n = 2;
 if((n == 1) || (n == 2)) { ... }
 ```
 
-Cannot use `concat(arr, arrTwo)` in foldl as list argument. Instead, use
-a let declaration assignment beforehand,
+For-loops require knowledge on how the language works under the hood,
+and are not intuitive. Recursion is advised when not working on say simple
+lists. See `./tests/evaluate.spec.ts` for examples.
 
-```
-let arr = [1, 2];
-let arrTwo = [3, 4];
-let concatenated = concat(arr, arrTwo);
-foldl(add, 0, concatenated);
-```
+# TODO's
+* make generic parseGroupedExpression
 
+* fix types - inspiration: https://github.com/estree/estree/blob/master/es5.md
 
+* fix quirks
