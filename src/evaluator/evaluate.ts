@@ -21,7 +21,6 @@ interface LexicalScope {
 export interface Environment {
   scope: LexicalScope;
   parent: LexicalScope;
-  //set(key: string, value: any): any;
   get(key: string): any;
 }
 
@@ -124,14 +123,6 @@ export function environment(
   return {
     scope,
     parent,
-    //set: (name: string, value) => {
-    //if (name in scope) {
-    //scope = value;
-    //}
-    //if (parent !== undefined) {
-    //return parent.set(name, value);
-    //}
-    //},
     get: (name: string) => {
       return name in scope
         ? scope[name]
