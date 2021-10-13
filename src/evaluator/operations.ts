@@ -1,3 +1,5 @@
+import { fmtStr } from 'crude-dev-tools';
+
 const arithmetics = {
   PLUS: (a: number, b: number) => a + b,
   MINUS: (a: number, b: number) => a - b,
@@ -6,7 +8,7 @@ const arithmetics = {
   POWER: (a: number, b: number) => a ** b,
   DIVISION: (a: number, b: number) => {
     if (b === 0) {
-      throw new Error('Division by zero is not allowed');
+      throw new Error(fmtStr('Division by zero is not allowed', 'red'));
     }
     return Math.round(a / b);
   },

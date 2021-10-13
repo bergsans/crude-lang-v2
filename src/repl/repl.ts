@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { createInterface } from 'readline';
-
+import { fmtStr } from 'crude-dev-tools';
 import methods from '../index';
 import importStdLib from '../utils/import-std-lib';
 const { interpret, tokenize, environment, parse, evaluate } = methods;
@@ -43,7 +43,7 @@ const commands = {
   ':help': () => console.log(helpMsg),
 };
 
-console.log(msg);
+console.log(fmtStr(msg, 'blue', null, 'bold'));
 
 (async function initWithStdLib() {
   const stdLib = await importStdLib();
@@ -64,8 +64,10 @@ function handleUserInput(inp: string, stdLib) {
     if (['let', 'define'].some((expr) => inp.includes(expr))) {
       replContext.push(inp);
     }
-    console.log(result);
+    console.log(fmtStr(result, 'green'));
   } catch (e) {
-    console.log(e);
+    console.log(
+      fmtStr(`I'm afraid I can't do that, dear it-is-always-the-user.`, 'red')
+    );
   }
 }

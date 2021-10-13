@@ -1,4 +1,3 @@
-![](crudelang-logo.png)
 
 
 # Setup

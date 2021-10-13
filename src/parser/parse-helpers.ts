@@ -1,6 +1,7 @@
 import { Token } from '../lexer/tokenize';
 import { UnaryExpression, INFIX_NOT } from './parse-types';
 import { isInBinaryExpression } from '../utils/predicates';
+import { fmtStr } from 'crude-dev-tools';
 import { List } from '../utils/list';
 import {
   _parseBinaryExpression,
@@ -35,12 +36,12 @@ export function produceArray(li: List<Token>) {
 export function produceArrayIndex(li: List<Token>) {
   const collection = li.next();
   if (li.head().type !== 'L_BRACKET') {
-    throw new Error('Expected opening bracket.');
+    throw new Error(fmtStr('Expected opening bracket.', 'red'));
   }
   li.next();
   const index = parseExpressionStatement(li);
   if (li.head().type !== 'R_BRACKET') {
-    throw new Error('Expected closing bracket.');
+    throw new Error(fmtStr('Expected closing bracket.', 'red'));
   }
   li.next();
   if (li.head().type === 'SEMICOLON') {

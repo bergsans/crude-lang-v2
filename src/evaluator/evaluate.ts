@@ -1,4 +1,5 @@
 import { NIL } from '../lexer/token-types';
+import { fmtStr } from 'crude-dev-tools';
 import RESERVED_KEYWORDS from '../lexer/reserved-keywords';
 import {
   BlockStatement as BlockStatementType,
@@ -49,7 +50,9 @@ function evaluateArray(node, context: Environment) {
 
 function evaluateElement(node, context: Environment) {
   if (!context.get(node.collection.literal)) {
-    throw new Error(`Unknown literal: ${node.collection.literal}`);
+    throw new Error(
+      fmtStr(`Unknown literal: ${node.collection.literal}`, 'red')
+    );
   }
   const elements = context.get(node.collection.literal);
   const index = evaluate(node.index, context);
@@ -72,18 +75,21 @@ function evaluateSliceStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
   const start = evaluate(node.start, context);
   if (typeof start !== 'number') {
-    throw new Error('slice expected number for start.');
+    throw new Error(fmtStr('slice expected number for start.', 'red'));
   }
   if (start < 0) {
-    throw new Error('start value cannot be negative.');
+    throw new Error(fmtStr('start value cannot be negative.', 'red'));
   }
   const end = evaluate(node.end, context);
   if (typeof end !== 'number') {
-    throw new Error('slice expected number for end.');
+    throw new Error(fmtStr('slice expected number for end.', 'red'));
   }
   if (end > value.length) {
     throw new Error(
-      `End value cannot be greater than value length, ${value.length}.`
+      fmtStr(
+        `End value cannot be greater than value length, ${value.length}.`,
+        'red'
+      )
     );
   }
   return value.slice(start, end);
@@ -213,7 +219,7 @@ function evaluateForStatement(node, context: Environment) {
 
 function evaluateCallExpression(node, context: Environment) {
   if (!context.get(node.name)) {
-    throw new Error(`Unknown definition: ${node.name}`);
+    throw new Error(fmtStr(`Unknown definition: ${node.name}`, 'red'));
   }
   const { env, params, body } = context.get(node.name);
   const updateEnv = params.reduce(

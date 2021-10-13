@@ -63,6 +63,7 @@ import {
   isInfixNotAndGroupedExpression,
 } from '../utils/predicates';
 import { list, List } from '../utils/list';
+import { fmtStr } from 'crude-dev-tools';
 import importStdLib from '../utils/import-std-lib';
 
 type Value = Token;
@@ -314,7 +315,7 @@ export function parseBlockStatement(li: List<Token>) {
 export function parseForStatement(li: List<Token>) {
   li.next();
   if (li.head().type !== 'L_PAREN') {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const id = li.next();
@@ -323,11 +324,11 @@ export function parseForStatement(li: List<Token>) {
   li.next();
   const end = parseStatement(li);
   if (li.head().type !== 'R_PAREN') {
-    throw new Error('Expected closing parenthesis.');
+    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
   }
   li.next();
   if (li.head().type !== 'L_BRACE') {
-    throw new Error('Expected block statement.');
+    throw new Error(fmtStr('Expected block statement.', 'red'));
   }
   li.next();
   const c = { type: BlockStatement, statements: parseBlockStatement(li) };
@@ -346,13 +347,13 @@ export function parseIfStatement(li: List<Token>) {
     li.next();
   }
   if (li.head().type !== 'L_PAREN') {
-    throw new Error('Expected grouped expression.');
+    throw new Error(fmtStr('Expected grouped expression.', 'red'));
   }
   li.next();
   const condition = parseExpressionStatement(li);
   li.next();
   if (li.head().type !== 'L_BRACE') {
-    throw new Error('Expected block statement.');
+    throw new Error(fmtStr('Expected block statement.', 'red'));
   }
   li.next();
   const c = { type: BlockStatement, statements: parseBlockStatement(li) };
@@ -379,22 +380,22 @@ export function parseReturnStatement(li: List<Token>) {
 export function parseSliceStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error('Expected start value.');
+    throw new Error(fmtStr('Expected start value.', 'red'));
   }
   li.next();
   const start = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error('Expected end value.');
+    throw new Error(fmtStr('Expected end value.', 'red'));
   }
   li.next();
   const end = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected closing parenthesis.');
+    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
   }
   li.next();
   return {
@@ -408,22 +409,22 @@ export function parseSliceStatement(li: List<Token>) {
 export function parseChangeStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const array = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error('Expected another argument: index.');
+    throw new Error(fmtStr('Expected another argument: index.', 'red'));
   }
   li.next();
   const index = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error('Expected another argument: index.');
+    throw new Error(fmtStr('Expected another argument: index.', 'red'));
   }
   li.next();
   const newValue = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected closing parenthesis.');
+    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
   }
   li.next();
   if (li.head().type === 'SEMICOLON') {
@@ -440,12 +441,12 @@ export function parseChangeStatement(li: List<Token>) {
 export function parseConvertStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected closing parenthesis.');
+    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
   }
   li.next();
   if (li.head().type === 'SEMICOLON') {
@@ -460,12 +461,12 @@ export function parseConvertStatement(li: List<Token>) {
 export function parsePrintStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected closing parenthesis.');
+    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
   }
   li.next();
   li.next();
@@ -478,17 +479,17 @@ export function parsePrintStatement(li: List<Token>) {
 export function parseConcatStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const firstValue = parseStatement(li);
   if (!isPeekToken(li.head(), 'COMMA')) {
-    throw new Error('Expected another argument.');
+    throw new Error(fmtStr('Expected another argument.', 'red'));
   }
   li.next();
   const secondValue = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected closing parenthesis.');
+    throw new Error(fmtStr('Expected closing parenthesis.', 'red'));
   }
   li.next();
   return {
@@ -500,12 +501,12 @@ export function parseConcatStatement(li: List<Token>) {
 export function parseLengthStatement(li: List<Token>) {
   li.next();
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const value = parseStatement(li);
   if (!isPeekToken(li.head(), 'R_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   return {
@@ -518,16 +519,16 @@ export function parseDefinitionStatement(li: List<Token>) {
   li.next();
   const name = li.next();
   if (name.type !== IDENTIFIER) {
-    throw new Error('Expected definition name.');
+    throw new Error(fmtStr('Expected definition name.', 'red'));
   }
   if (!isPeekToken(li.head(), 'L_PAREN')) {
-    throw new Error('Expected opening parenthesis.');
+    throw new Error(fmtStr('Expected opening parenthesis.', 'red'));
   }
   li.next();
   const params = [];
   while (!isPeekToken(li.head(), 'R_PAREN')) {
     if (!isPeekToken(li.head(), IDENTIFIER)) {
-      throw new Error('Expected definition parameter.');
+      throw new Error(fmtStr('Expected definition parameter.', 'red'));
     }
     const currentToken = li.next();
     params.push(currentToken);
@@ -537,7 +538,7 @@ export function parseDefinitionStatement(li: List<Token>) {
   }
   li.next();
   if (!isPeekToken(li.head(), 'L_BRACE')) {
-    throw new Error('Expected definition body.');
+    throw new Error(fmtStr('Expected definition body.', 'red'));
   }
   li.next();
   const body = parseBlockStatement(li);

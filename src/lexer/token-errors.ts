@@ -1,3 +1,4 @@
+import { fmtStr } from 'crude-dev-tools';
 import { Token, Tokens } from './tokenize';
 
 export class TokenizeError extends Error {
@@ -8,7 +9,7 @@ export class TokenizeError extends Error {
 }
 
 export function throwNoInput() {
-  throw new TokenizeError('No input');
+  throw new TokenizeError(fmtStr('No input', 'red'));
 }
 
 function unallowedTokenMessage(unallowedToken: Token) {
@@ -20,5 +21,5 @@ export function throwCollectedErrors(unallowedTokens: Tokens) {
     (acc, v) => acc.concat(unallowedTokenMessage(v), '\n'.repeat(2)),
     ''
   );
-  throw new TokenizeError(errorMessage);
+  throw new TokenizeError(fmtStr(errorMessage, 'red'));
 }
