@@ -31,7 +31,7 @@ import {
 } from '../lexer/token-types';
 import { List } from '../utils/list';
 import { peekCharacter, Token, NextToken } from '../lexer/tokenize';
-import { Expression } from '../parser/parse';
+import { Expression } from '../parser/parse-expression-statement';
 import {
   INFIX_ARITHMETIC_TYPES,
   INFIX_NOT,

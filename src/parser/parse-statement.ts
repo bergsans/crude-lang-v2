@@ -24,8 +24,10 @@ import { parseConcatStatement } from './parse-concat-statement';
 import { parseLetStatement } from './parse-let-statement';
 import { parseIfStatement } from './parse-if-statement';
 import { parseLengthStatement } from './parse-length-statement';
-import { parseExpressionStatement } from './parse-expression-statement';
-import { Expression } from './parse';
+import {
+  Expression,
+  parseExpressionStatement,
+} from './parse-expression-statement';
 import { Identifier } from './parse-literal-expression';
 
 export interface Statement {
@@ -48,6 +50,7 @@ const statementTypes = {
   [LET]: (li: List<Token>) => parseLetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),
 };
+
 export function parseStatement(li: List<Token>) {
   const currentToken = li.head();
   return currentToken.type in statementTypes

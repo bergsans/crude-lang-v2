@@ -1,9 +1,20 @@
 import { Token } from '../lexer/tokenize';
 import { characterNames, ASSIGN, NIL, IDENTIFIER } from '../lexer/token-types';
 import { List } from '../utils/list';
-import { parseExpressionStatement } from './parse-expression-statement';
+import {
+  Expression,
+  parseExpressionStatement,
+} from './parse-expression-statement';
+import { Node } from './parse';
+import { Identifier } from './parse-literal-expression';
 
-export function parseLetStatement(li: List<Token>) {
+export interface LetDeclaration extends Node {
+  type: 'LetDeclaration';
+  id: Identifier;
+  statement: Expression;
+}
+
+export function parseLetStatement(li: List<Token>): LetDeclaration {
   li.next();
   const { id, statement } = parseAssignment(li);
   return { type: 'LetDeclaration', id, statement };

@@ -1,9 +1,19 @@
 import { Token } from '../lexer/tokenize';
 import { isRightParens, isCommaToken } from '../utils/predicates';
 import { List } from '../utils/list';
-import { parseExpressionStatement } from './parse-expression-statement';
+import {
+  Expression,
+  parseExpressionStatement,
+} from './parse-expression-statement';
+import { Node } from './parse';
 
-export function parseCallExpression(li: List<Token>) {
+interface CallExpression extends Node {
+  type: 'CallExpression';
+  name: string;
+  args: Expression[];
+}
+
+export function parseCallExpression(li: List<Token>): CallExpression {
   const name = li.next().literal;
   li.next();
   const args = [];
@@ -17,7 +27,7 @@ export function parseCallExpression(li: List<Token>) {
   li.next();
   return {
     type: 'CallExpression',
-    name,
+    name, // callee
     args,
   };
 }

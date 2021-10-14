@@ -1,15 +1,10 @@
 import { tokenize } from './lexer/tokenize';
-import { parse, parseExpressionStatement } from './parser/parse';
-import { evaluate, environment, Environment } from './evaluator/evaluate';
-
-const interpret = (input: string, env: Environment) =>
-  evaluate(parse(tokenize(input)), env);
+import { parse } from './parser/parse';
+import { evaluate, environment } from './evaluator/evaluate';
 
 export default {
   tokenize,
   parse,
-  parseExpressionStatement,
-  interpret,
   environment,
   evaluate,
 };

@@ -9,12 +9,15 @@ export interface BlockStatement extends Node {
   statements: Statement[];
 }
 
-export function parseBlockStatement(li: List<Token>) {
+export function parseBlockStatement(li: List<Token>): BlockStatement {
   const statements = [];
   while (li.get().length && !isRightBrace(li) && !isEOF(li)) {
     const statement = parseStatement(li);
     statements.push(statement);
   }
   li.next();
-  return statements;
+  return {
+    type: 'BlockStatement',
+    statements,
+  };
 }

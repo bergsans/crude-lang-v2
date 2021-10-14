@@ -35,6 +35,7 @@ export interface Token {
   type: TokenType;
   literal: Literal;
   meta: Metadata;
+  name?: string;
 }
 
 export interface Data {

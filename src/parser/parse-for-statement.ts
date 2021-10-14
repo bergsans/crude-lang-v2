@@ -3,20 +3,34 @@ import { parseGroupedExpression } from './parse-helpers';
 import { isLeftBrace } from '../utils/predicates';
 import { List } from '../utils/list';
 import { fmtStr } from 'crude-dev-tools';
-import { parseBlockStatement } from './parse-block-statement';
+import { parseBlockStatement, BlockStatement } from './parse-block-statement';
+import { Node } from './parse';
+import { Identifier } from './parse-literal-expression';
+import { Expression } from './parse-expression-statement';
 
-export function parseForStatement(li: List<Token>) {
+interface ForStatement extends Node {
+  type: 'ForStatement';
+  id: Identifier;
+  start: Expression;
+  end: Expression;
+  action: BlockStatement;
+}
+
+export function parseForStatement(li: List<Token>): ForStatement {
   li.next();
-  const id = li.get()[1];
+  const id = {
+    type: 'Identifier',
+    name: li.get()[1].literal,
+  };
   const [, start, end] = parseGroupedExpression(3, li);
   if (!isLeftBrace(li)) {
     throw new Error(fmtStr('Expected block statement.', 'red'));
   }
   li.next();
-  const c = { type: 'BlockStatement', statements: parseBlockStatement(li) };
+  const c: BlockStatement = parseBlockStatement(li);
   const action = { ...c, statements: c.statements.filter((n: any) => n) };
   return {
-    type: 'For',
+    type: 'ForStatement',
     id,
     start,
     end,

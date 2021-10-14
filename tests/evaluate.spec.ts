@@ -164,6 +164,7 @@ return x;
       it(`${code.trim().replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code);
         const parsed = parse(tokens);
+        //console.log(JSON.stringify(parsed, null, 2));
         const result = evaluate(parsed);
         expect(result).to.eq(expectedResult);
       });

@@ -9,6 +9,7 @@ import {
 import { fmtStr } from 'crude-dev-tools';
 import { parseCallExpression } from './parse-call-expression';
 import { parseConcatStatement } from './parse-concat-statement';
+import { Node } from './parse';
 import { parseSliceStatement } from './parse-slice-statement';
 import { parseLengthStatement } from './parse-length-statement';
 import { _parseBinaryExpression } from './parse-binary-expression';
@@ -35,6 +36,13 @@ import { List } from '../utils/list';
 import { parseConvertStatement } from './parse-convert-statement';
 import { parseChangeStatement } from './parse-change-statement';
 import { parseLiteralExpression } from './parse-literal-expression';
+
+export interface Expression extends Node {
+  type: 'Expression';
+  literal: string;
+  expression: Expression;
+  argument?: Expression;
+}
 
 type ParseExpressionPredicate = (li: List<Token>) => boolean;
 
@@ -199,7 +207,7 @@ const parseExpressionHandlers: ParseExpressionHandler[] = [
   [isIdentifierAndEndOfStatement, produceIdentifierAndEndOfStatement],
 ];
 
-export function parseExpressionStatement(li: List<Token>) {
+export function parseExpressionStatement(li: List<Token>): Expression {
   for (const [predicate, producer] of parseExpressionHandlers) {
     if (predicate(li)) {
       return producer(li);

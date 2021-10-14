@@ -1,42 +1,29 @@
 import { Token, Metadata } from '../lexer/tokenize';
 import { list } from '../utils/list';
 import { Statement } from './parse-statement';
-import { parseBlockStatement } from './parse-block-statement';
-
-export type Value = Token;
-
-export type Left = NodeTree;
-
-export type Right = Left;
-
-export interface NodeTree {
-  left: Left;
-  value: Value;
-  right: Right;
-}
+import { BlockStatement, parseBlockStatement } from './parse-block-statement';
 
 export interface Node {
   type: string;
-  meta: Metadata;
+  meta?: Metadata;
 }
 
-export interface Expression extends NodeTree {
-  type: string;
-  literal: string;
-  expression: Expression;
-  argument?: Expression;
-}
-
-export interface AST {
+export interface Program extends Node {
   type: 'Program';
-  body: Statement[];
+  body: BlockStatement;
 }
 
-export function parse(tokens: Token[], stdLib?) {
+export function parse(tokens: Token[], stdLib?): Program {
   const li = list(tokens);
-  const statements = parseBlockStatement(li);
+  const body = parseBlockStatement(li);
+  const statements = stdLib
+    ? [].concat(stdLib.statements, body.statements)
+    : body.statements;
   return {
     type: 'Program',
-    body: stdLib ? [].concat(stdLib, statements) : statements,
+    body: {
+      type: 'BlockStatement',
+      statements,
+    },
   };
 }

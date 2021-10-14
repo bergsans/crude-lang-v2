@@ -1,7 +1,8 @@
 import { NIL } from '../lexer/token-types';
 import { fmtStr } from 'crude-dev-tools';
 import RESERVED_KEYWORDS from '../lexer/reserved-keywords';
-import { Expression, NodeTree } from '../parser/parse';
+import { Expression } from '../parser/parse-expression-statement';
+import { NodeTree } from '../parser/parse-binary-expression';
 import { isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 import { Statement } from '../parser/parse-statement';
@@ -91,11 +92,11 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   if (!node.left) {
     if (
       [
-        'Concat',
-        'Change',
-        'Convert',
-        'Length',
-        'Slice',
+        'ConcatStatement',
+        'ChangeStatement',
+        'ConvertStatement',
+        'LengthStatement',
+        'SliceStatement',
         'CallExpression',
       ].includes(node.value.type)
     ) {
@@ -172,7 +173,6 @@ function evaluateConvertStatement(node, context: Environment) {
 
 function evaluatePrintStatement(node, context: Environment) {
   const value = evaluate(node.value, context);
-  console.log(value);
   return NIL;
 }
 
@@ -200,7 +200,7 @@ function evaluateDefinitionStatement(node, context: Environment) {
 }
 
 function evaluateForStatement(node, context: Environment) {
-  const id = node.id.literal;
+  const id = node.id.name;
   const start = evaluate(node.start, context);
   const end = evaluate(node.end, context);
   for (let i = start; i < end; i++) {
@@ -223,7 +223,7 @@ function evaluateCallExpression(node, context: Environment) {
     env
   );
   const functionEnvironment = environment(updateEnv, context);
-  return evaluateBlockStatements(body, functionEnvironment);
+  return evaluateBlockStatements(body.statements, functionEnvironment);
 }
 
 const evaluateTypes = {
@@ -243,17 +243,20 @@ const evaluateTypes = {
       context
     );
   },
-  Convert: (node, context: Environment) =>
+  ConvertStatement: (node, context: Environment) =>
     evaluateConvertStatement(node, context),
-  Print: (node, context: Environment) => evaluatePrintStatement(node, context),
-  Change: (node, context: Environment) =>
+  PrintStatement: (node, context: Environment) =>
+    evaluatePrintStatement(node, context),
+  ChangeStatement: (node, context: Environment) =>
     evaluateChangeStatement(node, context),
-  Concat: (node, context: Environment) =>
+  ConcatStatement: (node, context: Environment) =>
     evaluateConcatStatement(node, context),
-  Slice: (node, context: Environment) => evaluateSliceStatement(node, context),
-  Length: (node, context: Environment) =>
+  SliceStatement: (node, context: Environment) =>
+    evaluateSliceStatement(node, context),
+  LengthStatement: (node, context: Environment) =>
     evaluateLengthStatement(node, context),
-  For: (node, context: Environment) => evaluateForStatement(node, context),
+  ForStatement: (node, context: Environment) =>
+    evaluateForStatement(node, context),
   DefinitionStatement: (node, context: Environment) => {
     return evaluateDefinitionStatement(node, context);
   },
@@ -263,9 +266,9 @@ const evaluateTypes = {
   ARRAY: (node, context: Environment) => evaluateArray(node, context),
   ELEMENT: (node, context: Environment) => evaluateElement(node, context),
   BlockStatement: (node, context: Environment) =>
-    evaluateBlockStatements(node, context),
+    evaluateBlockStatements(node.statements, context),
   Program: (node, context: Environment) =>
-    evaluateBlockStatements(node.body, context),
+    evaluateBlockStatements(node.body.statements, context),
   STRING: (node, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
   INTEGER: (node, context: Environment) =>

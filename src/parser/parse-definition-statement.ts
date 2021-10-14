@@ -1,4 +1,4 @@
-import { Token } from '../lexer/tokenize';
+import { Literal, Token } from '../lexer/tokenize';
 import { IDENTIFIER } from '../lexer/token-types';
 import {
   isCommaToken,
@@ -8,9 +8,19 @@ import {
 } from '../utils/predicates';
 import { List } from '../utils/list';
 import { fmtStr } from 'crude-dev-tools';
-import { parseBlockStatement } from './parse-block-statement';
+import { parseBlockStatement, BlockStatement } from './parse-block-statement';
+import { Node } from './parse';
+import { Expression } from './parse-expression-statement';
+import { LiteralExpression } from './parse-literal-expression';
 
-export function parseDefinitionStatement(li: List<Token>) {
+export interface DefinitionStatement extends Node {
+  type: 'DefinitionStatement';
+  name: string;
+  params: LiteralExpression[];
+  body: BlockStatement;
+}
+
+export function parseDefinitionStatement(li: List<Token>): DefinitionStatement {
   li.next();
   const name = li.next();
   if (name.type !== IDENTIFIER) {
@@ -36,7 +46,7 @@ export function parseDefinitionStatement(li: List<Token>) {
     throw new Error(fmtStr('Expected definition body.', 'red'));
   }
   li.next();
-  const body = parseBlockStatement(li);
+  const body: BlockStatement = parseBlockStatement(li);
   return {
     type: 'DefinitionStatement',
     name: name.literal,

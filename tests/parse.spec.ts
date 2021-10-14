@@ -12,44 +12,47 @@ describe('Parser', () => {
     const parsed = parse(tokens);
     const expectedResult = {
       type: 'Program',
-      body: [
-        {
-          type: 'LetDeclaration',
-          id: {
-            type: 'IDENTIFIER',
-            name: 'nums',
-          },
-          statement: {
-            type: 'ARRAY',
-            elements: [
-              {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'INTEGER',
-                  literal: '1',
-                  meta: {
-                    ln: 1,
-                    col: 13,
-                    realPosition: 12,
+      body: {
+        type: 'BlockStatement',
+        statements: [
+          {
+            type: 'LetDeclaration',
+            id: {
+              type: 'IDENTIFIER',
+              name: 'nums',
+            },
+            statement: {
+              type: 'ARRAY',
+              elements: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'INTEGER',
+                    literal: '1',
+                    meta: {
+                      ln: 1,
+                      col: 13,
+                      realPosition: 12,
+                    },
                   },
                 },
-              },
-              {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'INTEGER',
-                  literal: '2',
-                  meta: {
-                    ln: 1,
-                    col: 16,
-                    realPosition: 15,
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'INTEGER',
+                    literal: '2',
+                    meta: {
+                      ln: 1,
+                      col: 16,
+                      realPosition: 15,
+                    },
                   },
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-      ],
+        ],
+      },
     };
     expect(parsed).to.deep.equal(expectedResult);
   });
@@ -60,27 +63,30 @@ describe('Parser', () => {
     const parsed = parse(tokens);
     const expectedResult = {
       type: 'Program',
-      body: [
-        {
-          type: 'LetDeclaration',
-          id: {
-            type: 'IDENTIFIER',
-            name: 'name',
-          },
-          statement: {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'STRING',
-              literal: 'Gandalf the White',
-              meta: {
-                ln: 1,
-                col: 12,
-                realPosition: 11,
+      body: {
+        type: 'BlockStatement',
+        statements: [
+          {
+            type: 'LetDeclaration',
+            id: {
+              type: 'IDENTIFIER',
+              name: 'name',
+            },
+            statement: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'STRING',
+                literal: 'Gandalf the White',
+                meta: {
+                  ln: 1,
+                  col: 12,
+                  realPosition: 11,
+                },
               },
             },
           },
-        },
-      ],
+        ],
+      },
     };
 
     expect(parsed).to.deep.equal(expectedResult);
@@ -92,38 +98,41 @@ describe('Parser', () => {
     const parsed = parse(tokens);
     const expectedResult = {
       type: 'Program',
-      body: [
-        {
-          type: 'CallExpression',
-          name: 'add',
-          args: [
-            {
-              type: 'ExpressionStatement',
-              expression: {
-                type: 'INTEGER',
-                literal: '3',
-                meta: {
-                  ln: 1,
-                  col: 5,
-                  realPosition: 4,
+      body: {
+        type: 'BlockStatement',
+        statements: [
+          {
+            type: 'CallExpression',
+            name: 'add',
+            args: [
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'INTEGER',
+                  literal: '3',
+                  meta: {
+                    ln: 1,
+                    col: 5,
+                    realPosition: 4,
+                  },
                 },
               },
-            },
-            {
-              type: 'ExpressionStatement',
-              expression: {
-                type: 'INTEGER',
-                literal: '3',
-                meta: {
-                  ln: 1,
-                  col: 8,
-                  realPosition: 7,
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'INTEGER',
+                  literal: '3',
+                  meta: {
+                    ln: 1,
+                    col: 8,
+                    realPosition: 7,
+                  },
                 },
               },
-            },
-          ],
-        },
-      ],
+            ],
+          },
+        ],
+      },
     };
     expect(parsed).to.deep.equal(expectedResult);
   });
@@ -134,27 +143,30 @@ describe('Parser', () => {
     const parsed = parse(tokens);
     const expectedResult = {
       type: 'Program',
-      body: [
-        {
-          type: 'LetDeclaration',
-          id: {
-            type: 'IDENTIFIER',
-            name: 'x',
-          },
-          statement: {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'INTEGER',
-              literal: '3',
-              meta: {
-                ln: 1,
-                col: 9,
-                realPosition: 8,
+      body: {
+        type: 'BlockStatement',
+        statements: [
+          {
+            type: 'LetDeclaration',
+            id: {
+              type: 'IDENTIFIER',
+              name: 'x',
+            },
+            statement: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'INTEGER',
+                literal: '3',
+                meta: {
+                  ln: 1,
+                  col: 9,
+                  realPosition: 8,
+                },
               },
             },
           },
-        },
-      ],
+        ],
+      },
     };
     expect(parsed).to.deep.equal(expectedResult);
   });
@@ -166,73 +178,78 @@ describe('Parser', () => {
       const result = parse(tokens);
       const expectedResult = {
         type: 'Program',
-        body: [
-          {
-            type: 'DefinitionStatement',
-            name: 'add',
-            params: [
-              {
-                type: 'IDENTIFIER',
-                literal: 'a',
-                meta: {
-                  ln: 1,
-                  col: 12,
-                  realPosition: 11,
+        body: {
+          type: 'BlockStatement',
+          statements: [
+            {
+              type: 'DefinitionStatement',
+              name: 'add',
+              params: [
+                {
+                  type: 'IDENTIFIER',
+                  literal: 'a',
+                  meta: {
+                    ln: 1,
+                    col: 12,
+                    realPosition: 11,
+                  },
                 },
-              },
-              {
-                type: 'IDENTIFIER',
-                literal: 'b',
-                meta: {
-                  ln: 1,
-                  col: 15,
-                  realPosition: 14,
+                {
+                  type: 'IDENTIFIER',
+                  literal: 'b',
+                  meta: {
+                    ln: 1,
+                    col: 15,
+                    realPosition: 14,
+                  },
                 },
-              },
-            ],
-            body: [
-              {
-                type: 'ReturnStatement',
-                value: {
-                  type: 'BinaryExpression',
-                  left: {
+              ],
+              body: {
+                type: 'BlockStatement',
+                statements: [
+                  {
+                    type: 'ReturnStatement',
                     value: {
-                      type: 'IDENTIFIER',
-                      literal: 'a',
-                      meta: {
-                        ln: 1,
-                        col: 27,
-                        realPosition: 26,
+                      type: 'BinaryExpression',
+                      left: {
+                        value: {
+                          type: 'IDENTIFIER',
+                          literal: 'a',
+                          meta: {
+                            ln: 1,
+                            col: 27,
+                            realPosition: 26,
+                          },
+                        },
+                      },
+                      value: {
+                        type: 'PLUS',
+                        literal: '+',
+                        meta: {
+                          ln: 1,
+                          col: 29,
+                          realPosition: 28,
+                        },
+                      },
+                      right: {
+                        value: {
+                          type: 'IDENTIFIER',
+                          literal: 'b',
+                          meta: {
+                            ln: 1,
+                            col: 31,
+                            realPosition: 30,
+                          },
+                        },
                       },
                     },
                   },
-                  value: {
-                    type: 'PLUS',
-                    literal: '+',
-                    meta: {
-                      ln: 1,
-                      col: 29,
-                      realPosition: 28,
-                    },
-                  },
-                  right: {
-                    value: {
-                      type: 'IDENTIFIER',
-                      literal: 'b',
-                      meta: {
-                        ln: 1,
-                        col: 31,
-                        realPosition: 30,
-                      },
-                    },
-                  },
-                },
+                ],
               },
-            ],
-          },
-        ],
+            },
+          ],
+        },
       };
-
       expect(result).to.deep.equal(expectedResult);
     });
   });
@@ -244,65 +261,68 @@ describe('Parser', () => {
       const result = parse(tokens);
       const expectedResult = {
         type: 'Program',
-        body: [
-          {
-            type: 'IfStatement',
-            condition: {
-              type: 'BinaryExpression',
-              left: {
-                value: {
-                  type: 'INTEGER',
-                  literal: '3',
-                  meta: {
-                    ln: 1,
-                    col: 4,
-                    realPosition: 3,
-                  },
-                },
-              },
-              value: {
-                type: 'GREATER_THAN',
-                literal: '>',
-                meta: {
-                  ln: 1,
-                  col: 6,
-                  realPosition: 5,
-                },
-              },
-              right: {
-                value: {
-                  type: 'INTEGER',
-                  literal: '4',
-                  meta: {
-                    ln: 1,
-                    col: 8,
-                    realPosition: 7,
-                  },
-                },
-              },
-            },
-            consequence: {
-              type: 'BlockStatement',
-              statements: [
-                {
-                  type: 'ReturnStatement',
+        body: {
+          type: 'BlockStatement',
+          statements: [
+            {
+              type: 'IfStatement',
+              condition: {
+                type: 'BinaryExpression',
+                left: {
                   value: {
-                    type: 'ExpressionStatement',
-                    expression: {
-                      type: 'INTEGER',
-                      literal: '1',
-                      meta: {
-                        ln: 1,
-                        col: 20,
-                        realPosition: 19,
-                      },
+                    type: 'INTEGER',
+                    literal: '3',
+                    meta: {
+                      ln: 1,
+                      col: 4,
+                      realPosition: 3,
                     },
                   },
                 },
-              ],
+                value: {
+                  type: 'GREATER_THAN',
+                  literal: '>',
+                  meta: {
+                    ln: 1,
+                    col: 6,
+                    realPosition: 5,
+                  },
+                },
+                right: {
+                  value: {
+                    type: 'INTEGER',
+                    literal: '4',
+                    meta: {
+                      ln: 1,
+                      col: 8,
+                      realPosition: 7,
+                    },
+                  },
+                },
+              },
+              consequence: {
+                type: 'BlockStatement',
+                statements: [
+                  {
+                    type: 'ReturnStatement',
+                    value: {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'INTEGER',
+                        literal: '1',
+                        meta: {
+                          ln: 1,
+                          col: 20,
+                          realPosition: 19,
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
             },
-          },
-        ],
+          ],
+        },
       };
       expect(result).to.deep.equal(expectedResult);
     });
@@ -349,49 +369,52 @@ describe('Parser', () => {
         const result = parse(tokens);
         const expectedResult = {
           type: 'Program',
-          body: [
-            {
-              type: 'LetDeclaration',
-              id: {
-                type: 'IDENTIFIER',
-                name: 'x',
-              },
-              statement: {
-                type: 'BinaryExpression',
-                left: {
+          body: {
+            type: 'BlockStatement',
+            statements: [
+              {
+                type: 'LetDeclaration',
+                id: {
+                  type: 'IDENTIFIER',
+                  name: 'x',
+                },
+                statement: {
+                  type: 'BinaryExpression',
+                  left: {
+                    value: {
+                      type: 'INTEGER',
+                      literal: '4',
+                      meta: {
+                        ln: 1,
+                        col: 9,
+                        realPosition: 8,
+                      },
+                    },
+                  },
                   value: {
-                    type: 'INTEGER',
-                    literal: '4',
+                    type: 'EQUAL',
+                    literal: '==',
                     meta: {
                       ln: 1,
-                      col: 9,
-                      realPosition: 8,
+                      col: 11,
+                      realPosition: 10,
+                    },
+                  },
+                  right: {
+                    value: {
+                      type: 'INTEGER',
+                      literal: '4',
+                      meta: {
+                        ln: 1,
+                        col: 14,
+                        realPosition: 13,
+                      },
                     },
                   },
                 },
-                value: {
-                  type: 'EQUAL',
-                  literal: '==',
-                  meta: {
-                    ln: 1,
-                    col: 11,
-                    realPosition: 10,
-                  },
-                },
-                right: {
-                  value: {
-                    type: 'INTEGER',
-                    literal: '4',
-                    meta: {
-                      ln: 1,
-                      col: 14,
-                      realPosition: 13,
-                    },
-                  },
-                },
               },
-            },
-          ],
+            ],
+          },
         };
         expect(result).to.deep.equal(expectedResult);
       });
@@ -404,27 +427,30 @@ describe('Parser', () => {
         const result = parse(tokens);
         const expectedResult = {
           type: 'Program',
-          body: [
-            {
-              type: 'LetDeclaration',
-              id: {
-                type: 'IDENTIFIER',
-                name: 'x',
-              },
-              statement: {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'INTEGER',
-                  literal: '4',
-                  meta: {
-                    ln: 1,
-                    col: 9,
-                    realPosition: 8,
+          body: {
+            type: 'BlockStatement',
+            statements: [
+              {
+                type: 'LetDeclaration',
+                id: {
+                  type: 'IDENTIFIER',
+                  name: 'x',
+                },
+                statement: {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'INTEGER',
+                    literal: '4',
+                    meta: {
+                      ln: 1,
+                      col: 9,
+                      realPosition: 8,
+                    },
                   },
                 },
               },
-            },
-          ],
+            ],
+          },
         };
         expect(result).to.deep.equal(expectedResult);
       });
@@ -435,49 +461,52 @@ describe('Parser', () => {
         const result = parse(tokens);
         const expectedResult = {
           type: 'Program',
-          body: [
-            {
-              type: 'LetDeclaration',
-              id: {
-                type: 'IDENTIFIER',
-                name: 'x',
-              },
-              statement: {
-                type: 'BinaryExpression',
-                left: {
+          body: {
+            type: 'BlockStatement',
+            statements: [
+              {
+                type: 'LetDeclaration',
+                id: {
+                  type: 'IDENTIFIER',
+                  name: 'x',
+                },
+                statement: {
+                  type: 'BinaryExpression',
+                  left: {
+                    value: {
+                      type: 'INTEGER',
+                      literal: '4',
+                      meta: {
+                        ln: 1,
+                        col: 9,
+                        realPosition: 8,
+                      },
+                    },
+                  },
                   value: {
-                    type: 'INTEGER',
-                    literal: '4',
+                    type: 'PLUS',
+                    literal: '+',
                     meta: {
                       ln: 1,
-                      col: 9,
-                      realPosition: 8,
+                      col: 11,
+                      realPosition: 10,
+                    },
+                  },
+                  right: {
+                    value: {
+                      type: 'INTEGER',
+                      literal: '4',
+                      meta: {
+                        ln: 1,
+                        col: 13,
+                        realPosition: 12,
+                      },
                     },
                   },
                 },
-                value: {
-                  type: 'PLUS',
-                  literal: '+',
-                  meta: {
-                    ln: 1,
-                    col: 11,
-                    realPosition: 10,
-                  },
-                },
-                right: {
-                  value: {
-                    type: 'INTEGER',
-                    literal: '4',
-                    meta: {
-                      ln: 1,
-                      col: 13,
-                      realPosition: 12,
-                    },
-                  },
-                },
               },
-            },
-          ],
+            ],
+          },
         };
         expect(result).to.deep.equal(expectedResult);
       });
@@ -488,27 +517,30 @@ describe('Parser', () => {
         const result = parse(tokens);
         const expectedResult = {
           type: 'Program',
-          body: [
-            {
-              type: 'LetDeclaration',
-              id: {
-                type: 'IDENTIFIER',
-                name: 'x',
-              },
-              statement: {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'INTEGER',
-                  literal: '9',
-                  meta: {
-                    ln: 1,
-                    col: 9,
-                    realPosition: 8,
+          body: {
+            type: 'BlockStatement',
+            statements: [
+              {
+                type: 'LetDeclaration',
+                id: {
+                  type: 'IDENTIFIER',
+                  name: 'x',
+                },
+                statement: {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'INTEGER',
+                    literal: '9',
+                    meta: {
+                      ln: 1,
+                      col: 9,
+                      realPosition: 8,
+                    },
                   },
                 },
               },
-            },
-          ],
+            ],
+          },
         };
         expect(result).to.deep.equal(expectedResult);
       });
@@ -520,11 +552,15 @@ let numTwo = 200;
 `;
         const tokens = tokenize(code);
         const result = parse(tokens);
-        expect(result.body.length).to.eql(2);
-        expect(result.body[0].id.name).to.equal('numOne');
-        expect(result.body[0].statement.expression.literal).to.equal('100');
-        expect(result.body[1].id.name).to.equal('numTwo');
-        expect(result.body[1].statement.expression.literal).to.equal('200');
+        expect(result.body.statements.length).to.eql(2);
+        expect(result.body.statements[0].id.name).to.equal('numOne');
+        expect(result.body.statements[0].statement.expression.literal).to.equal(
+          '100'
+        );
+        expect(result.body.statements[1].id.name).to.equal('numTwo');
+        expect(result.body.statements[1].statement.expression.literal).to.equal(
+          '200'
+        );
       });
     });
 

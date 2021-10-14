@@ -9,11 +9,27 @@ import {
   isCallExpression,
 } from '../utils/predicates';
 import { List } from '../utils/list';
-import { Left, NodeTree } from './parse';
 import { parseConcatStatement } from './parse-concat-statement';
 import { parseSliceStatement } from './parse-slice-statement';
 import { parseLengthStatement } from './parse-length-statement';
 import { parseCallExpression } from './parse-call-expression';
+import { Expression } from './parse-expression-statement';
+
+export interface NodeTree {
+  left: any;
+  value: any; // Operator
+  right: any;
+}
+
+export interface BinaryExpression extends NodeTree {
+  type: 'BinaryExpression';
+}
+
+//export type Value = Token;
+
+//export type Left = NodeTree;
+
+//export type Right = Left;
 
 type NudPredicate = (li: List<Token>) => boolean;
 
@@ -81,7 +97,7 @@ function nud(li: List<Token>) {
   return tree(null, li.next(), null);
 }
 
-function led(li: List<Token>, left: Left, operator: Token) {
+function led(li: List<Token>, left: Expression, operator: Token) {
   return tree(
     left,
     operator,
@@ -114,12 +130,12 @@ function removeDeadNodes(node: NodeTree) {
   return node;
 }
 
-export function _parseBinaryExpression(li: List<Token>) {
+export function _parseBinaryExpression(li: List<Token>): BinaryExpression {
   const result = parseBinaryExpression(li);
   if (li.head().type === END_OF_STATEMENT) {
     li.next();
   }
-  const purifiedNode = removeDeadNodes(result);
+  const purifiedNode: NodeTree = removeDeadNodes(result);
   return {
     type: 'BinaryExpression',
     ...purifiedNode,

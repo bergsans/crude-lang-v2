@@ -3,9 +3,17 @@ import { isLeftBrace, isLeftParens } from '../utils/predicates';
 import { List } from '../utils/list';
 import { fmtStr } from 'crude-dev-tools';
 import { parseExpressionStatement } from './parse-expression-statement';
-import { parseBlockStatement } from './parse-block-statement';
+import { BlockStatement, parseBlockStatement } from './parse-block-statement';
+import { Node } from './parse';
+import { Expression } from './parse-expression-statement';
 
-export function parseIfStatement(li: List<Token>) {
+export interface IfStatement extends Node {
+  type: 'IfStatement';
+  condition: Expression;
+  consequence: BlockStatement;
+}
+
+export function parseIfStatement(li: List<Token>): IfStatement {
   if (li.head().type === 'IF') {
     li.next();
   }
@@ -19,7 +27,7 @@ export function parseIfStatement(li: List<Token>) {
     throw new Error(fmtStr('Expected block statement.', 'red'));
   }
   li.next();
-  const c = { type: 'BlockStatement', statements: parseBlockStatement(li) };
+  const c: BlockStatement = parseBlockStatement(li);
   const consequence = { ...c, statements: c.statements.filter((n: any) => n) };
   return {
     type: 'IfStatement',
