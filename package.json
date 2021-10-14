@@ -4,7 +4,7 @@
   "description": "TypeScript interpreter for CrudeLang (a toy language)",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -p ./tsconfig.json && cp src/std-lib .build/src -r",
+    "build": "tsc -p ./tsconfig.json && cp std-lib .build -r",
     "watch": "mocha -r ts-node/register tests/**/*.spec.ts --watch",
     "test": "mocha -r ts-node/register tests/**/*.spec.ts"
   },
