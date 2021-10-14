@@ -52,8 +52,3 @@ if((n == 1) || (n == 2)) { ... }
 For-loops require knowledge on how the language works under the hood,
 and are not intuitive. Recursion is advised when not working on say simple
 lists. See `./tests/evaluate.spec.ts` for examples.
-
-# TODO's
-* Fix quirks mentioned above.
-* Fix types, inspired by https://github.com/estree/estree/blob/master/es5.md
-
