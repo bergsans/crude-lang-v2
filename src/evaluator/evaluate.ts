@@ -172,7 +172,7 @@ function evaluateConvertStatement(node, context: Environment) {
 }
 
 function evaluatePrintStatement(node, context: Environment) {
-  const value = evaluate(node.value, context);
+  evaluate(node.value, context);
   return NIL;
 }
 

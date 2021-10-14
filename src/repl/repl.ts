@@ -4,7 +4,7 @@ import { createInterface } from 'readline';
 import { fmtStr } from 'crude-dev-tools';
 import methods from '../index';
 import importStdLib from '../utils/import-std-lib';
-const { tokenize, environment, parse, evaluate } = methods;
+const { tokenize, parse, evaluate } = methods;
 const repl = createInterface({
   input: process.stdin,
   output: process.stdout,
