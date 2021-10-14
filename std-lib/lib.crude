@@ -92,3 +92,11 @@ define sort(arr) {
   }
   return arr;
 }
+
+define head(arr) {
+  return arr[0];
+}
+
+define last(arr) {
+  return arr[length(arr) - 1];
+}
