@@ -1,14 +1,17 @@
 {
   "name": "crude-lang-v2",
   "version": "1.0.0",
-  "description": "",
+  "description": "TypeScript interpreter for CrudeLang (a toy language)",
   "main": "index.js",
   "scripts": {
     "build": "tsc -p ./tsconfig.json && cp src/std-lib .build/src -r",
     "watch": "mocha -r ts-node/register tests/**/*.spec.ts --watch",
     "test": "mocha -r ts-node/register tests/**/*.spec.ts"
   },
-  "keywords": [],
+  "keywords": [
+    "interpreter",
+    "toy-language"
+  ],
   "author": "Claes-Magnus Berg <bergclaesmagnus@gmail.com>",
   "license": "ISC",
   "engines": {
