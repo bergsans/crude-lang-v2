@@ -5,7 +5,7 @@ import { list } from './list';
 import { fmtStr } from 'crude-dev-tools';
 import getFileContent from './get-file-utf-8';
 
-const STD_LIB_PATH = path.join(__dirname, '../', 'std-lib', 'lib.cr');
+const STD_LIB_PATH = path.join(__dirname, '../', '../', 'std-lib', 'lib.crude');
 
 async function importStdLib(path = STD_LIB_PATH) {
   try {
