@@ -36,7 +36,6 @@ import {
   INFIX_ARITHMETIC_TYPES,
   INFIX_NOT,
   END_OF_STATEMENT,
-  OPEN_GROUPED_EXPRESSION,
 } from '../parser/parse-types';
 import RESERVED_KEYWORD from '../lexer/reserved-keywords';
 
@@ -119,44 +118,16 @@ export function isBrace(currentCharacter: string) {
   return [L_BRACE, R_BRACE].includes(currentCharacter);
 }
 
-export function isLeftBrace(li: List<Token>) {
-  return isPeekToken(li.head(), 'L_BRACE');
-}
-
-export function isRightBrace(li: List<Token>) {
-  return isPeekToken(li.head(), 'R_BRACE');
-}
-
-export function isEOF(li: List<Token>) {
-  return li.head().type === 'EOF';
-}
-
-export function isRightBracket(li: List<Token>) {
-  return li.head().type === 'R_BRACKET';
-}
-
-export function isLeftBracket(li: List<Token>) {
-  return li.head().type === 'L_BRACKET';
-}
-
 export function isBracket(currentCharacter: string) {
   return [L_BRACKET, R_BRACKET].includes(currentCharacter);
 }
 
-export function isCommaToken(li: List<Token>) {
-  return li.head().type === 'COMMA';
+export function isGroupedExpression(li: List<Token>) {
+  return li.isHead('L_PAREN');
 }
 
 export function isComma(currentCharacter: string) {
   return currentCharacter === COMMA;
-}
-
-export function isLeftParens(li: List<Token>) {
-  return li.head().type === 'L_PAREN';
-}
-
-export function isRightParens(li: List<Token>) {
-  return li.head().type === 'R_PAREN';
 }
 
 export function isParens(currentCharacter: string) {
@@ -167,10 +138,6 @@ export function isOperator(currentCharacter: string) {
   return [MINUS, PLUS, MULTIPLICATION, DIVISION, MODULO, POWER].includes(
     currentCharacter
   );
-}
-
-export function isSemicolonToken(li: List<Token>) {
-  return li.head().type === 'SEMICOLON';
 }
 
 export function isSemicolon(currentCharacter: string) {
@@ -293,44 +260,40 @@ export function isInfixNotAndBoolean(li: List<Token>) {
   return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN;
 }
 
-export function isGroupedExpression(li: List<Token>) {
-  return li.head().type === OPEN_GROUPED_EXPRESSION;
-}
-
 export function isArithmeticInfix(li: List<Token>) {
   return INFIX_ARITHMETIC_TYPES.includes(li.head().type);
 }
 
 export function isCallExpression(li: List<Token>) {
-  return li.head().type === 'IDENTIFIER' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('IDENTIFIER') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isChangeStatement(li: List<Token>) {
-  return li.head().type === 'CHANGE' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('CHANGE') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isConvertStatement(li: List<Token>) {
-  return li.head().type === 'CONVERT' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('CONVERT') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isForStatement(li: List<Token>) {
-  return li.head().type === 'FOR' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('FOR') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isPrintStatement(li: List<Token>) {
-  return li.head().type === 'PRINT' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('PRINT') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isConcatStatement(li: List<Token>) {
-  return li.head().type === 'CONCAT' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('CONCAT') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isLengthStatement(li: List<Token>) {
-  return li.head().type === 'LENGTH' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('LENGTH') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isSliceStatement(li: List<Token>) {
-  return li.head().type === 'SLICE' && li.get()[1].type === 'L_PAREN';
+  return li.isHead('SLICE') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isInBinaryExpression(li: List<Token>) {
@@ -346,29 +309,24 @@ export function isInBinaryExpression(li: List<Token>) {
 }
 
 export function isInfixNotAndGroupedExpression(li: List<Token>) {
-  return (
-    isPeekToken(li.head(), INFIX_NOT) &&
-    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
-  );
+  return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === 'L_PAREN';
 }
 
 export function isArithmeticOperatorAndGroupedExpression(li: List<Token>) {
   return (
     INFIX_ARITHMETIC_TYPES.includes(li.head().type) &&
-    li.lookAt(1).type === OPEN_GROUPED_EXPRESSION
+    li.lookAt(1).type === 'L_PAREN'
   );
 }
 
 export function isIdentifierAndEndOfStatement(li: List<Token>) {
-  return (
-    li.head().type === IDENTIFIER && li.lookAt(1).type === END_OF_STATEMENT
-  );
+  return li.isHead(IDENTIFIER) && li.lookAt(1).type === END_OF_STATEMENT;
 }
 
 export function isPartOfBinaryExpression(li: List<Token>) {
   return (
     (isPrimitive(li) && isOperatorType(li.lookAt(1).type)) ||
-    isPeekToken(li.head(), OPEN_GROUPED_EXPRESSION) ||
+    isPeekToken(li.head(), 'L_PAREN') ||
     INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   );
 }

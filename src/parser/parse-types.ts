@@ -2,7 +2,6 @@ export const INFIX_ARITHMETIC_TYPES = ['MINUS', 'PLUS'];
 export const LITERAL_PRIMITIVES = ['STRING', 'BOOLEAN', 'INTEGER'];
 export const INFIX_NOT = 'NOT';
 export const END_OF_STATEMENT = 'SEMICOLON';
-export const OPEN_GROUPED_EXPRESSION = 'L_PAREN';
 
 export const precedence = {
   R_PAREN: 0,

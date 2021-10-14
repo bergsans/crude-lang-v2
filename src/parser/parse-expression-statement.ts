@@ -1,11 +1,5 @@
 import { INFIX_NOT } from './parse-types';
-import {
-  isCommaToken,
-  isSemicolonToken,
-  isInBinaryExpression,
-  isLeftBracket,
-  isRightBracket,
-} from '../utils/predicates';
+import { isInBinaryExpression } from '../utils/predicates';
 import { fmtStr } from 'crude-dev-tools';
 import { parseCallExpression } from './parse-call-expression';
 import { parseConcatStatement } from './parse-concat-statement';
@@ -56,15 +50,15 @@ type ParseExpressionHandler = [
 function produceArray(li: List<Token>) {
   li.next();
   const elements = [];
-  while (!isRightBracket(li)) {
+  while (!li.isHead('R_BRACKET')) {
     const expression = parseExpressionStatement(li);
     elements.push(expression);
-    if (isCommaToken(li)) {
+    if (li.isHead('COMMA')) {
       li.next();
     }
   }
   li.next();
-  if (isSemicolonToken(li)) {
+  if (li.isHead('SEMICOLON')) {
     li.next();
   }
   return {
@@ -79,16 +73,16 @@ function produceBinaryExpression(li: List<Token>) {
 
 function produceArrayIndex(li: List<Token>) {
   const collection = li.next();
-  if (!isLeftBracket(li)) {
+  if (!li.isHead('L_BRACKET')) {
     throw new Error(fmtStr('Expected opening bracket.', 'red'));
   }
   li.next();
   const index = parseExpressionStatement(li);
-  if (!isRightBracket(li)) {
+  if (!li.isHead('R_BRACKET')) {
     throw new Error(fmtStr('Expected closing bracket.', 'red'));
   }
   li.next();
-  if (isSemicolonToken(li)) {
+  if (li.isHead('SEMICOLON')) {
     li.next();
   }
   return {
@@ -132,7 +126,7 @@ function produceCallExpression(li: List<Token>) {
     return _parseBinaryExpression(li);
   }
   const callExpression = parseCallExpression(li);
-  if (isSemicolonToken(li)) {
+  if (li.isHead('SEMICOLON')) {
     li.next();
   }
   return callExpression;

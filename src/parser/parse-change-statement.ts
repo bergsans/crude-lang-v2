@@ -1,7 +1,6 @@
 import { Token } from '../lexer/tokenize';
 import { parseGroupedExpression } from './parse-helpers';
 import { List } from '../utils/list';
-import { isSemicolonToken } from '../utils/predicates';
 import { Node } from './parse';
 import { Expression } from './parse-expression-statement';
 
@@ -15,7 +14,7 @@ export interface ChangeStatement extends Node {
 export function parseChangeStatement(li: List<Token>): ChangeStatement {
   li.next();
   const [array, index, newValue] = parseGroupedExpression(3, li);
-  if (isSemicolonToken(li)) {
+  if (li.isHead('SEMICOLON')) {
     li.next();
   }
   return {

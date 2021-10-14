@@ -1,5 +1,4 @@
 import { Token } from '../lexer/tokenize';
-import { isRightBrace, isEOF } from '../utils/predicates';
 import { List } from '../utils/list';
 import { parseStatement, Statement } from './parse-statement';
 import { Node } from './parse';
@@ -11,7 +10,7 @@ export interface BlockStatement extends Node {
 
 export function parseBlockStatement(li: List<Token>): BlockStatement {
   const statements = [];
-  while (li.get().length && !isRightBrace(li) && !isEOF(li)) {
+  while (li.get().length && !li.isHead('R_BRACE') && !li.isHead('EOF')) {
     const statement = parseStatement(li);
     statements.push(statement);
   }

@@ -1,11 +1,11 @@
 import { Token } from '../lexer/tokenize';
 import { precedence, END_OF_STATEMENT } from './parse-types';
 import {
-  isGroupedExpression,
   isSliceStatement,
   isConcatStatement,
   isLengthStatement,
   isArithmeticInfix,
+  isGroupedExpression,
   isCallExpression,
 } from '../utils/predicates';
 import { List } from '../utils/list';
@@ -24,12 +24,6 @@ export interface NodeTree {
 export interface BinaryExpression extends NodeTree {
   type: 'BinaryExpression';
 }
-
-//export type Value = Token;
-
-//export type Left = NodeTree;
-
-//export type Right = Left;
 
 type NudPredicate = (li: List<Token>) => boolean;
 

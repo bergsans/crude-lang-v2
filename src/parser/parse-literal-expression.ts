@@ -1,8 +1,6 @@
 import { Token } from '../lexer/tokenize';
 import { Node } from './parse';
-import { Expression } from './parse-expression-statement';
 
-// move
 export interface Identifier {
   type: string;
   name: string;

@@ -1,5 +1,4 @@
 import { Token } from '../lexer/tokenize';
-import { isRightParens, isCommaToken } from '../utils/predicates';
 import { List } from '../utils/list';
 import {
   Expression,
@@ -17,10 +16,10 @@ export function parseCallExpression(li: List<Token>): CallExpression {
   const name = li.next().literal;
   li.next();
   const args = [];
-  while (!isRightParens(li)) {
+  while (!li.isHead('R_PAREN')) {
     const expression = parseExpressionStatement(li);
     args.push(expression);
-    if (isCommaToken(li)) {
+    if (li.isHead('COMMA')) {
       li.next();
     }
   }

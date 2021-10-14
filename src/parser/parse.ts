@@ -1,6 +1,5 @@
 import { Token, Metadata } from '../lexer/tokenize';
 import { list } from '../utils/list';
-import { Statement } from './parse-statement';
 import { BlockStatement, parseBlockStatement } from './parse-block-statement';
 
 export interface Node {
