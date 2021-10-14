@@ -1,2 +1,3 @@
+# npm install && npm run build
 chmod +x .build/src/repl/repl.js
 .build/src/repl/repl.js
