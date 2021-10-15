@@ -100,3 +100,23 @@ define head(arr) {
 define last(arr) {
   return arr[length(arr) - 1];
 }
+
+define tail(arr) {
+  return slice(arr, 1, length(arr));
+}
+
+define addToHead(arr, el) {
+  return concat(el, arr);
+}
+
+define addToTail(arr, el) {
+  return concat(arr, el);
+}
+
+define compose(fns, val) {
+  if(length(fns) == 0) {
+    return val;
+  }
+  let fn = head(fns);
+  return compose(tail(fns), fn(val));
+}

@@ -348,6 +348,7 @@ return printCountTo(5);
         [1, 666, 3, 4],
       ],
       ['filter(isOdd, [1,2,3,4,5]);', [1, 3, 5]],
+      ['compose([inc, inc], 1);', 3],
       ['filter(isOdd, [1,2,3,4,5]);', [1, 3, 5]],
       ['map(inc, [1, 2, 3]);', [2, 3, 4]],
       // TODO: foldl(add, 0, concat(nums, someOtherNums)) doesn't work
