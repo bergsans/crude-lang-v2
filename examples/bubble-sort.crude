@@ -5,7 +5,7 @@ define bubbleSort(arr) {
       let nextVal = arr[j + 1];
       if(prevVal > nextVal) {
         let arr = change(arr, j, nextVal);
-        return change(arr, j + 1, prevVal);
+        change(arr, j + 1, prevVal);
       }
     }
   }
