@@ -380,7 +380,7 @@ define bubbleSort(arr) {
       let nextVal = arr[j + 1];
       if(prevVal > nextVal) {
         let arr = change(arr, j, nextVal);
-        return change(arr, j + 1, prevVal);
+        change(arr, j + 1, prevVal);
       }
     }
   }
@@ -629,7 +629,7 @@ isOneOrTwo(1);
       [
         `
 define fib(n) {
-  if((n == 0) || (n == 1)) {
+  if(n == 0 || n == 1) {
     return n;
   }
   return fib(n - 1) + fib(n - 2);
@@ -659,6 +659,7 @@ fib(11);
       ['return convert("66");', 66],
       ['return convert(66);', '66'],
       ['let a = 3; let a = 2; a;', 2],
+      ['if(1 == 1 || 3 == 3) { return "correct"; } return "fail!";', 'correct'],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
