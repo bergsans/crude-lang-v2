@@ -152,3 +152,12 @@ define findIndex(arr, el) {
   }
   return loopIsElInArray(0, -1);
 }
+
+define reverse(arr) {
+  let newArr = [];
+  let len = length(arr);
+  for(i, 0, len) {
+    change(newArr, i, arr[len - i - 1]);
+  }
+  return newArr;
+}

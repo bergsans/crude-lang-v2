@@ -698,13 +698,27 @@ findIndex([1,3,3,2,4,5], 2);
 `,
         3,
       ],
+      [
+        `
+define reverse(arr) {
+  let newArr = [];
+  let len = length(arr);
+  for(i, 0, len) {
+    change(newArr, i, arr[len - i - 1]);
+  }
+  return newArr;
+}
+reverse([1,2,3]);
+`,
+        [3, 2, 1],
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
         const tokens = tokenize(code);
         const parsed = parse(tokens);
         const result = evaluate(parsed);
-        expect(result).to.eq(expectedResult);
+        expect(result).to.deep.equal(expectedResult);
       });
     }
   });
