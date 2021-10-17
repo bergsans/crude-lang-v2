@@ -679,6 +679,25 @@ includes([1,2,3,4,5], 3);
 `,
         true,
       ],
+      [
+        `
+define findIndex(arr, el) {
+  define loopIsElInArray(i, condIsFalse) {
+    if(i < length(arr)) {
+      let currEl = arr[i];
+      if(currEl == el) {
+        return i;
+      }
+      return loopIsElInArray(i + 1, condIsFalse);
+    }
+    return condIsFalse;
+  }
+  return loopIsElInArray(0, -1);
+}
+findIndex([1,3,3,2,4,5], 2);
+`,
+        3,
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
