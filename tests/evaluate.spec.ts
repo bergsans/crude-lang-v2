@@ -509,7 +509,7 @@ define filter(predicate, arr) {
   let filtArr = [];
   for(i, 0, length(arr)) {
     if(predicate(arr[i])) {
-      return change(filtArr, length(filtArr), arr[i]);
+      change(filtArr, length(filtArr), arr[i]);
     }
   }
   return filtArr;
@@ -527,7 +527,7 @@ define inc(x) {
 define map(fn, arr) {
   let newArr = [];
   for(i, 0, length(arr)) {
-    return change(newArr, i, fn(arr[i]));
+    change(newArr, i, fn(arr[i]));
   }
   return newArr;
 }
