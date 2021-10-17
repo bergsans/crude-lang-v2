@@ -120,3 +120,18 @@ define compose(fns, val) {
   let fn = head(fns);
   return compose(tail(fns), fn(val));
 }
+
+define includes(arr, el) {
+  let len = length(arr);
+  define isTrue(i, condIsTrue) {
+    let currEl = arr[i];
+    if(i < len) {
+      if(currEl == el) {
+        return true;
+      }
+      return isTrue(i + 1, false);
+    }
+    return condIsTrue;
+  }
+  return isTrue(0, false);
+}

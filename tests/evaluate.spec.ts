@@ -660,6 +660,26 @@ fib(11);
       ['return convert(66);', '66'],
       ['let a = 3; let a = 2; a;', 2],
       ['if(1 == 1 || 3 == 3) { return "correct"; } return "fail!";', 'correct'],
+      [
+        `
+define includes(arr, el) {
+  let len = length(arr);
+  define isTrue(i, condIsTrue) {
+    let currEl = arr[i];
+    if(i < len) {
+      if(currEl == el) {
+        return true;
+      }
+      return isTrue(i + 1, false);
+    }
+    return condIsTrue;
+  }
+  return isTrue(0, false);
+}
+includes([1,2,3,4,5], 3);
+`,
+        true,
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
