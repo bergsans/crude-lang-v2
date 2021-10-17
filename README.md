@@ -41,14 +41,7 @@ Hi!
 
 # Quirks
 
-Currently, the order of precedence forces user to parenthesize
-comparisions, if used in conjunction with logical operators.
+* assignments
 
-```
-let n = 2;
-if((n == 1) || (n == 2)) { ... }
-```
+* no anonymous functions
 
-For-loops require knowledge on how the language works under the hood,
-and are not intuitive. Recursion is advised when not working on say simple
-lists. See `./tests/evaluate.spec.ts` for examples.
