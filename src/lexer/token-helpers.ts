@@ -36,12 +36,6 @@ export function readCharacter(
   };
 }
 
-const IDENTIFIER_TYPE_NAME = 'name';
-
-const NUMBER_TYPE_NAME = 'number';
-
-const STRING_TYPE_NAME = 'STRING';
-
 function read(
   data: Data,
   readType: string,
@@ -144,7 +138,7 @@ export function produceIdentifier(
 ) {
   const nextToken = read(
     { input, nextPosition, character, meta },
-    IDENTIFIER_TYPE_NAME,
+    'name',
     isASCIIAlphabetic
   );
   nextPosition = nextToken.nextPosition;
@@ -198,7 +192,7 @@ export function produceNumber(
 ) {
   const nextToken = read(
     { input, nextPosition, character, meta },
-    NUMBER_TYPE_NAME,
+    'number',
     isDigit
   );
   return {
@@ -223,6 +217,6 @@ export function produceString(
   nextPosition++;
   return {
     nextPosition,
-    currentToken: newToken(STRING_TYPE_NAME, str, meta),
+    currentToken: newToken('STRING', str, meta),
   };
 }
