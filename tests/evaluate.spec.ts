@@ -663,18 +663,17 @@ fib(11);
       [
         `
 define includes(arr, el) {
-  let len = length(arr);
-  define isTrue(i, condIsTrue) {
-    let currEl = arr[i];
-    if(i < len) {
+  define loopIsElInArray(i, condIsTrue) {
+    if(i < length(arr)) {
+      let currEl = arr[i];
       if(currEl == el) {
         return true;
       }
-      return isTrue(i + 1, false);
+      return loopIsElInArray(i + 1, condIsTrue);
     }
     return condIsTrue;
   }
-  return isTrue(0, false);
+  return loopIsElInArray(0, false);
 }
 includes([1,2,3,4,5], 3);
 `,

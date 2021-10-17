@@ -18,6 +18,10 @@ define inc(x) {
   return x + 1;
 }
 
+define dec(x) {
+  return x - 1;
+}
+
 define filter(predicate, arr) {
   let filtArr = [];
   for(i, 0, length(arr)) {
@@ -122,16 +126,15 @@ define compose(fns, val) {
 }
 
 define includes(arr, el) {
-  let len = length(arr);
-  define isTrue(i, condIsTrue) {
-    let currEl = arr[i];
-    if(i < len) {
+  define loopIsElInArray(i, condIsTrue) {
+    if(i < length(arr)) {
+      let currEl = arr[i];
       if(currEl == el) {
         return true;
       }
-      return isTrue(i + 1, false);
+      return loopIsElInArray(i + 1, condIsTrue);
     }
     return condIsTrue;
   }
-  return isTrue(0, false);
+  return loopIsElInArray(0, false);
 }
