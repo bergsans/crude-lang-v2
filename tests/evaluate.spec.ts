@@ -781,6 +781,30 @@ includes([1,2,3,4,5], 3);
 `,
         true,
       ],
+      [
+        `
+define selectionSort(arr) {
+  for(i, 0, length(arr)) {
+    let min = i;
+    for(j, i + 1, length(arr)) {
+      let a = arr[j];
+      let b = arr[min];
+      if (a < b) {
+        set min = j;
+      }
+    }
+    if(min != i) {
+      let temp = arr[i];
+      set arr = change(arr, i, arr[min]);
+      set arr = change(arr, min, temp);
+    }
+  }
+  return arr;
+}
+selectionSort([20000, 1000, 300000, 999, 88, 1, 77]);
+`,
+        [1, 77, 88, 999, 1000, 20000, 300000],
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {

@@ -37,6 +37,7 @@ Hi!
 ./crude examples/fibonacci.crude
 ./crude examples/factorial.crude
 ./crude examples/bubble-sort.crude
+./crude examples/selection-sort.crude
 ```
 
 ## Game of Life implementation

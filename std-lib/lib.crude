@@ -80,19 +80,26 @@ define trimStart(s) {
   return count(0);
 }
 
+
 define sort(arr) {
   for(i, 0, length(arr)) {
-    for(j, 0, length(arr)) {
-      let prevVal = arr[j];
-      let nextVal = arr[j + 1];
-      if(prevVal > nextVal) {
-        let arr = change(arr, j, nextVal);
-        return change(arr, j + 1, prevVal);
+    let min = i;
+    for(j, i + 1, length(arr)) {
+      let a = arr[j];
+      let b = arr[min];
+      if (a < b) {
+        set min = j;
       }
+    }
+    if(min != i) {
+      let temp = arr[i];
+      set arr = change(arr, i, arr[min]);
+      set arr = change(arr, min, temp);
     }
   }
   return arr;
 }
+
 
 define head(arr) {
   return arr[0];
