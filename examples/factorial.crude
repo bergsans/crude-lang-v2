@@ -4,4 +4,4 @@ define factorial(x) {
   }
   return x * factorial(x - 1);
 }
-factorial(10);
+print(factorial(10));

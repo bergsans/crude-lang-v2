@@ -11,4 +11,4 @@ define bubbleSort(arr) {
   }
   return arr;
 }
-bubbleSort([13, 21, 1, 34, 2, 1, 5, 3, 55, 0, 8]);
+print(bubbleSort([13, 21, 1, 34, 2, 1, 5, 3, 55, 0, 8]));

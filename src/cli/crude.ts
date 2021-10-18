@@ -21,7 +21,7 @@ async function interpretFile(fileName: string) {
       const stdLib = await importStdLib();
       const tokens = tokenize(input);
       const parsed = parse(tokens, stdLib);
-      console.log(evaluate(parsed));
+      evaluate(parsed);
     } catch (libError) {
       throw new Error(fmtStr(libError, 'red'));
     }
