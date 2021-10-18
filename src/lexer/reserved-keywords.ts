@@ -2,6 +2,7 @@ export default {
   LET: 'let',
   TRUE: 'true',
   FALSE: 'false',
+  SET: 'set',
   IF: 'if',
   RETURN: 'return',
   DEFINE: 'define',

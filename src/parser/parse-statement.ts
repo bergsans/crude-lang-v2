@@ -1,6 +1,7 @@
 import { Token } from '../lexer/tokenize';
 import {
   LET,
+  SET,
   SLICE,
   CONCAT,
   LENGTH,
@@ -20,6 +21,7 @@ import { parseReturnStatement } from './parse-return-statement';
 import { parseChangeStatement } from './parse-change-statement';
 import { parseForStatement } from './parse-for-statement';
 import { parsePrintStatement } from './parse-print-statement';
+import { parseSetStatement } from './parse-set-statement';
 import { parseConcatStatement } from './parse-concat-statement';
 import { parseLetStatement } from './parse-let-statement';
 import { parseIfStatement } from './parse-if-statement';
@@ -48,6 +50,7 @@ const statementTypes = {
   [CONCAT]: (li: List<Token>) => parseConcatStatement(li),
   [LENGTH]: (li: List<Token>) => parseLengthStatement(li),
   [LET]: (li: List<Token>) => parseLetStatement(li),
+  [SET]: (li: List<Token>) => parseSetStatement(li),
   [IF]: (li: List<Token>) => parseIfStatement(li),
 };
 

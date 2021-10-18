@@ -39,9 +39,7 @@ Hi!
 ./crude examples/bubble-sort.crude
 ```
 
-# Quirks
+# TODO
 
-* assignments
-
-* no anonymous functions
+* no anonymous functions, and immediatly called fn
 

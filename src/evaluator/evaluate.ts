@@ -7,8 +7,9 @@ interface LexicalScope {
 
 export interface Environment {
   scope: LexicalScope;
-  parent: LexicalScope;
+  parent: LexicalScope | undefined;
   get(key: string): any;
+  set(key: string, val: any): any;
 }
 
 export function environment(
@@ -18,6 +19,16 @@ export function environment(
   return {
     scope,
     parent,
+    set(name: string, val: any) {
+      if (name in scope) {
+        scope[name] = val;
+        return NIL;
+      }
+      if (parent !== undefined) {
+        return parent.set(name, val);
+      }
+      throw new Error(`No settable identifier ${name} is declared.`);
+    },
     get: (name: string) => {
       return name in scope
         ? scope[name]

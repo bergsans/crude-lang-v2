@@ -182,6 +182,7 @@ export function isNUL(character: string) {
 export function isReservedKeyword(nextToken: NextToken) {
   return [
     RESERVED_KEYWORD.LET,
+    RESERVED_KEYWORD.SET,
     RESERVED_KEYWORD.FALSE,
     RESERVED_KEYWORD.TRUE,
     RESERVED_KEYWORD.DEFINE,

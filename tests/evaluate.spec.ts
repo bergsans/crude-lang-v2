@@ -542,16 +542,12 @@ define isOdd(x) {
 }
 
 define every(predicate, li) {
-  define loop(i) {
-    if(i < length(li)) {
-      if(predicate(li[i]) == false) {
-        return false;
-      }
-      return loop(i + 1);
+  for(i, 0, length(li)) {
+    if(predicate(li[i]) == false) {
+      return false;
     }
-    return true;
   }
-  return loop(0);
+  return true;
 }
 every(isOdd, [1,3,5]);
 `,
@@ -564,16 +560,13 @@ define isOdd(x) {
 }
 
 define some(predicate, li) {
-  define loop(i) {
-    if(i < length(li)) {
-      if(predicate(li[i]) == true) {
-        return true;
-      }
-      return loop(i + 1);
+  let isSomeTrue = false;
+  for(i, 0, length(li)) {
+    if(predicate(li[i]) == true) {
+      set isSomeTrue = true;
     }
-    return false;
   }
-  return loop(0);
+  return isSomeTrue;
 }
 some(isOdd, [2,2,2,2,3,2]);
 `,
@@ -662,25 +655,6 @@ fib(11);
       ['if(1 == 1 || 3 == 3) { return "correct"; } return "fail!";', 'correct'],
       [
         `
-define includes(arr, el) {
-  define loopIsElInArray(i, condIsTrue) {
-    if(i < length(arr)) {
-      let currEl = arr[i];
-      if(currEl == el) {
-        return true;
-      }
-      return loopIsElInArray(i + 1, condIsTrue);
-    }
-    return condIsTrue;
-  }
-  return loopIsElInArray(0, false);
-}
-includes([1,2,3,4,5], 3);
-`,
-        true,
-      ],
-      [
-        `
 define findIndex(arr, el) {
   define loopIsElInArray(i, condIsFalse) {
     if(i < length(arr)) {
@@ -749,6 +723,80 @@ return x;
         const parsed = parse(tokens);
         const result = evaluate(parsed);
         expect(result).to.deep.equal(expectedResult);
+      });
+    }
+  });
+
+  describe('Assignment', () => {
+    const examples: Example[] = [
+      [
+        `
+      let x = 3;
+      set x = 4;
+      x;
+      `,
+        4,
+      ],
+      [
+        `
+      let x = 3;
+      if(x < 4) {
+      set x = 4;
+      }
+      x;
+      `,
+        4,
+      ],
+      [
+        `
+      let x = 3;
+      if(x < 55) {
+      if(x < 4) {
+      set x = 4;
+      }
+      }
+      x;
+      `,
+        4,
+      ],
+      [
+        `
+      if(x < 4) {
+      set x = 4;
+      }
+      x;
+      `,
+        undefined,
+      ],
+      [
+        `
+define includes(arr, el) {
+  let isIncluded = false;
+  for(i, 0, length(arr)) {
+      let currEl = arr[i];
+      if(currEl == el) {
+        set isIncluded = true;
+      }
+  }
+  return isIncluded;
+}
+includes([1,2,3,4,5], 3);
+`,
+        true,
+      ],
+    ];
+    for (const [code, expectedResult] of examples) {
+      it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
+        if (!code.includes('let')) {
+          expect(() => evaluate(parse(tokenize(code)))).to.throw(
+            'No settable identifier x is declared.'
+          );
+        } else {
+          const tokens = tokenize(code);
+          const parsed = parse(tokens);
+          const result = evaluate(parsed);
+          expect(result).to.deep.equal(expectedResult);
+        }
       });
     }
   });

@@ -1,3 +1,5 @@
+import { List } from '../utils/list';
+import { parseConvertStatement } from './parse-convert-statement';
 import { INFIX_NOT } from './parse-types';
 import { isInBinaryExpression } from '../utils/predicates';
 import { fmtStr } from 'crude-dev-tools';
@@ -26,8 +28,6 @@ import {
   isInfixNotAndBoolean,
   isInfixNotAndGroupedExpression,
 } from '../utils/predicates';
-import { List } from '../utils/list';
-import { parseConvertStatement } from './parse-convert-statement';
 import { parseChangeStatement } from './parse-change-statement';
 import { parseLiteralExpression } from './parse-literal-expression';
 

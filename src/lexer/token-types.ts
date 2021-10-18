@@ -3,6 +3,7 @@ export const NIL = undefined;
 export const DEFINE = 'DEFINE';
 export const SLICE = 'SLICE';
 export const LENGTH = 'LENGTH';
+export const SET = 'SET';
 export const CONCAT = 'CONCAT';
 export const CHANGE = 'CHANGE';
 export const CONVERT = 'CONVERT';

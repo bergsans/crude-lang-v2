@@ -50,16 +50,13 @@ define every(predicate, li) {
 }
 
 define some(predicate, li) {
-  define loop(i) {
-    if(i < length(li)) {
-      if(predicate(li[i]) == true) {
-        return true;
-      }
-      return loop(i + 1);
+  let isSomeTrue = false;
+  for(i, 0, length(li)) {
+    if(predicate(li[i]) == true) {
+      set isSomeTrue = true;
     }
-    return false;
   }
-  return loop(0);
+  return isSomeTrue;
 }
 
 define foldl(fn, curr, li) {
