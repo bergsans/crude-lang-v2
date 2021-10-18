@@ -4,6 +4,8 @@ import { evaluateArrayElement } from './evaluate-array-element';
 import { evaluateLiteralExpression } from './evaluate-literal-expression';
 import { evaluateUnaryExpression } from './evaluate-unary-expression';
 import { evaluateBlockStatements } from './evaluate-block-statements';
+import { evaluateClearStatement } from './evaluate-clear-statement';
+import { evaluateSleepStatement } from './evaluate-sleep-statement';
 import { evaluateSetStatement } from './evaluate-set-statement';
 import { evaluateLetDeclaration } from './evaluate-let-declaration';
 import { evaluateReturnStatement } from './evaluate-return-statement';
@@ -22,6 +24,10 @@ import { evaluateCallExpression } from './evaluate-call-expression';
 export const evaluateTypes = {
   LetDeclaration: (node, context: Environment) =>
     evaluateLetDeclaration(node, context),
+  ClearStatement: (node, context: Environment) =>
+    evaluateClearStatement(node, context),
+  SleepStatement: (node, context: Environment) =>
+    evaluateSleepStatement(node, context),
   SetStatement: (node, context: Environment) =>
     evaluateSetStatement(node, context),
   ReturnStatement: (node, context: Environment) =>

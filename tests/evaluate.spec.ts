@@ -340,10 +340,7 @@ return printCountTo(5);
     const examples: Example[] = [
       ['change([1,2,3,4], 1, 666);', [1, 666, 3, 4]],
       ['let new = change([1,2,3,4], 1, 666); new;', [1, 666, 3, 4]],
-      [
-        'let ns = [1,2,3,4]; let new = change(ns, 1, 666); new;',
-        [1, 666, 3, 4],
-      ],
+      ['let ns = [1,2,3,4]; change(ns, 1, 666); ns;', [1, 666, 3, 4]],
       ['filter(isOdd, [1,2,3,4,5]);', [1, 3, 5]],
       ['compose([inc, inc], 1);', 3],
       ['filter(isOdd, [1,2,3,4,5]);', [1, 3, 5]],

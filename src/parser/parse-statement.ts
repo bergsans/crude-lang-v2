@@ -9,6 +9,8 @@ import {
   RETURN_STATEMENT,
   CONVERT,
   CHANGE,
+  SLEEP,
+  CLEAR,
   PRINT,
   FOR,
   IF,
@@ -20,6 +22,8 @@ import { parseConvertStatement } from './parse-convert-statement';
 import { parseReturnStatement } from './parse-return-statement';
 import { parseChangeStatement } from './parse-change-statement';
 import { parseForStatement } from './parse-for-statement';
+import { parseClearStatement } from './parse-clear-statement';
+import { parseSleepStatement } from './parse-sleep-statement';
 import { parsePrintStatement } from './parse-print-statement';
 import { parseSetStatement } from './parse-set-statement';
 import { parseConcatStatement } from './parse-concat-statement';
@@ -46,6 +50,8 @@ const statementTypes = {
   [CONVERT]: (li: List<Token>) => parseConvertStatement(li),
   [CHANGE]: (li: List<Token>) => parseChangeStatement(li),
   [FOR]: (li: List<Token>) => parseForStatement(li),
+  [CLEAR]: (li: List<Token>) => parseClearStatement(li),
+  [SLEEP]: (li: List<Token>) => parseSleepStatement(li),
   [PRINT]: (li: List<Token>) => parsePrintStatement(li),
   [CONCAT]: (li: List<Token>) => parseConcatStatement(li),
   [LENGTH]: (li: List<Token>) => parseLengthStatement(li),

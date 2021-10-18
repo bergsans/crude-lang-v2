@@ -2,6 +2,8 @@ export default {
   LET: 'let',
   TRUE: 'true',
   FALSE: 'false',
+  SLEEP: 'sleep',
+  CLEAR: 'clear',
   SET: 'set',
   IF: 'if',
   RETURN: 'return',

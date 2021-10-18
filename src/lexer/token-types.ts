@@ -1,6 +1,8 @@
 export const NUL = '\0';
 export const NIL = undefined;
 export const DEFINE = 'DEFINE';
+export const SLEEP = 'SLEEP';
+export const CLEAR = 'CLEAR';
 export const SLICE = 'SLICE';
 export const LENGTH = 'LENGTH';
 export const SET = 'SET';

@@ -39,7 +39,3 @@ Hi!
 ./crude examples/bubble-sort.crude
 ```
 
-# TODO
-
-* no anonymous functions, and immediatly called fn
-
