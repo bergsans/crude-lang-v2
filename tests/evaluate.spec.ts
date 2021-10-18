@@ -712,6 +712,36 @@ reverse([1,2,3]);
 `,
         [3, 2, 1],
       ],
+      [
+        `
+if(x < 4) {
+  let x = 4;
+}
+return x;
+`,
+        false,
+      ],
+      [
+        `
+let x = 3;
+if(x < 4) {
+  let x = 4;
+}
+return x;
+`,
+        3,
+      ],
+      [
+        `
+let x = 3;
+if(x < 4) {
+  let x = 4;
+  return x;
+}
+return x;
+`,
+        4,
+      ],
     ];
     for (const [code, expectedResult] of examples) {
       it(`${code.replace(/\n/g, '')} is ${expectedResult}`, () => {
