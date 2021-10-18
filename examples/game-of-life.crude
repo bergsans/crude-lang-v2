@@ -1,0 +1,92 @@
+let directions = [
+  [  0, -1 ],
+  [  1, -1 ],
+  [  1,  0 ],
+  [  1,  1 ],
+  [  0,  1 ],
+  [ -1,  1 ],
+  [ -1,  0 ],
+  [ -1, -1 ]
+];
+let DEAD = 0;
+let ALIVE = 1;
+
+define isAlive(board, width, y, x) {
+  let isValidPoint = false;
+  let height = length(board) / width;
+  if(y < height && x < width) {
+    set isValidPoint = true;
+  }
+  let el = board[width * y + x];
+  if(isValidPoint == true && el == ALIVE) {
+    return 1;
+  }
+  return 0;
+}
+
+define render(board, w) {
+  clear();
+  print("");
+  let h = w;
+  for(y, 0, h) {
+    let tempStr = "";
+    for(x, 0, w) {
+      let ch = board[width * y + x];
+      if(ch == 0) {
+        set tempStr = tempStr + ".";
+      }
+      if(ch == 1) {
+        set tempStr = tempStr + "o";
+      }
+    }
+    print(tempStr);
+  }
+}
+
+define nextBoardState(board, width, gen, endGen) {
+  render(board, width);
+  if(gen == endGen) {
+    return render(board, width);
+  }
+  let newBoard = concat([], board);
+  let height = width;
+  for(y, 0, height) {
+    for(x, 0, width) {
+      let aliveNeighbors = 0;
+      for(i, 0, 8) {
+        let pos = directions[i];
+        let tempX = pos[0];
+        let tempY = pos[1];
+        set aliveNeighbors = aliveNeighbors + isAlive(board, width, y + tempY, x + tempX);
+      }
+      let pos = width * y + x;
+      let currentPosition = board[pos];
+      set newBoard = change(newBoard, pos, 0);
+      if(currentPosition == 1 && aliveNeighbors == 2) {
+        set newBoard = change(newBoard, pos, 1);
+      }
+      if(aliveNeighbors == 3) {
+        set newBoard = change(newBoard, pos, 1);
+      }
+    }
+  }
+  sleep(100);
+  return nextBoardState(newBoard, width, gen + 1, endGen);
+}
+let tumbler = [
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,1,1,0,1,1,0,0,0,0,0,0,
+ 0,0,0,1,1,0,1,1,0,0,0,0,0,0,
+ 0,0,0,0,1,0,1,0,0,0,0,0,0,0,
+ 0,0,1,0,1,0,1,0,1,0,0,0,0,0,
+ 0,0,1,0,1,0,1,0,1,0,0,0,0,0,
+ 0,0,1,1,0,0,0,1,1,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+];
+nextBoardState(tumbler, 14, 0, 1000);

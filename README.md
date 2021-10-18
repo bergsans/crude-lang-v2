@@ -39,3 +39,9 @@ Hi!
 ./crude examples/bubble-sort.crude
 ```
 
+## Game of Life implementation
+```
+./crude examples/game-of-life.crude
+```
+
+![](./examples/game-of-life-screenshot.gif)
