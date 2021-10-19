@@ -103,7 +103,7 @@ describe('Parser', () => {
         statements: [
           {
             type: 'CallExpression',
-            name: 'add',
+            callee: 'add',
             args: [
               {
                 type: 'ExpressionStatement',

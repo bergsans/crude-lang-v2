@@ -8,10 +8,10 @@ export function evaluateCallExpression(
   node: AST.CallExpression,
   context: Environment
 ) {
-  if (!context.get(node.name)) {
-    throw new Error(fmtStr(`Unknown definition: ${node.name}`, 'red'));
+  if (!context.get(node.callee)) {
+    throw new Error(fmtStr(`Unknown definition: ${node.callee}`, 'red'));
   }
-  const { env, params, body } = context.get(node.name);
+  const { env, params, body } = context.get(node.callee);
   const updateEnv = params.reduce(
     (acc, v, i) => ({
       ...acc,

@@ -8,12 +8,12 @@ import { Node } from './parse';
 
 export interface CallExpression extends Node {
   type: 'CallExpression';
-  name: string;
+  callee: string;
   args: Expression[];
 }
 
 export function parseCallExpression(li: List<Token>): CallExpression {
-  const name = li.next().literal;
+  const callee = li.next().literal;
   li.next();
   const args = [];
   while (!li.isHead('R_PAREN')) {
@@ -26,7 +26,7 @@ export function parseCallExpression(li: List<Token>): CallExpression {
   li.next();
   return {
     type: 'CallExpression',
-    name, // callee
+    callee,
     args,
   };
 }
