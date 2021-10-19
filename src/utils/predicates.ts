@@ -336,7 +336,8 @@ export function isIdentifierAndEndOfStatement(li: List<Token>) {
 
 export function isPartOfBinaryExpression(li: List<Token>) {
   return (
-    (isPrimitive(li) && isOperatorType(li.lookAt(1).type)) ||
+    ((isPrimitive(li) || isArrayIndex(li) || isArray(li)) &&
+      isOperatorType(li.lookAt(1).type)) ||
     isPeekToken(li.head(), 'L_PAREN') ||
     INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   );
