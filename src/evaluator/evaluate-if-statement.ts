@@ -1,17 +1,9 @@
-import { Expression } from '../parser/parse-expression-statement';
-import { BlockStatement } from '../parser/parse-block-statement';
+import { IfStatement } from '../parser/parse-if-statement';
 import { NIL } from '../lexer/token-types';
 import { evaluateBlockStatements } from './evaluate-block-statements';
 import { evaluate, Environment } from './evaluate';
 
-export function evaluateIfStatement(
-  node: {
-    type: string;
-    condition: Expression;
-    consequence: BlockStatement;
-  },
-  context: Environment
-) {
+export function evaluateIfStatement(node: IfStatement, context: Environment) {
   const condition = evaluate(node.condition, context);
   if (condition) {
     return node.consequence.statements.length > 0

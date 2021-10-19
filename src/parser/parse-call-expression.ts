@@ -6,7 +6,7 @@ import {
 } from './parse-expression-statement';
 import { Node } from './parse';
 
-interface CallExpression extends Node {
+export interface CallExpression extends Node {
   type: 'CallExpression';
   name: string;
   args: Expression[];

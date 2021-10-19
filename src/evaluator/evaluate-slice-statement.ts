@@ -1,7 +1,11 @@
 import { fmtStr } from 'crude-dev-tools';
 import { Environment, evaluate } from './evaluate';
+import { SliceStatement } from '../parser/parse-slice-statement';
 
-export function evaluateSliceStatement(node, context: Environment) {
+export function evaluateSliceStatement(
+  node: SliceStatement,
+  context: Environment
+) {
   const value = evaluate(node.value, context);
   const start = evaluate(node.start, context);
   if (typeof start !== 'number') {

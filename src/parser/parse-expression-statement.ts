@@ -31,11 +31,26 @@ import {
 import { parseChangeStatement } from './parse-change-statement';
 import { parseLiteralExpression } from './parse-literal-expression';
 
+export interface ArrayElement {
+  type: 'ELEMENT';
+  collection: Token;
+  index: number;
+}
+
+export interface Array {
+  type: 'ARRAY';
+  elements: ArrayElement[];
+}
+
 export interface Expression extends Node {
   type: 'Expression';
   literal: string;
   expression: Expression;
   argument?: Expression;
+}
+
+export interface UnaryExpression extends Omit<Expression, 'type'> {
+  type: 'UnaryExpression';
 }
 
 type ParseExpressionPredicate = (li: List<Token>) => boolean;

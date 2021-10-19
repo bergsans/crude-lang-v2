@@ -20,55 +20,79 @@ import { evaluateLengthStatement } from './evaluate-length-statement';
 import { evaluateConcatStatement } from './evaluate-concat-statement';
 import { evaluateSliceStatement } from './evaluate-slice-statement';
 import { evaluateCallExpression } from './evaluate-call-expression';
+import { Program } from '../parser/parse';
+import { BinaryExpression } from '../parser/parse-binary-expression';
+import { BlockStatement } from '../parser/parse-block-statement';
+import { LetDeclaration } from '../parser/parse-let-statement';
+import { ClearStatement } from '../parser/parse-clear-statement';
+import { SleepStatement } from '../parser/parse-sleep-statement';
+import { SetStatement } from '../parser/parse-set-statement';
+import { ReturnStatement } from '../parser/parse-return-statement';
+import { IfStatement } from '../parser/parse-if-statement';
+import { CallExpression } from '../parser/parse-call-expression';
+import { Array, ArrayElement } from '../parser/parse-expression-statement';
+import { ConvertStatement } from '../parser/parse-convert-statement';
+import { PrintStatement } from '../parser/parse-print-statement';
+import { ChangeStatement } from '../parser/parse-change-statement';
+import { ConcatStatement } from '../parser/parse-concat-statement';
+import { SliceStatement } from '../parser/parse-slice-statement';
+import { LengthStatement } from '../parser/parse-length-statement';
+import { ForStatement } from '../parser/parse-for-statement';
+import { DefinitionStatement } from '../parser/parse-definition-statement';
+import {
+  Expression,
+  UnaryExpression,
+} from '../parser/parse-expression-statement';
 
 export const evaluateTypes = {
-  LetDeclaration: (node, context: Environment) =>
+  LetDeclaration: (node: LetDeclaration, context: Environment) =>
     evaluateLetDeclaration(node, context),
-  ClearStatement: (node, context: Environment) =>
+  ClearStatement: (node: ClearStatement, context: Environment) =>
     evaluateClearStatement(node, context),
-  SleepStatement: (node, context: Environment) =>
+  SleepStatement: (node: SleepStatement, context: Environment) =>
     evaluateSleepStatement(node, context),
-  SetStatement: (node, context: Environment) =>
+  SetStatement: (node: SetStatement, context: Environment) =>
     evaluateSetStatement(node, context),
-  ReturnStatement: (node, context: Environment) =>
+  ReturnStatement: (node: ReturnStatement, context: Environment) =>
     evaluateReturnStatement(node, context),
-  IfStatement: (node, context: Environment) =>
+  IfStatement: (node: IfStatement, context: Environment) =>
     evaluateIfStatement(node, context),
-  UnaryExpression: (node, context: Environment) =>
+  UnaryExpression: (node: UnaryExpression, context: Environment) =>
     evaluateUnaryExpression[node.literal](node, context),
-  BinaryExpression: (node, context: Environment) =>
+  BinaryExpression: (node: BinaryExpression, context: Environment) =>
     evaluateBinaryExpression(node, context),
-  ExpressionStatement: (node, context: Environment) => {
+  ExpressionStatement: (node: Expression, context: Environment) => {
     return evaluateLiteralExpression[node.expression.type](
       node.expression.literal,
       context
     );
   },
-  ConvertStatement: (node, context: Environment) =>
+  ConvertStatement: (node: ConvertStatement, context: Environment) =>
     evaluateConvertStatement(node, context),
-  PrintStatement: (node, context: Environment) =>
+  PrintStatement: (node: PrintStatement, context: Environment) =>
     evaluatePrintStatement(node, context),
-  ChangeStatement: (node, context: Environment) =>
+  ChangeStatement: (node: ChangeStatement, context: Environment) =>
     evaluateChangeStatement(node, context),
-  ConcatStatement: (node, context: Environment) =>
+  ConcatStatement: (node: ConcatStatement, context: Environment) =>
     evaluateConcatStatement(node, context),
-  SliceStatement: (node, context: Environment) =>
+  SliceStatement: (node: SliceStatement, context: Environment) =>
     evaluateSliceStatement(node, context),
-  LengthStatement: (node, context: Environment) =>
+  LengthStatement: (node: LengthStatement, context: Environment) =>
     evaluateLengthStatement(node, context),
-  ForStatement: (node, context: Environment) =>
+  ForStatement: (node: ForStatement, context: Environment) =>
     evaluateForStatement(node, context),
-  DefinitionStatement: (node, context: Environment) => {
+  DefinitionStatement: (node: DefinitionStatement, context: Environment) => {
     return evaluateDefinitionStatement(node, context);
   },
-  CallExpression: (node, context: Environment) => {
+  CallExpression: (node: CallExpression, context: Environment) => {
     return evaluateCallExpression(node, context);
   },
-  ARRAY: (node, context: Environment) => evaluateArray(node, context),
-  ELEMENT: (node, context: Environment) => evaluateArrayElement(node, context),
-  BlockStatement: (node, context: Environment) =>
+  ARRAY: (node: Array, context: Environment) => evaluateArray(node, context),
+  ELEMENT: (node: ArrayElement, context: Environment) =>
+    evaluateArrayElement(node, context),
+  BlockStatement: (node: BlockStatement, context: Environment) =>
     evaluateBlockStatements(node.statements, context),
-  Program: (node, context: Environment) =>
+  Program: (node: Program, context: Environment) =>
     evaluateBlockStatements(node.body.statements, context),
   STRING: (node, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),

@@ -7,7 +7,7 @@ import { Node } from './parse';
 import { Identifier } from './parse-literal-expression';
 import { Expression } from './parse-expression-statement';
 
-interface ForStatement extends Node {
+export interface ForStatement extends Node {
   type: 'ForStatement';
   id: Identifier;
   start: Expression;

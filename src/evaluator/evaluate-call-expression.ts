@@ -2,8 +2,12 @@ import { fmtStr } from 'crude-dev-tools';
 import { Environment, evaluate } from './evaluate';
 import { environment } from './evaluate';
 import { evaluateBlockStatements } from './evaluate-block-statements';
+import { CallExpression } from '../parser/parse-call-expression';
 
-export function evaluateCallExpression(node, context: Environment) {
+export function evaluateCallExpression(
+  node: CallExpression,
+  context: Environment
+) {
   if (!context.get(node.name)) {
     throw new Error(fmtStr(`Unknown definition: ${node.name}`, 'red'));
   }
