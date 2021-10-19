@@ -1,8 +1,8 @@
 import { evaluate, Environment } from './evaluate';
-import { ChangeStatement } from '../parser/parse-change-statement';
+import * as AST from '../parser/AST-types';
 
 export function evaluateChangeStatement(
-  node: ChangeStatement,
+  node: AST.ChangeStatement,
   context: Environment
 ) {
   const array = evaluate(node.array, context);

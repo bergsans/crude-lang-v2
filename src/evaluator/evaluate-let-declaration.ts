@@ -1,9 +1,9 @@
 import { NIL } from '../lexer/token-types';
 import { evaluate, Environment } from './evaluate';
-import { LetDeclaration } from '../parser/parse-let-statement';
+import * as AST from '../parser/AST-types';
 
 export function evaluateLetDeclaration(
-  node: LetDeclaration,
+  node: AST.LetDeclaration,
   context: Environment
 ) {
   const value = evaluate(node.statement, context);

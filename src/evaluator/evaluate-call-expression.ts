@@ -1,11 +1,11 @@
 import { fmtStr } from 'crude-dev-tools';
 import { Environment, evaluate } from './evaluate';
+import * as AST from '../parser/AST-types';
 import { environment } from './evaluate';
 import { evaluateBlockStatements } from './evaluate-block-statements';
-import { CallExpression } from '../parser/parse-call-expression';
 
 export function evaluateCallExpression(
-  node: CallExpression,
+  node: AST.CallExpression,
   context: Environment
 ) {
   if (!context.get(node.name)) {

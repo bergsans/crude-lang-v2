@@ -1,9 +1,9 @@
 import { fmtStr } from 'crude-dev-tools';
+import * as AST from '../parser/AST-types';
 import { Environment, evaluate } from './evaluate';
-import { SliceStatement } from '../parser/parse-slice-statement';
 
 export function evaluateSliceStatement(
-  node: SliceStatement,
+  node: AST.SliceStatement,
   context: Environment
 ) {
   const value = evaluate(node.value, context);

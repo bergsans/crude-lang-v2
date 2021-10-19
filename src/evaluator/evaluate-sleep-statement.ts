@@ -1,6 +1,6 @@
 import { evaluate, Environment } from './evaluate';
 import { NIL } from '../lexer/token-types';
-import { SleepStatement } from '../parser/parse-sleep-statement';
+import * as AST from '../parser/AST-types';
 
 function sleep(ms: number) {
   const start = Date.now();
@@ -8,7 +8,7 @@ function sleep(ms: number) {
 }
 
 export function evaluateSleepStatement(
-  node: SleepStatement,
+  node: AST.SleepStatement,
   context: Environment
 ) {
   const sleepMs = evaluate(node.value, context);

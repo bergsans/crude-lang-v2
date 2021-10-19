@@ -1,8 +1,8 @@
 import { evaluate, Environment } from './evaluate';
-import { ConvertStatement } from '../parser/parse-convert-statement';
+import * as AST from '../parser/AST-types';
 
 export function evaluateConvertStatement(
-  node: ConvertStatement,
+  node: AST.ConvertStatement,
   context: Environment
 ) {
   const value = evaluate(node.value, context);

@@ -1,9 +1,9 @@
 import { evaluate, Environment } from './evaluate';
-import { PrintStatement } from '../parser/parse-print-statement';
+import * as AST from '../parser/AST-types';
 import { NIL } from '../lexer/token-types';
 
 export function evaluatePrintStatement(
-  node: PrintStatement,
+  node: AST.PrintStatement,
   context: Environment
 ) {
   console.log(evaluate(node.value, context));

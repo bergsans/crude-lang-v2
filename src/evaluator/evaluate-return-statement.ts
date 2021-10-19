@@ -1,8 +1,8 @@
 import { evaluate, Environment } from './evaluate';
-import { ReturnStatement } from '../parser/parse-return-statement';
+import * as AST from '../parser/AST-types';
 
 export function evaluateReturnStatement(
-  node: ReturnStatement,
+  node: AST.ReturnStatement,
   context: Environment
 ) {
   return evaluate(node.value, context);

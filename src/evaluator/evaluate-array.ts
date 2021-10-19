@@ -1,6 +1,6 @@
 import { Environment, evaluate } from './evaluate';
-import { Array, ArrayElement } from '../parser/parse-expression-statement';
+import * as AST from '../parser/AST-types';
 
-export function evaluateArray(node: Array, context: Environment) {
-  return node.elements.map((el: ArrayElement) => evaluate(el, context));
+export function evaluateArray(node: AST.Array, context: Environment) {
+  return node.elements.map((el: AST.ArrayElement) => evaluate(el, context));
 }

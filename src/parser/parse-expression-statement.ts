@@ -34,7 +34,7 @@ import { parseLiteralExpression } from './parse-literal-expression';
 export interface ArrayElement {
   type: 'ArrayElement';
   collection: Token;
-  index: number;
+  index: Expression;
 }
 
 export interface Array {

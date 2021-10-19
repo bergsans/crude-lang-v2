@@ -1,8 +1,8 @@
 import { Environment, evaluate } from './evaluate';
-import { ConcatStatement } from '../parser/parse-concat-statement';
+import * as AST from '../parser/AST-types';
 
 export function evaluateConcatStatement(
-  node: ConcatStatement,
+  node: AST.ConcatStatement,
   context: Environment
 ) {
   const [firstValue, secondValue] = node.args;

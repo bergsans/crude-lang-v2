@@ -1,11 +1,11 @@
-import { Expression } from '../parser/parse-expression-statement';
+import * as AST from '../parser/AST-types';
 import { Environment, evaluate } from './evaluate';
 
 export const evaluateUnaryExpression = {
-  NOT: (node: Expression, context: Environment) =>
+  NOT: (node: AST.Expression, context: Environment) =>
     !evaluate(node.argument, context),
-  MINUS: (node: Expression, context: Environment) =>
+  MINUS: (node: AST.Expression, context: Environment) =>
     -evaluate(node.argument, context),
-  PLUS: (node: Expression, context: Environment) =>
+  PLUS: (node: AST.Expression, context: Environment) =>
     +evaluate(node.argument, context),
 };

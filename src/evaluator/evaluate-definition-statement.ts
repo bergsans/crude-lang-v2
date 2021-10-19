@@ -1,9 +1,9 @@
 import { NIL } from '../lexer/token-types';
 import { environment, Environment } from './evaluate';
-import { DefinitionStatement } from '../parser/parse-definition-statement';
+import * as AST from '../parser/AST-types';
 
 export function evaluateDefinitionStatement(
-  node: DefinitionStatement,
+  node: AST.DefinitionStatement,
   context: Environment
 ) {
   context.scope[node.name] = {
