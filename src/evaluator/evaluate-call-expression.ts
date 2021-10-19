@@ -1,7 +1,7 @@
 import { fmtStr } from 'crude-dev-tools';
-import { Environment, evaluate } from './evaluate';
+import { environment, Environment } from './environment';
+import { evaluate } from './evaluate';
 import * as AST from '../parser/AST-types';
-import { environment } from './evaluate';
 import { evaluateBlockStatements } from './evaluate-block-statements';
 
 export function evaluateCallExpression(

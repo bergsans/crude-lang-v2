@@ -1,5 +1,6 @@
 import { NIL } from '../lexer/token-types';
-import { Environment, evaluate } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 import { isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 import { evaluateLiteralExpression } from './evaluate-literal-expression';

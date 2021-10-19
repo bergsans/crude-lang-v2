@@ -1,6 +1,7 @@
 import { NIL } from '../lexer/token-types';
 import * as AST from '../parser/AST-types';
-import { evaluate, Environment } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 
 export function evaluateSetStatement(
   node: AST.SetStatement,

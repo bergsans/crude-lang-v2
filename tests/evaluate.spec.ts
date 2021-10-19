@@ -4,7 +4,8 @@ import { parse } from '../src/parser/parse';
 import { parseExpressionStatement } from '../src/parser/parse-expression-statement';
 import { _parseBinaryExpression } from '../src/parser/parse-binary-expression';
 import { evaluateBinaryExpression } from '../src/evaluator/evaluate-binary-expression';
-import { Environment, evaluate } from '../src/evaluator/evaluate';
+import { Environment } from '../src/evaluator/environment';
+import { evaluate } from '../src/evaluator/evaluate';
 import { list } from '../src/utils/list';
 import importStdLib from '../src/utils/import-std-lib';
 

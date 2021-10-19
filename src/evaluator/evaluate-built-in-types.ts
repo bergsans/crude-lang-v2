@@ -1,4 +1,4 @@
-import { Environment } from './evaluate';
+import { Environment } from './environment';
 import { evaluateArray } from './evaluate-array';
 import { evaluateArrayElement } from './evaluate-array-element';
 import { evaluateLiteralExpression } from './evaluate-literal-expression';

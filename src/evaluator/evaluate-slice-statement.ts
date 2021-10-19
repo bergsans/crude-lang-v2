@@ -1,6 +1,7 @@
 import { fmtStr } from 'crude-dev-tools';
 import * as AST from '../parser/AST-types';
-import { Environment, evaluate } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 
 export function evaluateSliceStatement(
   node: AST.SliceStatement,

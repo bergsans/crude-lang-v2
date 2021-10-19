@@ -1,4 +1,5 @@
-import { Environment, evaluate } from './evaluate';
+import { evaluate } from './evaluate';
+import { Environment } from './environment';
 import * as AST from '../parser/AST-types';
 
 export function evaluateArray(node: AST.Array, context: Environment) {

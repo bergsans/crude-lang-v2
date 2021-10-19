@@ -1,7 +1,7 @@
 import { fmtStr } from 'crude-dev-tools';
-import { Environment, evaluate } from './evaluate';
+import { evaluate } from './evaluate';
+import { Environment } from './environment';
 import * as AST from '../parser/AST-types';
-
 export function evaluateArrayElement(
   node: AST.ArrayElement,
   context: Environment

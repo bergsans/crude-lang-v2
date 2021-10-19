@@ -1,5 +1,5 @@
 import RESERVED_KEYWORDS from '../lexer/reserved-keywords';
-import { Environment } from './evaluate';
+import { Environment } from './environment';
 
 export const evaluateLiteralExpression = {
   Boolean: (literal: string, _context: Environment) =>

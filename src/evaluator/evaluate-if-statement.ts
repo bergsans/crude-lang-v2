@@ -1,7 +1,8 @@
 import { NIL } from '../lexer/token-types';
+import { Environment } from './environment';
 import * as AST from '../parser/AST-types';
 import { evaluateBlockStatements } from './evaluate-block-statements';
-import { evaluate, Environment } from './evaluate';
+import { evaluate } from './evaluate';
 
 export function evaluateIfStatement(
   node: AST.IfStatement,

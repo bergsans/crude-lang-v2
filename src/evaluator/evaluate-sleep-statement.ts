@@ -1,4 +1,5 @@
-import { evaluate, Environment } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 import { NIL } from '../lexer/token-types';
 import * as AST from '../parser/AST-types';
 

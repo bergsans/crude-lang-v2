@@ -1,5 +1,5 @@
 import { NIL } from '../lexer/token-types';
-import { environment, Environment } from './evaluate';
+import { environment, Environment } from './environment';
 import * as AST from '../parser/AST-types';
 
 export function evaluateDefinitionStatement(

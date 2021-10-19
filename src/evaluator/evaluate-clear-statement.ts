@@ -1,4 +1,4 @@
-import { Environment } from './evaluate';
+import { Environment } from './environment';
 import { NIL } from '../lexer/token-types';
 import * as AST from '../parser/AST-types';
 

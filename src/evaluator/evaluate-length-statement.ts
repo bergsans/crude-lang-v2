@@ -1,4 +1,5 @@
-import { Environment, evaluate } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 import * as AST from '../parser/AST-types';
 
 export function evaluateLengthStatement(
