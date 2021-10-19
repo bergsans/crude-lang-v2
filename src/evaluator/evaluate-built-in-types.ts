@@ -87,17 +87,17 @@ export const evaluateTypes = {
   CallExpression: (node: CallExpression, context: Environment) => {
     return evaluateCallExpression(node, context);
   },
-  ARRAY: (node: Array, context: Environment) => evaluateArray(node, context),
-  ELEMENT: (node: ArrayElement, context: Environment) =>
+  Array: (node: Array, context: Environment) => evaluateArray(node, context),
+  ArrayElement: (node: ArrayElement, context: Environment) =>
     evaluateArrayElement(node, context),
   BlockStatement: (node: BlockStatement, context: Environment) =>
     evaluateBlockStatements(node.statements, context),
   Program: (node: Program, context: Environment) =>
     evaluateBlockStatements(node.body.statements, context),
-  STRING: (node: NodeTree, context: Environment) =>
+  String: (node: NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
-  INTEGER: (node: NodeTree, context: Environment) =>
+  Integer: (node: NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
-  BOOLEAN: (node: NodeTree, context: Environment) =>
+  Boolean: (node: NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
 };

@@ -17,30 +17,30 @@ let numTwo =333;
 `;
       const expectedRes1 = [
         { type: 'LET', literal: 'let' },
-        { type: 'IDENTIFIER', literal: 'num' },
+        { type: 'Identifier', literal: 'num' },
         { type: 'ASSIGN', literal: '=' },
-        { type: 'INTEGER', literal: '444' },
+        { type: 'Integer', literal: '444' },
         { type: 'SEMICOLON', literal: ';' },
         { type: 'EOF', literal: '\u0000' },
       ];
       const expectedRes2 = [
         { type: 'LET', literal: 'let' },
-        { type: 'IDENTIFIER', literal: 'numOne' },
+        { type: 'Identifier', literal: 'numOne' },
         { type: 'ASSIGN', literal: '=' },
-        { type: 'INTEGER', literal: '2' },
+        { type: 'Integer', literal: '2' },
         { type: 'PLUS', literal: '+' },
-        { type: 'INTEGER', literal: '2' },
+        { type: 'Integer', literal: '2' },
         { type: 'PLUS', literal: '+' },
         { type: 'L_PAREN', literal: '(' },
-        { type: 'INTEGER', literal: '3' },
+        { type: 'Integer', literal: '3' },
         { type: 'MINUS', literal: '-' },
-        { type: 'INTEGER', literal: '3' },
+        { type: 'Integer', literal: '3' },
         { type: 'R_PAREN', literal: ')' },
         { type: 'SEMICOLON', literal: ';' },
         { type: 'LET', literal: 'let' },
-        { type: 'IDENTIFIER', literal: 'numTwo' },
+        { type: 'Identifier', literal: 'numTwo' },
         { type: 'ASSIGN', literal: '=' },
-        { type: 'INTEGER', literal: '333' },
+        { type: 'Integer', literal: '333' },
         { type: 'SEMICOLON', literal: ';' },
         { type: 'EOF', literal: '\u0000' },
       ];
@@ -71,7 +71,7 @@ let numTwo =333;
           meta: { ln: 1, col: 1, realPosition: 0 },
         },
         {
-          type: 'IDENTIFIER',
+          type: 'Identifier',
           literal: 'num',
           meta: { ln: 1, col: 5, realPosition: 4 },
         },
@@ -81,7 +81,7 @@ let numTwo =333;
           meta: { ln: 1, col: 9, realPosition: 8 },
         },
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '444',
           meta: { ln: 1, col: 11, realPosition: 10 },
         },
@@ -116,7 +116,7 @@ let ?? = 2;
       const tokens2 = tokenize(code2);
       const expectedResult1 = [
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 1, realPosition: 0 },
         },
@@ -126,7 +126,7 @@ let ?? = 2;
           meta: { ln: 1, col: 3, realPosition: 2 },
         },
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 6, realPosition: 5 },
         },
@@ -138,7 +138,7 @@ let ?? = 2;
       ];
       const expectedResult2 = [
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 1, realPosition: 0 },
         },
@@ -148,7 +148,7 @@ let ?? = 2;
           meta: { ln: 1, col: 3, realPosition: 2 },
         },
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 6, realPosition: 5 },
         },

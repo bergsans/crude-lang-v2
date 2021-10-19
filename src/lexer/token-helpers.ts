@@ -6,7 +6,6 @@ import {
   GREATER_THAN,
   GREATER_THAN_OR_EQUAL,
   IDENTIFIER,
-  INTEGER,
   UNALLOWED_CHARACTER,
   characterNames,
   BOOLEAN,
@@ -196,7 +195,7 @@ export function produceNumber(
     isDigit
   );
   return {
-    currentToken: newToken(INTEGER, nextToken.number, meta),
+    currentToken: newToken('Integer', nextToken.number, meta),
     nextPosition: nextToken.nextPosition,
   };
 }
@@ -217,6 +216,6 @@ export function produceString(
   nextPosition++;
   return {
     nextPosition,
-    currentToken: newToken('STRING', str, meta),
+    currentToken: newToken('String', str, meta),
   };
 }

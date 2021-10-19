@@ -18,16 +18,16 @@ describe('Parser', () => {
           {
             type: 'LetDeclaration',
             id: {
-              type: 'IDENTIFIER',
+              type: 'Identifier',
               name: 'nums',
             },
             statement: {
-              type: 'ARRAY',
+              type: 'Array',
               elements: [
                 {
                   type: 'ExpressionStatement',
                   expression: {
-                    type: 'INTEGER',
+                    type: 'Integer',
                     literal: '1',
                     meta: {
                       ln: 1,
@@ -39,7 +39,7 @@ describe('Parser', () => {
                 {
                   type: 'ExpressionStatement',
                   expression: {
-                    type: 'INTEGER',
+                    type: 'Integer',
                     literal: '2',
                     meta: {
                       ln: 1,
@@ -69,13 +69,13 @@ describe('Parser', () => {
           {
             type: 'LetDeclaration',
             id: {
-              type: 'IDENTIFIER',
+              type: 'Identifier',
               name: 'name',
             },
             statement: {
               type: 'ExpressionStatement',
               expression: {
-                type: 'STRING',
+                type: 'String',
                 literal: 'Gandalf the White',
                 meta: {
                   ln: 1,
@@ -108,7 +108,7 @@ describe('Parser', () => {
               {
                 type: 'ExpressionStatement',
                 expression: {
-                  type: 'INTEGER',
+                  type: 'Integer',
                   literal: '3',
                   meta: {
                     ln: 1,
@@ -120,7 +120,7 @@ describe('Parser', () => {
               {
                 type: 'ExpressionStatement',
                 expression: {
-                  type: 'INTEGER',
+                  type: 'Integer',
                   literal: '3',
                   meta: {
                     ln: 1,
@@ -149,13 +149,13 @@ describe('Parser', () => {
           {
             type: 'LetDeclaration',
             id: {
-              type: 'IDENTIFIER',
+              type: 'Identifier',
               name: 'x',
             },
             statement: {
               type: 'ExpressionStatement',
               expression: {
-                type: 'INTEGER',
+                type: 'Integer',
                 literal: '3',
                 meta: {
                   ln: 1,
@@ -186,7 +186,7 @@ describe('Parser', () => {
               name: 'add',
               params: [
                 {
-                  type: 'IDENTIFIER',
+                  type: 'Identifier',
                   literal: 'a',
                   meta: {
                     ln: 1,
@@ -195,7 +195,7 @@ describe('Parser', () => {
                   },
                 },
                 {
-                  type: 'IDENTIFIER',
+                  type: 'Identifier',
                   literal: 'b',
                   meta: {
                     ln: 1,
@@ -213,7 +213,7 @@ describe('Parser', () => {
                       type: 'BinaryExpression',
                       left: {
                         value: {
-                          type: 'IDENTIFIER',
+                          type: 'Identifier',
                           literal: 'a',
                           meta: {
                             ln: 1,
@@ -233,7 +233,7 @@ describe('Parser', () => {
                       },
                       right: {
                         value: {
-                          type: 'IDENTIFIER',
+                          type: 'Identifier',
                           literal: 'b',
                           meta: {
                             ln: 1,
@@ -270,7 +270,7 @@ describe('Parser', () => {
                 type: 'BinaryExpression',
                 left: {
                   value: {
-                    type: 'INTEGER',
+                    type: 'Integer',
                     literal: '3',
                     meta: {
                       ln: 1,
@@ -290,7 +290,7 @@ describe('Parser', () => {
                 },
                 right: {
                   value: {
-                    type: 'INTEGER',
+                    type: 'Integer',
                     literal: '4',
                     meta: {
                       ln: 1,
@@ -308,7 +308,7 @@ describe('Parser', () => {
                     value: {
                       type: 'ExpressionStatement',
                       expression: {
-                        type: 'INTEGER',
+                        type: 'Integer',
                         literal: '1',
                         meta: {
                           ln: 1,
@@ -332,13 +332,13 @@ describe('Parser', () => {
     describe('Integer', () => {
       it('4;', () => {
         const result = parseLiteralExpression({
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
         } as Token);
         const expectedResult = {
           type: 'ExpressionStatement',
           expression: {
-            type: 'INTEGER',
+            type: 'Integer',
             literal: '4',
           },
         };
@@ -355,7 +355,7 @@ describe('Parser', () => {
         const expectedResult = {
           type: 'ExpressionStatement',
           expression: {
-            type: 'BOOLEAN',
+            type: 'Boolean',
             literal: 'true',
             meta: { ln: 1, col: 1, realPosition: 0 },
           },
@@ -375,14 +375,14 @@ describe('Parser', () => {
               {
                 type: 'LetDeclaration',
                 id: {
-                  type: 'IDENTIFIER',
+                  type: 'Identifier',
                   name: 'x',
                 },
                 statement: {
                   type: 'BinaryExpression',
                   left: {
                     value: {
-                      type: 'INTEGER',
+                      type: 'Integer',
                       literal: '4',
                       meta: {
                         ln: 1,
@@ -402,7 +402,7 @@ describe('Parser', () => {
                   },
                   right: {
                     value: {
-                      type: 'INTEGER',
+                      type: 'Integer',
                       literal: '4',
                       meta: {
                         ln: 1,
@@ -433,13 +433,13 @@ describe('Parser', () => {
               {
                 type: 'LetDeclaration',
                 id: {
-                  type: 'IDENTIFIER',
+                  type: 'Identifier',
                   name: 'x',
                 },
                 statement: {
                   type: 'ExpressionStatement',
                   expression: {
-                    type: 'INTEGER',
+                    type: 'Integer',
                     literal: '4',
                     meta: {
                       ln: 1,
@@ -467,14 +467,14 @@ describe('Parser', () => {
               {
                 type: 'LetDeclaration',
                 id: {
-                  type: 'IDENTIFIER',
+                  type: 'Identifier',
                   name: 'x',
                 },
                 statement: {
                   type: 'BinaryExpression',
                   left: {
                     value: {
-                      type: 'INTEGER',
+                      type: 'Integer',
                       literal: '4',
                       meta: {
                         ln: 1,
@@ -494,7 +494,7 @@ describe('Parser', () => {
                   },
                   right: {
                     value: {
-                      type: 'INTEGER',
+                      type: 'Integer',
                       literal: '4',
                       meta: {
                         ln: 1,
@@ -523,13 +523,13 @@ describe('Parser', () => {
               {
                 type: 'LetDeclaration',
                 id: {
-                  type: 'IDENTIFIER',
+                  type: 'Identifier',
                   name: 'x',
                 },
                 statement: {
                   type: 'ExpressionStatement',
                   expression: {
-                    type: 'INTEGER',
+                    type: 'Integer',
                     literal: '9',
                     meta: {
                       ln: 1,
@@ -571,7 +571,7 @@ let numTwo = 200;
           type: 'BinaryExpression',
           left: {
             value: {
-              type: 'INTEGER',
+              type: 'Integer',
               literal: '4',
             },
           },
@@ -581,7 +581,7 @@ let numTwo = 200;
           },
           right: {
             value: {
-              type: 'INTEGER',
+              type: 'Integer',
               literal: '4',
             },
           },
@@ -603,7 +603,7 @@ let numTwo = 200;
           type: 'BinaryExpression',
           left: {
             value: {
-              type: 'INTEGER',
+              type: 'Integer',
               literal: '4',
               meta: {
                 ln: 1,
@@ -624,7 +624,7 @@ let numTwo = 200;
           right: {
             left: {
               value: {
-                type: 'INTEGER',
+                type: 'Integer',
                 literal: '4',
                 meta: {
                   ln: 1,
@@ -644,7 +644,7 @@ let numTwo = 200;
             },
             right: {
               value: {
-                type: 'INTEGER',
+                type: 'Integer',
                 literal: '4',
                 meta: {
                   ln: 1,

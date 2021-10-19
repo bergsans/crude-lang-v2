@@ -32,13 +32,13 @@ import { parseChangeStatement } from './parse-change-statement';
 import { parseLiteralExpression } from './parse-literal-expression';
 
 export interface ArrayElement {
-  type: 'ELEMENT';
+  type: 'ArrayElement';
   collection: Token;
   index: number;
 }
 
 export interface Array {
-  type: 'ARRAY';
+  type: 'Array';
   elements: ArrayElement[];
 }
 
@@ -77,7 +77,7 @@ function produceArray(li: List<Token>) {
     li.next();
   }
   return {
-    type: 'ARRAY',
+    type: 'Array',
     elements,
   };
 }
@@ -101,7 +101,7 @@ function produceArrayIndex(li: List<Token>) {
     li.next();
   }
   return {
-    type: 'ELEMENT',
+    type: 'ArrayElement',
     collection,
     index,
   };
