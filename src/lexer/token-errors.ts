@@ -9,7 +9,7 @@ export class TokenizeError extends Error {
 }
 
 function unallowedTokenMessage(unallowedToken: Token) {
-  return `${unallowedToken.literal} - at line ${unallowedToken.meta.ln}, column ${unallowedToken.meta.col} - is an unvalid character.`;
+  return `${unallowedToken.literal} - at line ${unallowedToken.meta.ln}, column ${unallowedToken.meta.col} - is an invalid character.`;
 }
 
 export function throwCollectedErrors(unallowedTokens: Token[]) {
