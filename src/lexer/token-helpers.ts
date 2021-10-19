@@ -6,8 +6,7 @@ import {
   GREATER_THAN,
   GREATER_THAN_OR_EQUAL,
   IDENTIFIER,
-  INTEGER,
-  UNALLOWED_CHARACTER,
+  DISALLOWED_CHARACTER,
   characterNames,
   BOOLEAN,
   NEW_LINE,
@@ -172,7 +171,7 @@ export function produceSingleSign(
   };
 }
 
-export function produceUnallowedCharacter(
+export function produceDisallowedCharacter(
   _input: string,
   _nextPosition: number,
   character: string,
@@ -180,7 +179,7 @@ export function produceUnallowedCharacter(
 ) {
   return {
     nextPosition: _nextPosition,
-    currentToken: newToken(UNALLOWED_CHARACTER, character, meta),
+    currentToken: newToken(DISALLOWED_CHARACTER, character, meta),
   };
 }
 
@@ -196,7 +195,7 @@ export function produceNumber(
     isDigit
   );
   return {
-    currentToken: newToken(INTEGER, nextToken.number, meta),
+    currentToken: newToken('Integer', nextToken.number, meta),
     nextPosition: nextToken.nextPosition,
   };
 }
@@ -217,6 +216,6 @@ export function produceString(
   nextPosition++;
   return {
     nextPosition,
-    currentToken: newToken('STRING', str, meta),
+    currentToken: newToken('String', str, meta),
   };
 }

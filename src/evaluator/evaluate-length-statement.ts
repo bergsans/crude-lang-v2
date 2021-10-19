@@ -1,6 +1,11 @@
-import { Environment, evaluate } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
+import * as AST from '../parser/AST-types';
 
-export function evaluateLengthStatement(node, context: Environment) {
+export function evaluateLengthStatement(
+  node: AST.LengthStatement,
+  context: Environment
+) {
   const value = evaluate(node.value, context);
   return value.length;
 }

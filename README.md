@@ -1,5 +1,19 @@
 ![](./crudelang-logo.png)
 
+# TODO
+
+* Cannot reference array els besides from in an assignment, or in a call expression (`id(arr[0]);`). You cannot write:
+
+```
+let arr = [1, 2];
+arr[0] + 12;
+if(arr[0] == 1) { ... }
+```
+
+Should fix: change logic in `isPartOfBinaryExpression`
+
+* Decide if include anonymous fns and immediatly invoked fn.
+
 # Setup
 ```
 npm install
@@ -37,6 +51,7 @@ Hi!
 ./crude examples/fibonacci.crude
 ./crude examples/factorial.crude
 ./crude examples/bubble-sort.crude
+./crude examples/selection-sort.crude
 ```
 
 ## Game of Life implementation
@@ -44,4 +59,12 @@ Hi!
 ./crude examples/game-of-life.crude
 ```
 
+<<<<<<< HEAD
+## Game of Life implementation
+```
+./crude examples/game-of-life.crude
+```
+
+=======
+>>>>>>> 587d69671e473161062893ed9c1b500b1c1fa12d
 ![](./examples/game-of-life-screenshot.gif)

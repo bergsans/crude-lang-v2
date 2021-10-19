@@ -5,14 +5,11 @@ import {
   R_BRACKET,
   L_BRACE,
   R_BRACE,
-  IDENTIFIER,
-  BOOLEAN,
-  INTEGER,
   DIVISION,
   BANG,
   AND_SIGN,
   OR_SIGN,
-  UNALLOWED_CHARACTER,
+  DISALLOWED_CHARACTER,
   ASSIGN,
   L_PAREN,
   R_PAREN,
@@ -68,8 +65,8 @@ export function isQuoteSign(character: string) {
   return character.toLowerCase() === '"';
 }
 
-export function isUnallowedToken(token: Token) {
-  return token.type === UNALLOWED_CHARACTER;
+export function isDisallowedToken(token: Token) {
+  return token.type === DISALLOWED_CHARACTER;
 }
 
 export function isEqual(currentCharacter: string, nextCharacter: string) {
@@ -247,7 +244,7 @@ export function isPrimitiveAndEndOfStatement(li: List<Token>) {
 
 export function isArrayIndex(li: List<Token>) {
   return (
-    isPeekToken(li.head(), IDENTIFIER) && li.lookAt(1).type === 'L_BRACKET'
+    isPeekToken(li.head(), 'Identifier') && li.lookAt(1).type === 'L_BRACKET'
   );
 }
 
@@ -256,11 +253,13 @@ export function isArray(li: List<Token>) {
 }
 
 export function isPrimitive(li: List<Token>) {
-  return [INTEGER, 'IDENTIFIER', 'STRING', BOOLEAN].includes(li.head().type);
+  return ['Integer', 'Identifier', 'String', 'Boolean'].includes(
+    li.head().type
+  );
 }
 
 export function isInfixNotAndBoolean(li: List<Token>) {
-  return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === BOOLEAN;
+  return isPeekToken(li.head(), INFIX_NOT) && li.lookAt(1).type === 'Boolean';
 }
 
 export function isArithmeticInfix(li: List<Token>) {
@@ -268,7 +267,7 @@ export function isArithmeticInfix(li: List<Token>) {
 }
 
 export function isCallExpression(li: List<Token>) {
-  return li.isHead('IDENTIFIER') && li.get()[1].type === 'L_PAREN';
+  return li.isHead('Identifier') && li.get()[1].type === 'L_PAREN';
 }
 
 export function isChangeStatement(li: List<Token>) {
@@ -331,12 +330,13 @@ export function isArithmeticOperatorAndGroupedExpression(li: List<Token>) {
 }
 
 export function isIdentifierAndEndOfStatement(li: List<Token>) {
-  return li.isHead(IDENTIFIER) && li.lookAt(1).type === END_OF_STATEMENT;
+  return li.isHead('Identifier') && li.lookAt(1).type === END_OF_STATEMENT;
 }
 
 export function isPartOfBinaryExpression(li: List<Token>) {
   return (
-    (isPrimitive(li) && isOperatorType(li.lookAt(1).type)) ||
+    ((isPrimitive(li) || isArrayIndex(li) || isArray(li)) &&
+      isOperatorType(li.lookAt(1).type)) ||
     isPeekToken(li.head(), 'L_PAREN') ||
     INFIX_ARITHMETIC_TYPES.includes(li.head().type)
   );

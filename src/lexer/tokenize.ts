@@ -1,10 +1,10 @@
 import { NUL } from './token-types';
-import { throwNoInput, throwCollectedErrors } from './token-errors';
+import { throwCollectedErrors } from './token-errors';
 import {
   isWhitespace,
   isDigit,
   isASCIIAlphabetic,
-  isUnallowedToken,
+  isDisallowedToken,
   isSingleSign,
   isComparisonOperator,
   isNUL,
@@ -15,7 +15,7 @@ import {
   produceNULToken,
   produceComparisionOperatorToken,
   produceIdentifier,
-  produceUnallowedCharacter,
+  produceDisallowedCharacter,
   produceNumber,
   produceSingleSign,
   readCharacter,
@@ -75,7 +75,7 @@ const tokenHandlers: TokenHandler[] = [
   [isASCIIAlphabetic, produceIdentifier],
   [isDigit, produceNumber],
   [isQuoteSign, produceString],
-  [defaultAlwaysTrue, produceUnallowedCharacter],
+  [defaultAlwaysTrue, produceDisallowedCharacter],
 ];
 
 export function peekCharacter(input: string, nextPosition: number) {
@@ -145,9 +145,6 @@ function produceTokens(data: Data) {
 }
 
 export function tokenize(input: string): Token[] {
-  if (!input.length) {
-    throwNoInput();
-  }
   const initialMeta: Metadata = {
     realPosition: 0,
     col: 1,
@@ -165,9 +162,9 @@ export function tokenize(input: string): Token[] {
     character,
     meta,
   });
-  if (tokens.some(isUnallowedToken)) {
-    const unallowedTokens = tokens.filter(isUnallowedToken);
-    throwCollectedErrors(unallowedTokens);
+  if (tokens.some(isDisallowedToken)) {
+    const disallowedTokens = tokens.filter(isDisallowedToken);
+    throwCollectedErrors(disallowedTokens);
   }
   return tokens;
 }

@@ -101,7 +101,7 @@ function led(li: List<Token>, left: Expression, operator: Token) {
 
 function parseBinaryExpression(li: List<Token>, currentPrecedence = 0) {
   let left = nud(li);
-  if (li.head().type === END_OF_STATEMENT) {
+  if (li.isHead(END_OF_STATEMENT)) {
     return left;
   }
   while (precedence[li.head().type] > currentPrecedence) {

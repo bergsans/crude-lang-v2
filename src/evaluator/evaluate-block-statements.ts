@@ -1,9 +1,10 @@
-import { Statement } from '../parser/parse-statement';
 import { NIL } from '../lexer/token-types';
-import { environment, Environment, evaluate } from './evaluate';
+import * as AST from '../parser/AST-types';
+import { environment, Environment } from './environment';
+import { evaluate } from './evaluate';
 
 export function evaluateBlockStatements(
-  statements: Statement[],
+  statements: AST.Statement[],
   context: Environment
 ) {
   const localEnvironment = environment({}, context);

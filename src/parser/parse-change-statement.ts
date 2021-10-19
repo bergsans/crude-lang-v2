@@ -3,10 +3,11 @@ import { parseGroupedExpression } from './parse-helpers';
 import { List } from '../utils/list';
 import { Node } from './parse';
 import { Expression } from './parse-expression-statement';
+import { Array } from './parse-expression-statement';
 
 export interface ChangeStatement extends Node {
   type: 'ChangeStatement';
-  array: Expression[];
+  array: Array;
   index: Expression;
   newValue: Expression;
 }

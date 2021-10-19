@@ -1,4 +1,4 @@
-import { Environment } from './evaluate';
+import { Environment } from './environment';
 import { evaluateArray } from './evaluate-array';
 import { evaluateArrayElement } from './evaluate-array-element';
 import { evaluateLiteralExpression } from './evaluate-literal-expression';
@@ -20,60 +20,66 @@ import { evaluateLengthStatement } from './evaluate-length-statement';
 import { evaluateConcatStatement } from './evaluate-concat-statement';
 import { evaluateSliceStatement } from './evaluate-slice-statement';
 import { evaluateCallExpression } from './evaluate-call-expression';
+import * as AST from '../parser/AST-types';
 
 export const evaluateTypes = {
-  LetDeclaration: (node, context: Environment) =>
+  LetDeclaration: (node: AST.LetDeclaration, context: Environment) =>
     evaluateLetDeclaration(node, context),
-  ClearStatement: (node, context: Environment) =>
+  ClearStatement: (node: AST.ClearStatement, context: Environment) =>
     evaluateClearStatement(node, context),
-  SleepStatement: (node, context: Environment) =>
+  SleepStatement: (node: AST.SleepStatement, context: Environment) =>
     evaluateSleepStatement(node, context),
-  SetStatement: (node, context: Environment) =>
+  SetStatement: (node: AST.SetStatement, context: Environment) =>
     evaluateSetStatement(node, context),
-  ReturnStatement: (node, context: Environment) =>
+  ReturnStatement: (node: AST.ReturnStatement, context: Environment) =>
     evaluateReturnStatement(node, context),
-  IfStatement: (node, context: Environment) =>
+  IfStatement: (node: AST.IfStatement, context: Environment) =>
     evaluateIfStatement(node, context),
-  UnaryExpression: (node, context: Environment) =>
+  UnaryExpression: (node: AST.UnaryExpression, context: Environment) =>
     evaluateUnaryExpression[node.literal](node, context),
-  BinaryExpression: (node, context: Environment) =>
+  BinaryExpression: (node: AST.BinaryExpression, context: Environment) =>
     evaluateBinaryExpression(node, context),
-  ExpressionStatement: (node, context: Environment) => {
+  ExpressionStatement: (node: AST.Expression, context: Environment) => {
     return evaluateLiteralExpression[node.expression.type](
       node.expression.literal,
       context
     );
   },
-  ConvertStatement: (node, context: Environment) =>
+  ConvertStatement: (node: AST.ConvertStatement, context: Environment) =>
     evaluateConvertStatement(node, context),
-  PrintStatement: (node, context: Environment) =>
+  PrintStatement: (node: AST.PrintStatement, context: Environment) =>
     evaluatePrintStatement(node, context),
-  ChangeStatement: (node, context: Environment) =>
+  ChangeStatement: (node: AST.ChangeStatement, context: Environment) =>
     evaluateChangeStatement(node, context),
-  ConcatStatement: (node, context: Environment) =>
+  ConcatStatement: (node: AST.ConcatStatement, context: Environment) =>
     evaluateConcatStatement(node, context),
-  SliceStatement: (node, context: Environment) =>
+  SliceStatement: (node: AST.SliceStatement, context: Environment) =>
     evaluateSliceStatement(node, context),
-  LengthStatement: (node, context: Environment) =>
+  LengthStatement: (node: AST.LengthStatement, context: Environment) =>
     evaluateLengthStatement(node, context),
-  ForStatement: (node, context: Environment) =>
+  ForStatement: (node: AST.ForStatement, context: Environment) =>
     evaluateForStatement(node, context),
-  DefinitionStatement: (node, context: Environment) => {
+  DefinitionStatement: (
+    node: AST.DefinitionStatement,
+    context: Environment
+  ) => {
     return evaluateDefinitionStatement(node, context);
   },
-  CallExpression: (node, context: Environment) => {
+  CallExpression: (node: AST.CallExpression, context: Environment) => {
     return evaluateCallExpression(node, context);
   },
-  ARRAY: (node, context: Environment) => evaluateArray(node, context),
-  ELEMENT: (node, context: Environment) => evaluateArrayElement(node, context),
-  BlockStatement: (node, context: Environment) =>
+  Array: (node: AST.Array, context: Environment) =>
+    evaluateArray(node, context),
+  ArrayElement: (node: AST.ArrayElement, context: Environment) =>
+    evaluateArrayElement(node, context),
+  BlockStatement: (node: AST.BlockStatement, context: Environment) =>
     evaluateBlockStatements(node.statements, context),
-  Program: (node, context: Environment) =>
+  Program: (node: AST.Program, context: Environment) =>
     evaluateBlockStatements(node.body.statements, context),
-  STRING: (node, context: Environment) =>
+  String: (node: AST.NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
-  INTEGER: (node, context: Environment) =>
+  Integer: (node: AST.NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
-  BOOLEAN: (node, context: Environment) =>
+  Boolean: (node: AST.NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
 };

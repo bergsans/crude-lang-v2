@@ -15,40 +15,45 @@ let numTwo = 333;
 let numOne =2 + 2 + (3 - 3);
 let numTwo =333;
 `;
+
+      const codeSnippet4 = '';
+
       const expectedRes1 = [
         { type: 'LET', literal: 'let' },
-        { type: 'IDENTIFIER', literal: 'num' },
+        { type: 'Identifier', literal: 'num' },
         { type: 'ASSIGN', literal: '=' },
-        { type: 'INTEGER', literal: '444' },
+        { type: 'Integer', literal: '444' },
         { type: 'SEMICOLON', literal: ';' },
         { type: 'EOF', literal: '\u0000' },
       ];
       const expectedRes2 = [
         { type: 'LET', literal: 'let' },
-        { type: 'IDENTIFIER', literal: 'numOne' },
+        { type: 'Identifier', literal: 'numOne' },
         { type: 'ASSIGN', literal: '=' },
-        { type: 'INTEGER', literal: '2' },
+        { type: 'Integer', literal: '2' },
         { type: 'PLUS', literal: '+' },
-        { type: 'INTEGER', literal: '2' },
+        { type: 'Integer', literal: '2' },
         { type: 'PLUS', literal: '+' },
         { type: 'L_PAREN', literal: '(' },
-        { type: 'INTEGER', literal: '3' },
+        { type: 'Integer', literal: '3' },
         { type: 'MINUS', literal: '-' },
-        { type: 'INTEGER', literal: '3' },
+        { type: 'Integer', literal: '3' },
         { type: 'R_PAREN', literal: ')' },
         { type: 'SEMICOLON', literal: ';' },
         { type: 'LET', literal: 'let' },
-        { type: 'IDENTIFIER', literal: 'numTwo' },
+        { type: 'Identifier', literal: 'numTwo' },
         { type: 'ASSIGN', literal: '=' },
-        { type: 'INTEGER', literal: '333' },
+        { type: 'Integer', literal: '333' },
         { type: 'SEMICOLON', literal: ';' },
         { type: 'EOF', literal: '\u0000' },
       ];
       const expectedRes3 = expectedRes2;
+      const expectedRes4 = [];
       [
         [codeSnippet1, expectedRes1],
         [codeSnippet2, expectedRes2],
         [codeSnippet3, expectedRes3],
+        [codeSnippet4, expectedRes4],
       ].forEach(([code, res]: [string, Token[]]) => {
         const tokensWithoutMetadata = tokenize(code).map(
           ({ type, literal }: Partial<Token>) => ({
@@ -71,7 +76,7 @@ let numTwo =333;
           meta: { ln: 1, col: 1, realPosition: 0 },
         },
         {
-          type: 'IDENTIFIER',
+          type: 'Identifier',
           literal: 'num',
           meta: { ln: 1, col: 5, realPosition: 4 },
         },
@@ -81,7 +86,7 @@ let numTwo =333;
           meta: { ln: 1, col: 9, realPosition: 8 },
         },
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '444',
           meta: { ln: 1, col: 11, realPosition: 10 },
         },
@@ -94,16 +99,16 @@ let numTwo =333;
       expect(tokens).to.deep.equal(res);
     });
 
-    it('Should throw on unallowed token', () => {
+    it('Should throw on disallowed token', () => {
       const code = `
 let num_1 = 333;
 let ?? = 2;
 `;
-      const expectedErrorMessage = `_ - at line 2, column 8 - is an unvalid character.
+      const expectedErrorMessage = `_ - at line 2, column 8 - is an invalid character.
 
-? - at line 3, column 5 - is an unvalid character.
+? - at line 3, column 5 - is an invalid character.
 
-? - at line 3, column 6 - is an unvalid character.
+? - at line 3, column 6 - is an invalid character.
 
 `;
       expect(() => tokenize(code)).to.throw(expectedErrorMessage);
@@ -116,7 +121,7 @@ let ?? = 2;
       const tokens2 = tokenize(code2);
       const expectedResult1 = [
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 1, realPosition: 0 },
         },
@@ -126,7 +131,7 @@ let ?? = 2;
           meta: { ln: 1, col: 3, realPosition: 2 },
         },
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 6, realPosition: 5 },
         },
@@ -138,7 +143,7 @@ let ?? = 2;
       ];
       const expectedResult2 = [
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 1, realPosition: 0 },
         },
@@ -148,7 +153,7 @@ let ?? = 2;
           meta: { ln: 1, col: 3, realPosition: 2 },
         },
         {
-          type: 'INTEGER',
+          type: 'Integer',
           literal: '4',
           meta: { ln: 1, col: 6, realPosition: 5 },
         },

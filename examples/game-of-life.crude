@@ -27,6 +27,10 @@ define isAlive(board, width, y, x) {
 define render(board, w) {
   clear();
   print("");
+<<<<<<< HEAD
+=======
+  print("");
+>>>>>>> 587d69671e473161062893ed9c1b500b1c1fa12d
   let h = w;
   for(y, 0, h) {
     let tempStr = "";
@@ -39,7 +43,12 @@ define render(board, w) {
         set tempStr = tempStr + "o";
       }
     }
+<<<<<<< HEAD
     print(tempStr);
+=======
+    let formattedString = "      " + tempStr;
+    print(formattedString);
+>>>>>>> 587d69671e473161062893ed9c1b500b1c1fa12d
   }
 }
 
@@ -49,7 +58,11 @@ define nextBoardState(board, width, gen, endGen) {
     return render(board, width);
   }
   let newBoard = concat([], board);
+<<<<<<< HEAD
   let height = width;
+=======
+  let height = length(board) / width;
+>>>>>>> 587d69671e473161062893ed9c1b500b1c1fa12d
   for(y, 0, height) {
     for(x, 0, width) {
       let aliveNeighbors = 0;
@@ -74,6 +87,7 @@ define nextBoardState(board, width, gen, endGen) {
   return nextBoardState(newBoard, width, gen + 1, endGen);
 }
 let tumbler = [
+<<<<<<< HEAD
  0,0,0,0,0,0,0,0,0,0,0,0,0,0,
  0,0,0,0,0,0,0,0,0,0,0,0,0,0,
  0,0,0,1,1,0,1,1,0,0,0,0,0,0,
@@ -90,3 +104,16 @@ let tumbler = [
  0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 ];
 nextBoardState(tumbler, 14, 0, 1000);
+=======
+ 0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,1,1,0,1,1,0,0,0,0,
+ 0,0,0,1,1,0,1,1,0,0,0,0,
+ 0,0,0,0,1,0,1,0,0,0,0,0,
+ 0,0,1,0,1,0,1,0,1,0,0,0,
+ 0,0,1,0,1,0,1,0,1,0,0,0,
+ 0,0,1,1,0,0,0,1,1,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,
+];
+nextBoardState(tumbler, 12, 0, 1000);
+>>>>>>> 587d69671e473161062893ed9c1b500b1c1fa12d

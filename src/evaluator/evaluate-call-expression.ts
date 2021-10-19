@@ -1,13 +1,17 @@
 import { fmtStr } from 'crude-dev-tools';
-import { Environment, evaluate } from './evaluate';
-import { environment } from './evaluate';
+import { environment, Environment } from './environment';
+import { evaluate } from './evaluate';
+import * as AST from '../parser/AST-types';
 import { evaluateBlockStatements } from './evaluate-block-statements';
 
-export function evaluateCallExpression(node, context: Environment) {
-  if (!context.get(node.name)) {
-    throw new Error(fmtStr(`Unknown definition: ${node.name}`, 'red'));
+export function evaluateCallExpression(
+  node: AST.CallExpression,
+  context: Environment
+) {
+  if (!context.get(node.callee)) {
+    throw new Error(fmtStr(`Unknown definition: ${node.callee}`, 'red'));
   }
-  const { env, params, body } = context.get(node.name);
+  const { env, params, body } = context.get(node.callee);
   const updateEnv = params.reduce(
     (acc, v, i) => ({
       ...acc,

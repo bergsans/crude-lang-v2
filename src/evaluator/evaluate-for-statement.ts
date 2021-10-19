@@ -1,8 +1,13 @@
-import { evaluate, Environment } from './evaluate';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 import { NIL } from '../lexer/token-types';
+import * as AST from '../parser/AST-types';
 import { evaluateBlockStatements } from './evaluate-block-statements';
 
-export function evaluateForStatement(node, context: Environment) {
+export function evaluateForStatement(
+  node: AST.ForStatement,
+  context: Environment
+) {
   const id = node.id.name;
   const start = evaluate(node.start, context);
   const end = evaluate(node.end, context);

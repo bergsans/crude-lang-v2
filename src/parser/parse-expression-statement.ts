@@ -31,11 +31,26 @@ import {
 import { parseChangeStatement } from './parse-change-statement';
 import { parseLiteralExpression } from './parse-literal-expression';
 
+export interface ArrayElement {
+  type: 'ArrayElement';
+  collection: Token;
+  index: Expression;
+}
+
+export interface Array {
+  type: 'Array';
+  elements: ArrayElement[];
+}
+
 export interface Expression extends Node {
   type: 'Expression';
   literal: string;
   expression: Expression;
   argument?: Expression;
+}
+
+export interface UnaryExpression extends Omit<Expression, 'type'> {
+  type: 'UnaryExpression';
 }
 
 type ParseExpressionPredicate = (li: List<Token>) => boolean;
@@ -62,7 +77,7 @@ function produceArray(li: List<Token>) {
     li.next();
   }
   return {
-    type: 'ARRAY',
+    type: 'Array',
     elements,
   };
 }
@@ -86,7 +101,7 @@ function produceArrayIndex(li: List<Token>) {
     li.next();
   }
   return {
-    type: 'ELEMENT',
+    type: 'ArrayElement',
     collection,
     index,
   };

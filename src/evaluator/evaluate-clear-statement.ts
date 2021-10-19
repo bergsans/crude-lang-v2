@@ -1,7 +1,11 @@
-import { Environment } from './evaluate';
+import { Environment } from './environment';
 import { NIL } from '../lexer/token-types';
+import * as AST from '../parser/AST-types';
 
-export function evaluateClearStatement(node, context: Environment) {
+export function evaluateClearStatement(
+  _node: AST.ClearStatement,
+  _context: Environment
+) {
   console.clear();
   return NIL;
 }

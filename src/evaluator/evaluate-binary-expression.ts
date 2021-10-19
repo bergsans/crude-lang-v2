@@ -1,11 +1,15 @@
 import { NIL } from '../lexer/token-types';
-import { Environment, evaluate } from './evaluate';
-import { NodeTree } from '../parser/parse-binary-expression';
+import { Environment } from './environment';
+import { evaluate } from './evaluate';
 import { isOperatorType } from '../utils/predicates';
 import { operations } from './operations';
 import { evaluateLiteralExpression } from './evaluate-literal-expression';
+import * as AST from '../parser/AST-types';
 
-export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
+export function evaluateBinaryExpression(
+  node: AST.NodeTree,
+  context: Environment
+) {
   if (!node.left) {
     if (
       [
@@ -26,8 +30,8 @@ export function evaluateBinaryExpression(node: NodeTree, context: Environment) {
   }
   if (isOperatorType(node.value.type)) {
     return operations[node.value.type](
-      evaluateBinaryExpression(node.left as NodeTree, context),
-      evaluateBinaryExpression(node.right as NodeTree, context)
+      evaluateBinaryExpression(node.left as AST.NodeTree, context),
+      evaluateBinaryExpression(node.right as AST.NodeTree, context)
     );
   }
   return NIL;

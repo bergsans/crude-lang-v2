@@ -1,15 +1,11 @@
-import { Expression } from '../parser/parse-expression-statement';
-import { BlockStatement } from '../parser/parse-block-statement';
 import { NIL } from '../lexer/token-types';
+import { Environment } from './environment';
+import * as AST from '../parser/AST-types';
 import { evaluateBlockStatements } from './evaluate-block-statements';
-import { evaluate, Environment } from './evaluate';
+import { evaluate } from './evaluate';
 
 export function evaluateIfStatement(
-  node: {
-    type: string;
-    condition: Expression;
-    consequence: BlockStatement;
-  },
+  node: AST.IfStatement,
   context: Environment
 ) {
   const condition = evaluate(node.condition, context);
