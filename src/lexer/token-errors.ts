@@ -8,13 +8,12 @@ export class TokenizeError extends Error {
   }
 }
 
-function unallowedTokenMessage(unallowedToken: Token) {
-  return `${unallowedToken.literal} - at line ${unallowedToken.meta.ln}, column ${unallowedToken.meta.col} - is an invalid character.`;
-}
+function disallowedTokenMessage(disallowedToken: Token) {
+  return `${disallowedToken.literal} - at line ${disallowedToken.meta.ln}, column ${disallowedToken.meta.col} - is an unvalid character.`;
 
-export function throwCollectedErrors(unallowedTokens: Token[]) {
-  const errorMessage = unallowedTokens.reduce(
-    (acc, v) => acc.concat(unallowedTokenMessage(v), '\n'.repeat(2)),
+export function throwCollectedErrors(disallowedTokens: Token[]) {
+  const errorMessage = disallowedTokens.reduce(
+    (acc, v) => acc.concat(disallowedTokenMessage(v), '\n'.repeat(2)),
     ''
   );
   throw new TokenizeError(fmtStr(errorMessage, 'red'));

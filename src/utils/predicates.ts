@@ -9,7 +9,7 @@ import {
   BANG,
   AND_SIGN,
   OR_SIGN,
-  UNALLOWED_CHARACTER,
+  DISALLOWED_CHARACTER,
   ASSIGN,
   L_PAREN,
   R_PAREN,
@@ -65,8 +65,8 @@ export function isQuoteSign(character: string) {
   return character.toLowerCase() === '"';
 }
 
-export function isUnallowedToken(token: Token) {
-  return token.type === UNALLOWED_CHARACTER;
+export function isDisallowedToken(token: Token) {
+  return token.type === DISALLOWED_CHARACTER;
 }
 
 export function isEqual(currentCharacter: string, nextCharacter: string) {

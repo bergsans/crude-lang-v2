@@ -6,7 +6,7 @@ import {
   GREATER_THAN,
   GREATER_THAN_OR_EQUAL,
   IDENTIFIER,
-  UNALLOWED_CHARACTER,
+  DISALLOWED_CHARACTER,
   characterNames,
   BOOLEAN,
   NEW_LINE,
@@ -171,7 +171,7 @@ export function produceSingleSign(
   };
 }
 
-export function produceUnallowedCharacter(
+export function produceDisallowedCharacter(
   _input: string,
   _nextPosition: number,
   character: string,
@@ -179,7 +179,7 @@ export function produceUnallowedCharacter(
 ) {
   return {
     nextPosition: _nextPosition,
-    currentToken: newToken(UNALLOWED_CHARACTER, character, meta),
+    currentToken: newToken(DISALLOWED_CHARACTER, character, meta),
   };
 }
 
