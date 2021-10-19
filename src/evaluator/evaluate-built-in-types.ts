@@ -21,7 +21,7 @@ import { evaluateConcatStatement } from './evaluate-concat-statement';
 import { evaluateSliceStatement } from './evaluate-slice-statement';
 import { evaluateCallExpression } from './evaluate-call-expression';
 import { Program } from '../parser/parse';
-import { BinaryExpression } from '../parser/parse-binary-expression';
+import { NodeTree, BinaryExpression } from '../parser/parse-binary-expression';
 import { BlockStatement } from '../parser/parse-block-statement';
 import { LetDeclaration } from '../parser/parse-let-statement';
 import { ClearStatement } from '../parser/parse-clear-statement';
@@ -94,10 +94,10 @@ export const evaluateTypes = {
     evaluateBlockStatements(node.statements, context),
   Program: (node: Program, context: Environment) =>
     evaluateBlockStatements(node.body.statements, context),
-  STRING: (node, context: Environment) =>
+  STRING: (node: NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
-  INTEGER: (node, context: Environment) =>
+  INTEGER: (node: NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
-  BOOLEAN: (node, context: Environment) =>
+  BOOLEAN: (node: NodeTree, context: Environment) =>
     evaluateLiteralExpression[node.value.type](node.value.literal, context),
 };

@@ -2,7 +2,7 @@
 
 # TODO
 
-Cannot reference array els besides from in an assignment, or in a call expression (`id(arr[0]);`). You cannot write:
+* Cannot reference array els besides from in an assignment, or in a call expression (`id(arr[0]);`). You cannot write:
 
 ```
 let arr = [1, 2];
@@ -11,6 +11,8 @@ if(arr[0] == 1) { ... }
 ```
 
 Should fix: change logic in `isPartOfBinaryExpression`
+
+* Decide if include anonymous fns and immediatly invoked fn.
 
 # Setup
 ```
