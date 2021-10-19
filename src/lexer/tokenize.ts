@@ -4,7 +4,7 @@ import {
   isWhitespace,
   isDigit,
   isASCIIAlphabetic,
-  isUnallowedToken,
+  isDisallowedToken,
   isSingleSign,
   isComparisonOperator,
   isNUL,
@@ -15,7 +15,7 @@ import {
   produceNULToken,
   produceComparisionOperatorToken,
   produceIdentifier,
-  produceUnallowedCharacter,
+  produceDisallowedCharacter,
   produceNumber,
   produceSingleSign,
   readCharacter,
@@ -75,7 +75,7 @@ const tokenHandlers: TokenHandler[] = [
   [isASCIIAlphabetic, produceIdentifier],
   [isDigit, produceNumber],
   [isQuoteSign, produceString],
-  [defaultAlwaysTrue, produceUnallowedCharacter],
+  [defaultAlwaysTrue, produceDisallowedCharacter],
 ];
 
 export function peekCharacter(input: string, nextPosition: number) {
@@ -162,9 +162,9 @@ export function tokenize(input: string): Token[] {
     character,
     meta,
   });
-  if (tokens.some(isUnallowedToken)) {
-    const unallowedTokens = tokens.filter(isUnallowedToken);
-    throwCollectedErrors(unallowedTokens);
+  if (tokens.some(isDisallowedToken)) {
+    const disallowedTokens = tokens.filter(isDisallowedToken);
+    throwCollectedErrors(disallowedTokens);
   }
   return tokens;
 }

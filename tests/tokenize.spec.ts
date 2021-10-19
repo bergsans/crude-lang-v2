@@ -99,7 +99,7 @@ let numTwo =333;
       expect(tokens).to.deep.equal(res);
     });
 
-    it('Should throw on unallowed token', () => {
+    it('Should throw on disallowed token', () => {
       const code = `
 let num_1 = 333;
 let ?? = 2;

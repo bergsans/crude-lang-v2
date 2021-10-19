@@ -35,7 +35,7 @@ export const BOOLEAN = 'Boolean';
 export const INTEGER = 'Integer';
 export const ASSIGN = '=';
 export const SEMICOLON = ';';
-export const UNALLOWED_CHARACTER = 'UNALLOWED_CHARACTER';
+export const DISALLOWED_CHARACTER = 'DISALLOWED_CHARACTER';
 export const GREATER_THAN = '>';
 export const LOWER_THAN = '<';
 export const GREATER_THAN_OR_EQUAL = '>=';
