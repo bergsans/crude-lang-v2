@@ -10,7 +10,6 @@ export class TokenizeError extends Error {
 
 function disallowedTokenMessage(disallowedToken: Token) {
   return `${disallowedToken.literal} - at line ${disallowedToken.meta.ln}, column ${disallowedToken.meta.col} - is an unvalid character.`;
-}
 
 export function throwCollectedErrors(disallowedTokens: Token[]) {
   const errorMessage = disallowedTokens.reduce(
