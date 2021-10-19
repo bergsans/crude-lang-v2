@@ -1,5 +1,5 @@
 import { NUL } from './token-types';
-import { throwNoInput, throwCollectedErrors } from './token-errors';
+import { throwCollectedErrors } from './token-errors';
 import {
   isWhitespace,
   isDigit,
@@ -145,9 +145,6 @@ function produceTokens(data: Data) {
 }
 
 export function tokenize(input: string): Token[] {
-  if (!input.length) {
-    throwNoInput();
-  }
   const initialMeta: Metadata = {
     realPosition: 0,
     col: 1,

@@ -6,6 +6,20 @@ import { _parseBinaryExpression } from '../src/parser/parse-binary-expression';
 import { list, List } from '../src/utils/list';
 
 describe('Parser', () => {
+  it('Parse nothing', () => {
+    const code = '';
+    const tokens = tokenize(code);
+    const parsed = parse(tokens);
+    const expectedResult = {
+      type: 'Program',
+      body: {
+        type: 'BlockStatement',
+        statements: [],
+      },
+    };
+    expect(parsed).to.deep.equal(expectedResult);
+  });
+
   it('Parse array', () => {
     const code = 'let nums = [1, 2];';
     const tokens = tokenize(code);

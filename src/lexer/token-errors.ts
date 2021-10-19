@@ -8,10 +8,6 @@ export class TokenizeError extends Error {
   }
 }
 
-export function throwNoInput() {
-  throw new TokenizeError(fmtStr('No input', 'red'));
-}
-
 function unallowedTokenMessage(unallowedToken: Token) {
   return `${unallowedToken.literal} - at line ${unallowedToken.meta.ln}, column ${unallowedToken.meta.col} - is an unvalid character.`;
 }

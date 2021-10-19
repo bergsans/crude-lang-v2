@@ -15,6 +15,9 @@ let numTwo = 333;
 let numOne =2 + 2 + (3 - 3);
 let numTwo =333;
 `;
+
+      const codeSnippet4 = '';
+
       const expectedRes1 = [
         { type: 'LET', literal: 'let' },
         { type: 'Identifier', literal: 'num' },
@@ -45,10 +48,12 @@ let numTwo =333;
         { type: 'EOF', literal: '\u0000' },
       ];
       const expectedRes3 = expectedRes2;
+      const expectedRes4 = [];
       [
         [codeSnippet1, expectedRes1],
         [codeSnippet2, expectedRes2],
         [codeSnippet3, expectedRes3],
+        [codeSnippet4, expectedRes4],
       ].forEach(([code, res]: [string, Token[]]) => {
         const tokensWithoutMetadata = tokenize(code).map(
           ({ type, literal }: Partial<Token>) => ({
