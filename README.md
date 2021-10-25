@@ -2,13 +2,18 @@
 
 # TODO
 
-* Cannot reference array els besides from in an assignment, or in a call expression (`id(arr[0]);`). You cannot write:
+- assignments rimitives array
+- array i binary expr
+- null.
+- refactor builtins
+- random and exit as built-in
+- smarter for loops
+- else, while
+- anonymous funs
+- immediatly invoked fns
 
-```
-let arr = [1, 2];
-arr[0] + 12;
-if(arr[0] == 1) { ... }
-```
+
+
 
 Should fix: change logic in `isPartOfBinaryExpression`
 
