@@ -58,13 +58,4 @@ Hi!
 ```
 ./crude examples/game-of-life.crude
 ```
-
-<<<<<<< HEAD
-## Game of Life implementation
-```
-./crude examples/game-of-life.crude
-```
-
-=======
->>>>>>> 587d69671e473161062893ed9c1b500b1c1fa12d
 ![](./examples/game-of-life-screenshot.gif)
