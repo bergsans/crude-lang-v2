@@ -1,5 +1,7 @@
 ![](./crudelang-logo.png)
 
+CrudeLang is a learning project aiming to increase my knowledge of parsers and interpreters. [masak](https://github.com/masak) volunteered to make a [specification for CrudeLang](https://masak.github.io/crude-spec/).
+
 # TODO
 
 - assignments rimitives array
