@@ -2,25 +2,6 @@
 
 CrudeLang is a learning project aiming to increase my knowledge of parsers and interpreters. [masak](https://github.com/masak) volunteered to make a [specification for CrudeLang](https://masak.github.io/crude-spec/).
 
-# TODO
-
-- assignments rimitives array
-- array i binary expr
-- null.
-- refactor builtins
-- random and exit as built-in
-- smarter for loops
-- else, while
-- anonymous funs
-- immediatly invoked fns
-
-
-
-
-Should fix: change logic in `isPartOfBinaryExpression`
-
-* Decide if include anonymous fns and immediatly invoked fn.
-
 # Setup
 ```
 npm install
