@@ -1,6 +1,7 @@
 ![](./crudelang-logo.png)
 
-CrudeLang is a learning project aiming to increase my knowledge of parsers and interpreters. [masak](https://github.com/masak) volunteered to make a [specification for CrudeLang](https://masak.github.io/crude-spec/).
+CrudeLang is a learning project aiming to increase my knowledge of parsers and interpreters. I've previously implemented [a minimalistic Lisp](https://github.com/bergsans/one-page-lisp); therefore I thought it would be challenging to make an imperative interpreter.
+[masak](https://github.com/masak) volunteered to make a [specification for CrudeLang](https://masak.github.io/crude-spec/).
 
 # Setup
 ```
